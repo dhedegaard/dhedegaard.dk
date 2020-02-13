@@ -1,5 +1,8 @@
 module.exports = {
   siteMetadata: {
+    title: `Dennis Hedegaard`,
+    description: `Personal website of a web developer from Aarhus`,
+    author: `Dennis Hedegaard <dennis@dhedegaard.dk>`,
     siteUrl: `https://dhedegaard.dk`
   },
   plugins: [
@@ -33,6 +36,7 @@ module.exports = {
         theme_color: `#fff`,
         display: `standalone`
       }
-    }
+    },
+    `gatsby-plugin-offline`
   ]
 };
