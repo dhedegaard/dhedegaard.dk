@@ -1,0 +1,16 @@
+{
+  "name": "dhedegaard.dk",
+  "version": "1.0.0",
+  "description": "dhedegaard.dk",
+  "homepage": "https://dhedegaard.dk/",
+  "scripts": {
+    "start": "gatsby develop",
+    "build": "gatsby build"
+  },
+  "author": "Dennis Hedegaard <dennis@dhedegaard.dk>",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "gatsby": "^2.19.17",
+    "typescript": "^3.7.5"
+  }
+}
