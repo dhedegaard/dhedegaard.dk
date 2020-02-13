@@ -8,7 +8,7 @@ import Layout from "../layout";
 import styled from "styled-components";
 
 const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
-  width: 16px;
+  width: 1em;
   height: 16px;
 `;
 
