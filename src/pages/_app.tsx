@@ -2,9 +2,10 @@ import { FC } from "react";
 import Container from "@mui/material/Container";
 import Head from "next/head";
 import { AppProps } from "next/app";
-import { config } from "@fortawesome/fontawesome-svg-core";
-import "@fortawesome/fontawesome-svg-core/styles.css";
 
+import { config } from "@fortawesome/fontawesome-svg-core";
+// We don't need the styles, so we just ignore it and style the SVGs ourselves.
+// import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
 
 const Layout: FC<AppProps> = ({ Component, pageProps }) => (

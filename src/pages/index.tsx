@@ -6,6 +6,8 @@ import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import { FC } from "react";
 
+const iconStyle = { width: "16px", height: "16px" };
+
 const Index: FC = () => (
   <>
     <Typography variant="h4" component="h1" paragraph>
@@ -18,15 +20,16 @@ const Index: FC = () => (
     <Typography paragraph>
       Find me on{" "}
       <Link href="https://github.com/dhedegaard">
-        <FontAwesomeIcon icon={faGithub} fixedWidth /> Github
+        <FontAwesomeIcon style={iconStyle} icon={faGithub} fixedWidth /> Github
       </Link>
       ,{" "}
       <Link href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/">
-        <FontAwesomeIcon icon={faLinkedin} fixedWidth /> LinkedIn
+        <FontAwesomeIcon style={iconStyle} icon={faLinkedin} fixedWidth />{" "}
+        LinkedIn
       </Link>{" "}
       or send me a{" "}
       <Link href="mailto:dennis@dhedegaard.dk">
-        <FontAwesomeIcon icon={faEnvelope} fixedWidth /> mail
+        <FontAwesomeIcon style={iconStyle} icon={faEnvelope} fixedWidth /> mail
       </Link>
       .
     </Typography>
