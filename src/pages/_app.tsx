@@ -16,8 +16,8 @@ const Layout: FC<AppProps> = ({ Component, pageProps }) => (
       <meta name="description" content="The website of Dennis Hedegaard" />
       <meta property="og:title" content="Dennis Hedegaard" />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://dhedegaard.dk/" />
-      <link rel="canonical" href="https://dhedegaard.dk/" />
+      <meta property="og:url" content="https://www.dhedegaard.dk/" />
+      <link rel="canonical" href="https://www.dhedegaard.dk/" />
       <link rel="apple-touch-icon" href="/favicon.png" />
       <meta name="theme-color" content="#fff" />
     </Head>
