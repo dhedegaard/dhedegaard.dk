@@ -1,21 +1,21 @@
-import React from "react";
-import { Link as GatsbyLink } from "gatsby";
-import Layout from "../layout";
-import { Typography, Link } from "@material-ui/core";
+import { FC } from "react";
+import NextLink from "next/link";
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
 
-const NotFound: React.FC = () => (
-  <Layout>
+const NotFound: FC = () => (
+  <>
     <Typography variant="h4" component="h1" paragraph>
       404: Not found
     </Typography>
     <Typography paragraph>
       The page does not exist.{" "}
-      <Link component={GatsbyLink} to="/">
+      <Link component={NextLink} href="/">
         Go to the main page
       </Link>
       .
     </Typography>
-  </Layout>
+  </>
 );
 
 export default NotFound;

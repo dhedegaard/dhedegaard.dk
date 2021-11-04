@@ -3,7 +3,7 @@ module.exports = {
     title: `Dennis Hedegaard`,
     description: `Personal website of a web developer from Aarhus`,
     author: `Dennis Hedegaard <dennis@dhedegaard.dk>`,
-    siteUrl: `https://dhedegaard.dk`
+    siteUrl: `https://dhedegaard.dk`,
   },
   plugins: [
     `gatsby-plugin-typescript`,
@@ -20,23 +20,23 @@ module.exports = {
           {
             family: `Roboto`,
             subsets: [`latin`],
-            variants: [`400`]
-          }
-        ]
-      }
+            variants: [`400`],
+          },
+        ],
+      },
     },
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: `Dennis Hedegaard`,
         short_name: `Dennis Hedegaard`,
-        icon: `src/images/favicon.png`,
+        icon: `/favicon.png`,
         start_url: `/`,
         background_color: `#000`,
         theme_color: `#fff`,
-        display: `standalone`
-      }
+        display: `standalone`,
+      },
     },
-    `gatsby-plugin-offline`
-  ]
+    `gatsby-plugin-offline`,
+  ],
 };

@@ -1,0 +1,26 @@
+import { FC } from "react";
+import Container from "@mui/material/Container";
+import CssBaseline from "@mui/material/CssBaseline";
+import Head from "next/head";
+import { AppProps } from "next/app";
+
+const Layout: FC<AppProps> = ({ Component, pageProps }) => (
+  <>
+    <Head>
+      <html lang="en" />
+      <title>Dennis Hedegaard</title>
+      <link rel="icon" href="/favicon.png" />
+      <meta name="description" content="The website of Dennis Hedegaard" />
+      <meta property="og:title" content="Dennis Hedegaard" />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://dhedegaard.dk/" />
+      <link rel="canonical" href="https://dhedegaard.dk/" />
+    </Head>
+    <CssBaseline />
+    <Container maxWidth="sm">
+      <Component {...pageProps} />
+    </Container>
+  </>
+);
+
+export default Layout;

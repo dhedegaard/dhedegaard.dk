@@ -2,9 +2,9 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons/faGithub";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons/faLinkedin";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons/faEnvelope";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Typography, Link } from "@material-ui/core";
-import React from "react";
-import Layout from "../layout";
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
+import { FC } from "react";
 import styled from "styled-components";
 
 const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
@@ -12,8 +12,8 @@ const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
   height: 16px;
 `;
 
-const Index: React.FC = () => (
-  <Layout>
+const Index: FC = () => (
+  <>
     <Typography variant="h4" component="h1" paragraph>
       Dennis Hedegaard
     </Typography>
@@ -36,7 +36,7 @@ const Index: React.FC = () => (
       </Link>
       .
     </Typography>
-  </Layout>
+  </>
 );
 
 export default Index;

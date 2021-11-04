@@ -61,3 +61,5 @@ htmlcov
 node_modules
 .cache
 public
+.next
+out
