@@ -10,7 +10,6 @@ config.autoAddCss = false;
 const Layout: FC<AppProps> = ({ Component, pageProps }) => (
   <>
     <Head>
-      <html lang="en" />
       <title>Dennis Hedegaard</title>
       <link rel="icon" href="/favicon.png" />
       <link rel="manifest" href="/manifest.json" />
