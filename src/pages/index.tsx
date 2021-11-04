@@ -18,15 +18,15 @@ const Index: FC = () => (
     <Typography paragraph>
       Find me on{" "}
       <Link href="https://github.com/dhedegaard">
-        <FontAwesomeIcon icon={faGithub} /> Github
+        <FontAwesomeIcon icon={faGithub} fixedWidth /> Github
       </Link>
       ,{" "}
       <Link href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/">
-        <FontAwesomeIcon icon={faLinkedin} /> LinkedIn
+        <FontAwesomeIcon icon={faLinkedin} fixedWidth /> LinkedIn
       </Link>{" "}
       or send me a{" "}
       <Link href="mailto:dennis@dhedegaard.dk">
-        <FontAwesomeIcon icon={faEnvelope} /> mail
+        <FontAwesomeIcon icon={faEnvelope} fixedWidth /> mail
       </Link>
       .
     </Typography>
