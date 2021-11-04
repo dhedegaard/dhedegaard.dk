@@ -10,6 +10,7 @@ const Layout: FC<AppProps> = ({ Component, pageProps }) => (
       <html lang="en" />
       <title>Dennis Hedegaard</title>
       <link rel="icon" href="/favicon.png" />
+      <link rel="manifest" href="/manifest.json" />
       <meta name="description" content="The website of Dennis Hedegaard" />
       <meta property="og:title" content="Dennis Hedegaard" />
       <meta property="og:type" content="website" />
