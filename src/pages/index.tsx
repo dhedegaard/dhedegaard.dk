@@ -5,8 +5,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import { FC } from "react";
+import styled from "@emotion/styled";
 
-const iconStyle = { width: "16px", height: "16px" };
+const FAIcon = styled(FontAwesomeIcon)`
+  width: 16px;
+  height: 16px;
+`;
 
 const Index: FC = () => (
   <>
@@ -20,16 +24,15 @@ const Index: FC = () => (
     <Typography paragraph>
       Find me on{" "}
       <Link href="https://github.com/dhedegaard">
-        <FontAwesomeIcon style={iconStyle} icon={faGithub} fixedWidth /> Github
+        <FAIcon icon={faGithub} fixedWidth /> Github
       </Link>
       ,{" "}
       <Link href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/">
-        <FontAwesomeIcon style={iconStyle} icon={faLinkedin} fixedWidth />{" "}
-        LinkedIn
+        <FAIcon icon={faLinkedin} fixedWidth /> LinkedIn
       </Link>{" "}
       or send me a{" "}
       <Link href="mailto:dennis@dhedegaard.dk">
-        <FontAwesomeIcon style={iconStyle} icon={faEnvelope} fixedWidth /> mail
+        <FAIcon icon={faEnvelope} fixedWidth /> mail
       </Link>
       .
     </Typography>
