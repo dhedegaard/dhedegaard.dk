@@ -1,7 +1,7 @@
 import { FC } from "react";
+import Container from "@mui/material/Container";
 import Head from "next/head";
 import { AppProps } from "next/app";
-import styled from "@emotion/styled";
 
 import { config } from "@fortawesome/fontawesome-svg-core";
 // We don't need the styles, so we just ignore it and style the SVGs ourselves.
@@ -22,20 +22,10 @@ const Layout: FC<AppProps> = ({ Component, pageProps }) => (
       <link rel="apple-touch-icon" href="/favicon.png" />
       <meta name="theme-color" content="#fff" />
     </Head>
-    <Container>
+    <Container maxWidth="sm">
       <Component {...pageProps} />
     </Container>
   </>
 );
 
 export default Layout;
-
-const Container = styled.div`
-  width: 100%;
-  box-sizing: border-box;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 600px;
-  padding-left: 24px;
-  padding-right: 24px;
-`;
