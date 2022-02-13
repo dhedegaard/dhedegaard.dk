@@ -72,7 +72,12 @@ const Index: FC<Props> = ({ repositories }) => (
 
 const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
   <Paper variant="outlined" sx={{ p: 2 }}>
-    <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems="flex-start"
+      sx={{ mb: 1 }}
+    >
       <RepoLink
         color="inherit"
         underline="none"
@@ -84,8 +89,9 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
         {repo.name}
       </RepoLink>
       {repo.stargazers_count > 0 && (
-        <Box display="flex" gap={0.5}>
+        <Box display="flex">
           <Typography fontSize="small">{repo.stargazers_count}</Typography>
+          &nbsp;
           <FontAwesomeIcon width={13} fixedWidth icon={faStar} />
         </Box>
       )}
@@ -135,7 +141,6 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
 
 const RepoLink = styled(Link)`
   text-decoration: none;
-  margin-bottom: 8px;
   font-weight: bold;
 `;
 
