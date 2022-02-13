@@ -1,6 +1,7 @@
 {
   "theme_color": "#209cee",
   "background_color": "#ffffff",
+  "id": "/",
   "display": "minimal-ui",
   "scope": "/",
   "start_url": "/",
