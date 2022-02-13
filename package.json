@@ -4,8 +4,10 @@
   "description": "dhedegaard.dk",
   "homepage": "https://www.dhedegaard.dk/",
   "scripts": {
-    "start": "next dev",
-    "build": "next build && next export",
+    "start": "next start",
+    "watch": "next dev",
+    "build": "next build && next export && yarn generate-sw",
+    "generate-sw": "workbox generateSW",
     "lint": "next lint"
   },
   "author": "Dennis Hedegaard <dennis@dhedegaard.dk>",
@@ -33,6 +35,7 @@
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.11",
     "eslint": "<8.0.0",
-    "eslint-config-next": "12.0.10"
+    "eslint-config-next": "12.0.10",
+    "workbox-cli": "^6.4.2"
   }
 }
