@@ -38,15 +38,18 @@ const Index: FC<Props> = ({ repositories }) => (
     </Typography>
     <Typography paragraph>
       Find me on{" "}
-      <Link href="https://github.com/dhedegaard">
+      <Link href="https://github.com/dhedegaard" underline="none">
         <FAIcon icon={faGithub} fixedWidth /> Github
       </Link>
       ,{" "}
-      <Link href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/">
+      <Link
+        href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
+        underline="none"
+      >
         <FAIcon icon={faLinkedin} fixedWidth /> LinkedIn
       </Link>{" "}
       or send me a{" "}
-      <Link href="mailto:dennis@dhedegaard.dk">
+      <Link href="mailto:dennis@dhedegaard.dk" underline="none">
         <FAIcon icon={faEnvelope} fixedWidth /> mail
       </Link>
       .
