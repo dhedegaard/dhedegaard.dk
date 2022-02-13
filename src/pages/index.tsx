@@ -59,7 +59,7 @@ const Index: FC<Props> = ({ repositories }) => (
       <>
         <Divider sx={{ mt: 4, mb: 2 }} />
         <Typography variant="h5" component="h2" sx={{ mb: 2 }}>
-          Interresting Github repositories
+          Interresting Github projects
         </Typography>
         <RepositoriesBox>
           {repositories.map((repo) => (
