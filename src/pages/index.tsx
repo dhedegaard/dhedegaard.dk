@@ -82,13 +82,13 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
         rel="noopener noreferrer"
         variant="subtitle1"
       >
-        {repo.name}
+        {repo.name} <FontAwesomeIcon width="16px" icon={faGithub} />
       </RepoLink>
       {repo.stargazers_count > 0 && (
         <Box display="flex">
           <Typography fontSize="small">{repo.stargazers_count}</Typography>
           &nbsp;
-          <FontAwesomeIcon width={13} fixedWidth icon={faStar} />
+          <FontAwesomeIcon width="16px" fixedWidth icon={faStar} />
         </Box>
       )}
     </Box>
