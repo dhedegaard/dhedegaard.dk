@@ -22,7 +22,7 @@ const Layout: FC<AppProps> = ({ Component, pageProps }) => (
       <link rel="apple-touch-icon" href="/favicon.png" />
       <meta name="theme-color" content="#fff" />
     </Head>
-    <Container maxWidth="sm">
+    <Container maxWidth="md">
       <Component {...pageProps} />
     </Container>
   </>
