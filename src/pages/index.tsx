@@ -86,7 +86,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
       </RepoLink>
       {repo.stargazers_count > 0 && (
         <Box display="flex">
-          <Typography fontSize="small">{repo.stargazers_count}</Typography>
+          <Typography fontSize="14px">{repo.stargazers_count}</Typography>
           &nbsp;
           <FontAwesomeIcon width="16px" fixedWidth icon={faStar} />
         </Box>
