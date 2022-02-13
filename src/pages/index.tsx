@@ -58,21 +58,21 @@ const Index: FC<Props> = ({ repositories }) => (
     {repositories != null && repositories.length > 0 && (
       <>
         <Divider sx={{ mt: 4, mb: 2 }} />
-        <Box display="flex" flexDirection="column" gap={3} sx={{ mb: 4 }}>
-          <Typography variant="h5" component="h2" sx={{ mb: 2 }}>
-            Interresting Github repositories
-          </Typography>
+        <Typography variant="h5" component="h2" sx={{ mb: 2 }}>
+          Interresting Github repositories
+        </Typography>
+        <RepositoriesBox>
           {repositories.map((repo) => (
             <Repo key={repo.id} repo={repo} />
           ))}
-        </Box>
+        </RepositoriesBox>
       </>
     )}
   </>
 );
 
 const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
-  <Paper variant="outlined" sx={{ p: 2 }}>
+  <RepoPaper variant="outlined">
     <Box
       display="flex"
       justifyContent="space-between"
@@ -98,7 +98,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
       )}
     </Box>
 
-    <Typography fontSize="0.9em" sx={{ mb: 1.5 }}>
+    <Typography fontSize="0.9em" sx={{ mb: 1.5, flex: "auto" }}>
       {repo.description}
     </Typography>
 
@@ -137,7 +137,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
         <b>{repo.language}</b>
       </Typography>
     )}
-  </Paper>
+  </RepoPaper>
 );
 
 const FAIcon = styled(FontAwesomeIcon)`
@@ -147,6 +147,26 @@ const FAIcon = styled(FontAwesomeIcon)`
 const RepoLink = styled(Link)`
   text-decoration: none;
   font-weight: bold;
+`;
+
+const RepositoriesBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 36px;
+  justify-content: space-between;
+`;
+
+const RepoPaper = styled(Paper)`
+  padding: 16px;
+  flex: 0 0 calc(50% - 12px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  @media (max-width: 1023px) {
+    flex-basis: 100%;
+  }
 `;
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
