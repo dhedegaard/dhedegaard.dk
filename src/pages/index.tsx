@@ -81,8 +81,10 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
         target="_blank"
         rel="noopener noreferrer"
         variant="subtitle1"
+        sx={{ display: "flex" }}
       >
-        {repo.name} <FontAwesomeIcon width="16px" icon={faGithub} />
+        {repo.name}&nbsp;
+        <FontAwesomeIcon width="16px" icon={faGithub} />
       </RepoLink>
       {repo.stargazers_count > 0 && (
         <Box display="flex">
