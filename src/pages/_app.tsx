@@ -34,15 +34,17 @@ const Layout: FC<AppProps> = ({ Component, pageProps }) => (
     <Container maxWidth="md">
       <Component {...pageProps} />
     </Container>
-    <Script id="sw" strategy="afterInteractive">
-      {`// Check that service workers are supported
-        if ('serviceWorker' in navigator) {
-          // Use the window load event to keep the page load performant
-          window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js');
-          });
-        }`}
-    </Script>
+    {process.env.NODE_ENV === "production" && (
+      <Script id="sw">
+        {`// Check that service workers are supported
+          if ('serviceWorker' in navigator) {
+            // Use the window load event to keep the page load performant
+            window.addEventListener('load', () => {
+              navigator.serviceWorker.register('/sw.js');
+            });
+          }`}
+      </Script>
+    )}
   </>
 );
 
