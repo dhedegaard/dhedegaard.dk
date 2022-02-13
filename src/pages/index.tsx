@@ -123,7 +123,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
 
     {repo.language != null && (
       <Typography fontSize="small">
-        Language:
+        Language:&nbsp;
         <b>{repo.language}</b>
       </Typography>
     )}
