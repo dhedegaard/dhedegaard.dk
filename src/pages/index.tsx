@@ -73,12 +73,7 @@ const Index: FC<Props> = ({ repositories }) => (
 
 const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
   <RepoPaper variant="outlined">
-    <Box
-      display="flex"
-      justifyContent="space-between"
-      alignItems="flex-start"
-      sx={{ mb: 1 }}
-    >
+    <Box display="flex" justifyContent="space-between" alignItems="flex-start">
       <RepoLink
         color="inherit"
         underline="none"
@@ -98,12 +93,12 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
       )}
     </Box>
 
-    <Typography fontSize="0.9em" sx={{ mb: 1.5, flex: "auto" }}>
+    <Typography fontSize="0.9em" sx={{ flex: "auto" }}>
       {repo.description}
     </Typography>
 
     {repo.homepage != null && repo.homepage !== "" && (
-      <Box display="flex" gap={1} alignItems="center" sx={{ mb: 1 }}>
+      <Box display="flex" gap={1} alignItems="center">
         <FontAwesomeIcon icon={faLink} fixedWidth width={11} />{" "}
         <Link
           variant="body2"
@@ -118,13 +113,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
     )}
 
     {repo.topics.length > 0 && (
-      <Box
-        display="inline-flex"
-        flexWrap="wrap"
-        gap={1}
-        sx={{ mb: 1 }}
-        width="100%"
-      >
+      <Box display="inline-flex" flexWrap="wrap" gap={1} width="100%">
         {repo.topics.map((topic) => (
           <Chip variant="outlined" key={topic} size="small" label={topic} />
         ))}
@@ -164,6 +153,7 @@ const RepoPaper = styled(Paper)`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  gap: 8px;
   @media (max-width: 1023px) {
     flex-basis: 100%;
   }
