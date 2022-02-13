@@ -18,11 +18,6 @@ import {
   GithubRepository,
 } from "../clients/github";
 
-const FAIcon = styled(FontAwesomeIcon)`
-  width: 16px;
-  height: 16px;
-`;
-
 interface Props {
   repositories?: Array<GithubRepository>;
 }
@@ -39,25 +34,31 @@ const Index: FC<Props> = ({ repositories }) => (
     <Typography paragraph>
       Find me on{" "}
       <Link href="https://github.com/dhedegaard" underline="none">
-        <FAIcon icon={faGithub} fixedWidth /> Github
+        <FAIcon icon={faGithub} size="sm" />
+        &nbsp;
+        <span>Github</span>
       </Link>
       ,{" "}
       <Link
         href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
         underline="none"
       >
-        <FAIcon icon={faLinkedin} fixedWidth /> LinkedIn
+        <FAIcon icon={faLinkedin} />
+        &nbsp;
+        <span>LinkedIn</span>
       </Link>{" "}
       or send me a{" "}
       <Link href="mailto:dennis@dhedegaard.dk" underline="none">
-        <FAIcon icon={faEnvelope} fixedWidth /> mail
+        <FAIcon icon={faEnvelope} />
+        &nbsp;
+        <span>mail</span>
       </Link>
       .
     </Typography>
     {repositories != null && repositories.length > 0 && (
       <>
         <Divider sx={{ mt: 4, mb: 2 }} />
-        <Box display="flex" flexDirection="column" gap={3}>
+        <Box display="flex" flexDirection="column" gap={3} sx={{ mb: 4 }}>
           <Typography variant="h5" component="h2" sx={{ mb: 2 }}>
             Interresting Github repositories
           </Typography>
@@ -138,6 +139,10 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
     )}
   </Paper>
 );
+
+const FAIcon = styled(FontAwesomeIcon)`
+  width: 16px;
+`;
 
 const RepoLink = styled(Link)`
   text-decoration: none;
