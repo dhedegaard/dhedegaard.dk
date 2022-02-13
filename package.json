@@ -6,8 +6,7 @@
   "scripts": {
     "start": "next start",
     "watch": "next dev",
-    "build": "next build && next export && yarn generate-sw",
-    "generate-sw": "workbox generateSW",
+    "build": "next build && next export",
     "lint": "next lint"
   },
   "author": "Dennis Hedegaard <dennis@dhedegaard.dk>",
@@ -35,7 +34,6 @@
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.11",
     "eslint": "<8.0.0",
-    "eslint-config-next": "12.0.10",
-    "workbox-cli": "^6.4.2"
+    "eslint-config-next": "12.0.10"
   }
 }

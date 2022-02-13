@@ -2,7 +2,6 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import Container from "@mui/material/Container";
 import { AppProps } from "next/app";
 import Head from "next/head";
-import Script from "next/script";
 import { FC } from "react";
 
 // We don't need the styles, so we just ignore it and style the SVGs ourselves.
@@ -34,17 +33,6 @@ const Layout: FC<AppProps> = ({ Component, pageProps }) => (
     <Container maxWidth="md">
       <Component {...pageProps} />
     </Container>
-    {process.env.NODE_ENV === "production" && (
-      <Script id="sw">
-        {`// Check that service workers are supported
-          if ('serviceWorker' in navigator) {
-            // Use the window load event to keep the page load performant
-            window.addEventListener('load', () => {
-              navigator.serviceWorker.register('/sw.js');
-            });
-          }`}
-      </Script>
-    )}
   </>
 );
 
