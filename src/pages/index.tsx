@@ -24,7 +24,7 @@ const FAIcon = styled(FontAwesomeIcon)`
 `;
 
 interface Props {
-  repositories: Array<GithubRepository>;
+  repositories?: Array<GithubRepository>;
 }
 
 const Index: FC<Props> = ({ repositories }) => (
@@ -51,7 +51,7 @@ const Index: FC<Props> = ({ repositories }) => (
       </Link>
       .
     </Typography>
-    {repositories.length > 0 && (
+    {repositories != null && repositories.length > 0 && (
       <>
         <Divider sx={{ mt: 4, mb: 2 }} />
         <Box display="flex" flexDirection="column" gap={3}>
@@ -137,9 +137,15 @@ const RepoLink = styled(Link)`
 `;
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const repositories = await getLastUpdatedPublicRepositories();
+  const repositories = await getLastUpdatedPublicRepositories().catch(
+    (error) => {
+      console.error(error);
+      return undefined;
+    }
+  );
+
   return {
-    props: { repositories: repositories.slice(0, 20) },
+    props: { repositories: repositories?.slice(0, 20) },
     revalidate: 3600,
   };
 };
