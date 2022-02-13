@@ -2,7 +2,7 @@
   "name": "dhedegaard.dk",
   "version": "1.0.0",
   "description": "dhedegaard.dk",
-  "homepage": "https://dhedegaard.dk/",
+  "homepage": "https://www.dhedegaard.dk/",
   "scripts": {
     "start": "next dev",
     "build": "next build && next export",
