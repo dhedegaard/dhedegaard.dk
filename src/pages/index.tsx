@@ -115,7 +115,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
     )}
 
     {repo.topics.length > 0 && (
-      <Box display="inline-flex" flexWrap="wrap" gap={1} width="100%">
+      <Box display="inline-flex" flexWrap="wrap" gap="4px" width="100%">
         {repo.topics.map((topic) => (
           <Chip variant="outlined" key={topic} size="small" label={topic} />
         ))}
