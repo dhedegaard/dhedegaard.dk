@@ -60,7 +60,9 @@ const Index: FC<Props> = ({ repositories, avatarUrl }) => (
           .
         </Typography>
       </Box>
-      {avatarUrl != null && <Avatar src={avatarUrl} alt="Me" />}
+      {avatarUrl != null && (
+        <Avatar src={avatarUrl} alt="Me" crossOrigin="anonymous" />
+      )}
     </Box>
     {repositories != null && repositories.length > 0 && (
       <>
