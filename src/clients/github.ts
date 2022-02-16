@@ -28,3 +28,8 @@ export const getLastUpdatedPublicRepositories = () =>
         ["desc", "desc", "desc"]
       )
     );
+
+export const getUser = () =>
+  fetch("https://api.github.com/users/dhedegaard")
+    .then((resp) => resp.json())
+    .then((data: { avatar_url: string }) => data);

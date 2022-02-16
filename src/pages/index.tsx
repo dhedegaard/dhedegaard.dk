@@ -15,49 +15,56 @@ import { GetStaticProps } from "next";
 import { FC } from "react";
 import {
   getLastUpdatedPublicRepositories,
+  getUser,
   GithubRepository,
 } from "../clients/github";
 
 interface Props {
   repositories?: Array<GithubRepository>;
+  avatarUrl?: string;
 }
 
-const Index: FC<Props> = ({ repositories }) => (
+const Index: FC<Props> = ({ repositories, avatarUrl }) => (
   <>
-    <Typography variant="h4" component="h1" paragraph>
-      Dennis Hedegaard
-    </Typography>
-    <Typography paragraph>
-      A Software developer from Aarhus, Denmark. I work mostly with web
-      technologies.
-    </Typography>
-    <Typography paragraph>
-      Find me on{" "}
-      <Link href="https://github.com/dhedegaard" underline="none">
-        <FAIcon icon={faGithub} size="sm" />
-        &nbsp;
-        <span>Github</span>
-      </Link>
-      ,{" "}
-      <Link
-        href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
-        underline="none"
-      >
-        <FAIcon icon={faLinkedin} />
-        &nbsp;
-        <span>LinkedIn</span>
-      </Link>{" "}
-      or send me a{" "}
-      <Link href="mailto:dennis@dhedegaard.dk" underline="none">
-        <FAIcon icon={faEnvelope} />
-        &nbsp;
-        <span>mail</span>
-      </Link>
-      .
-    </Typography>
+    <Box display="flex" justifyContent="space-between" gap={1}>
+      <Box flex="auto">
+        <Typography variant="h4" component="h1" paragraph>
+          Dennis Hedegaard
+        </Typography>
+        <Typography paragraph>
+          A Software developer from Aarhus, Denmark. I work mostly with web
+          technologies.
+        </Typography>
+        <Typography paragraph>
+          Find me on{" "}
+          <Link href="https://github.com/dhedegaard" underline="none">
+            <FAIcon icon={faGithub} size="sm" />
+            &nbsp;
+            <span>Github</span>
+          </Link>
+          ,{" "}
+          <Link
+            href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
+            underline="none"
+          >
+            <FAIcon icon={faLinkedin} />
+            &nbsp;
+            <span>LinkedIn</span>
+          </Link>{" "}
+          or send me a{" "}
+          <Link href="mailto:dennis@dhedegaard.dk" underline="none">
+            <FAIcon icon={faEnvelope} />
+            &nbsp;
+            <span>mail</span>
+          </Link>
+          .
+        </Typography>
+      </Box>
+      {avatarUrl != null && <Avatar src={avatarUrl} alt="Me" />}
+    </Box>
     {repositories != null && repositories.length > 0 && (
       <>
-        <Divider sx={{ mt: 4, mb: 2 }} />
+        <Divider sx={{ mt: 2, mb: 2 }} />
         <Typography variant="h5" component="h2" sx={{ mb: 2 }}>
           Interresting Github projects
         </Typography>
@@ -131,6 +138,19 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
   </RepoPaper>
 );
 
+const Avatar = styled.img`
+  width: 90px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  flex: none;
+  border-radius: 50%;
+  align-self: flex-start;
+
+  @media (max-width: 768px) {
+    width: 60px;
+  }
+`;
+
 const FAIcon = styled(FontAwesomeIcon)`
   width: 16px;
 `;
@@ -162,15 +182,22 @@ const RepoPaper = styled(Paper)`
 `;
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const repositories = await getLastUpdatedPublicRepositories().catch(
-    (error) => {
-      console.error(error);
+  const [repositories, user] = await Promise.all([
+    getLastUpdatedPublicRepositories().catch((error) => {
+      console.error("Error fetching public repos:", error);
       return undefined;
-    }
-  );
+    }),
+    getUser().catch((error) => {
+      console.error("Error fetching user:", error);
+      return undefined;
+    }),
+  ]);
 
   return {
-    props: { repositories: repositories?.slice(0, 20) },
+    props: {
+      repositories: repositories?.slice(0, 20),
+      avatarUrl: user?.avatar_url,
+    },
     revalidate: 3600,
   };
 };
