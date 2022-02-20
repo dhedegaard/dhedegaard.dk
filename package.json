@@ -7,7 +7,8 @@
     "start": "next start",
     "watch": "next dev",
     "build": "next build && next export",
-    "lint": "next lint"
+    "lint": "next lint",
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "author": "Dennis Hedegaard <dennis@dhedegaard.dk>",
   "private": true,
@@ -21,6 +22,8 @@
     "@fortawesome/free-solid-svg-icons": "^6.0.0",
     "@fortawesome/react-fontawesome": "^0.1.17",
     "@mui/material": "^5.4.1",
+    "graphql": "^16.3.0",
+    "graphql-tag": "^2.12.6",
     "lodash": "^4.17.21",
     "next": "^12.0.10",
     "react": "^17.0.2",
@@ -29,6 +32,8 @@
     "typescript": "^4.5.5"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "2.6.2",
+    "@graphql-codegen/typescript": "2.4.5",
     "@types/lodash": "^4.14.178",
     "@types/node": "16",
     "@types/react": "^17.0.39",

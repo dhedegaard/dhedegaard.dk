@@ -13,28 +13,23 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/system/Box";
 import { GetStaticProps } from "next";
 import { FC } from "react";
-import {
-  getLastUpdatedPublicRepositories,
-  getUser,
-  GithubRepository,
-} from "../clients/github";
+import { getGithubUser, GithubRepository } from "../clients/github";
+import { orderBy } from "lodash";
 
 interface Props {
-  repositories?: Array<GithubRepository>;
-  avatarUrl?: string;
+  repositories: Array<GithubRepository>;
+  avatarUrl: string | null;
+  bio: string | null;
 }
 
-const Index: FC<Props> = ({ repositories, avatarUrl }) => (
+const Index: FC<Props> = ({ repositories, avatarUrl, bio }) => (
   <>
     <Box display="flex" justifyContent="space-between" gap={1}>
       <Box flex="auto">
         <Typography variant="h4" component="h1" paragraph>
           Dennis Hedegaard
         </Typography>
-        <Typography paragraph>
-          A Software developer from Aarhus, Denmark. I work mostly with web
-          technologies.
-        </Typography>
+        {bio != null && <Typography paragraph>{bio}</Typography>}
         <Typography paragraph>
           Find me on{" "}
           <Link href="https://github.com/dhedegaard" underline="none">
@@ -86,7 +81,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
       <RepoLink
         color="inherit"
         underline="none"
-        href={repo.html_url}
+        href={repo.url}
         target="_blank"
         rel="noopener noreferrer"
         variant="subtitle1"
@@ -95,9 +90,9 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
         {repo.name}&nbsp;
         <FontAwesomeIcon width="16px" icon={faGithub} />
       </RepoLink>
-      {repo.stargazers_count > 0 && (
+      {repo.stargazerCount > 0 && (
         <Box display="flex">
-          <Typography fontSize="14px">{repo.stargazers_count}</Typography>
+          <Typography fontSize="14px">{repo.stargazerCount}</Typography>
           &nbsp;
           <FontAwesomeIcon width="16px" fixedWidth icon={faStar} />
         </Box>
@@ -108,33 +103,45 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
       {repo.description}
     </Typography>
 
-    {repo.homepage != null && repo.homepage !== "" && (
+    {repo.homepageUrl != null && (
       <Box display="flex" gap={1} alignItems="center">
         <FontAwesomeIcon icon={faLink} fixedWidth width={11} />{" "}
         <Link
           variant="body2"
-          href={repo.homepage}
+          href={repo.homepageUrl}
           target="_blank"
           underline="none"
           rel="noopener noreferrer"
         >
-          {repo.homepage}
+          {repo.homepageUrl}
         </Link>
       </Box>
     )}
 
     {repo.topics.length > 0 && (
       <Box display="inline-flex" flexWrap="wrap" gap="4px" width="100%">
-        {repo.topics.map((topic) => (
-          <Chip variant="outlined" key={topic} size="small" label={topic} />
+        {repo.topics.map(({ topic }) => (
+          <Chip
+            variant="outlined"
+            key={topic.id}
+            size="small"
+            label={topic.name}
+          />
         ))}
       </Box>
     )}
 
-    {repo.language != null && (
+    {repo.primaryLanguage != null && (
       <Typography fontSize="small">
         Language:&nbsp;
-        <b>{repo.language}</b>
+        <Typography
+          fontWeight="bold"
+          display="inline"
+          fontSize="small"
+          color={repo.primaryLanguage.color ?? undefined}
+        >
+          {repo.primaryLanguage.name}
+        </Typography>
       </Typography>
     )}
   </RepoPaper>
@@ -184,21 +191,71 @@ const RepoPaper = styled(Paper)`
 `;
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const [repositories, user] = await Promise.all([
-    getLastUpdatedPublicRepositories().catch((error) => {
-      console.error("Error fetching public repos:", error);
-      return undefined;
-    }),
-    getUser().catch((error) => {
-      console.error("Error fetching user:", error);
-      return undefined;
-    }),
-  ]);
+  const user = await getGithubUser().catch((error) => {
+    console.error("Error fetching github user:", error);
+    return undefined;
+  });
+
+  if (user == null) {
+    return {
+      props: {
+        avatarUrl: null,
+        bio: null,
+        repositories: [],
+      },
+      revalidate: 5,
+    };
+  }
+
+  const orderedPinnedNodeIds = user.pinnedItems?.nodes?.map((e) => e.id) ?? [];
+  console.log({ orderedPinnedNodeIds });
+  const repos =
+    user.topRepositories?.edges?.reduce<GithubRepository[]>((acc, edge) => {
+      const repo = edge?.node;
+      if (
+        repo == null ||
+        repo.isPrivate ||
+        repo.isArchived ||
+        repo.owner.id !== user.id
+      ) {
+        return acc;
+      }
+      acc.push({
+        id: repo.id,
+        name: repo.name,
+        url: repo.url,
+        description: repo.description ?? null,
+        homepageUrl: repo.homepageUrl,
+        updatedAt: repo.updatedAt ?? null,
+        stargazerCount: repo.stargazerCount,
+        primaryLanguage: repo.primaryLanguage ?? null,
+        topics:
+          repo.repositoryTopics.edges
+            ?.map((topic) => topic?.node ?? undefined)
+            ?.filter((e): e is NonNullable<typeof e> => e != null) ?? [],
+      });
+      return acc;
+    }, []) ?? [];
+  const orderedRepos = orderBy(
+    repos,
+    [
+      // Pinned repos ascending
+      (e) => {
+        const index = orderedPinnedNodeIds.indexOf(e.id);
+        return index === -1 ? Infinity : index;
+      },
+      "stargazerCount",
+      "updatedAt",
+    ],
+    ["asc", "desc", "desc"]
+  );
+  // TODO: Ordering.
 
   return {
     props: {
-      repositories: repositories?.slice(0, 20),
-      avatarUrl: user?.avatar_url,
+      repositories: orderedRepos.slice(0, 30),
+      avatarUrl: user?.avatarUrl ?? null,
+      bio: user?.bio ?? null,
     },
     revalidate: 3600,
   };

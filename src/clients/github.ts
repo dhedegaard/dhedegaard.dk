@@ -1,35 +1,38 @@
-import orderBy from "lodash/orderBy";
+import { Language, RepositoryTopic, User } from "../codegen/types";
+import { userQuery } from "./user-query";
 
 export interface GithubRepository {
-  archived: boolean;
-  id: number;
+  id: string;
   name: string;
-  full_name: string;
-  private: boolean;
-  html_url: string;
-  description: string;
-  created_at: string;
-  updated_at: string;
-  pushed_at: string;
-  homepage: null | string;
-  language: null | string;
-  stargazers_count: number;
-  watchers_count: number;
-  topics: string[];
+  url: string;
+  description: string | null;
+  updatedAt: unknown;
+  homepageUrl: null | string;
+  primaryLanguage: Language | null;
+  stargazerCount: number;
+  topics: RepositoryTopic[];
+  // TODO: More languages.
 }
 
-export const getLastUpdatedPublicRepositories = () =>
-  fetch("https://api.github.com/users/dhedegaard/repos?per_page=1000")
-    .then((resp) => resp.json())
-    .then((data: Array<GithubRepository>) =>
-      orderBy(
-        data.filter((repo) => !repo.archived && !repo.private),
-        ["stargazer_count", "watchers_count", "pushed_at"],
-        ["desc", "desc", "desc"]
-      )
-    );
-
-export const getUser = () =>
-  fetch("https://api.github.com/users/dhedegaard")
-    .then((resp) => resp.json())
-    .then((data: { avatar_url: string }) => data);
+export const getGithubUser = async () => {
+  return await fetch("https://api.github.com/graphql", {
+    method: "POST",
+    body: JSON.stringify({
+      query: userQuery.loc!.source!.body,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `bearer ${process.env.GITHUB_PAT}`,
+    },
+  })
+    .then(
+      (res) => res.json() as Promise<{ errors?: any; data: { user: User } }>
+    )
+    .then((res) => {
+      if (res.errors != null) {
+        console.error("Error in Github response:", res.errors);
+        return undefined;
+      }
+      return res.data.user;
+    });
+};
