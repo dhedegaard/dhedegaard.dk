@@ -2,6 +2,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import Container from "@mui/material/Container";
 import { AppProps } from "next/app";
 import Head from "next/head";
+import Script from "next/script";
 import { FC } from "react";
 
 // We don't need the styles, so we just ignore it and style the SVGs ourselves.
@@ -10,6 +11,16 @@ config.autoAddCss = false;
 
 const Layout: FC<AppProps> = ({ Component, pageProps }) => (
   <>
+    <Script id="unregister-serviceworker">{`
+      if(window.navigator && navigator.serviceWorker) {
+        navigator.serviceWorker.getRegistrations()
+        .then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+          }
+        });
+      }
+    `}</Script>
     <Head>
       <title>Dennis Hedegaard</title>
       <link rel="icon" href="/favicon.png" />
