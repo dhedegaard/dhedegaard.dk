@@ -241,7 +241,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         url: repo.url,
         pinned: orderedPinnedNodeIds.includes(repo.id),
         description: repo.description ?? null,
-        homepageUrl: repo.homepageUrl,
+        homepageUrl: repo.homepageUrl === "" ? null : repo.homepageUrl,
         updatedAt: repo.updatedAt ?? null,
         pushedAt: repo.pushedAt ?? null,
         stargazerCount: repo.stargazerCount,
