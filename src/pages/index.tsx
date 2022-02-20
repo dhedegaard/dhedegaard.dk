@@ -143,12 +143,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
         Language(s):&nbsp;
         {repo.languages.map((language, index) => (
           <Fragment key={language.id}>
-            <Typography
-              fontWeight="bold"
-              display="inline"
-              fontSize="small"
-              color={language.color ?? undefined}
-            >
+            <Typography fontWeight="bold" display="inline" fontSize="small">
               {language.name}
             </Typography>
             {index < repo.languages.length - 1 ? ", " : null}
