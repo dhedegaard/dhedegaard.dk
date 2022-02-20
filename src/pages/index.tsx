@@ -1,9 +1,10 @@
 import styled from "@emotion/styled";
 import { faGithub } from "@fortawesome/free-brands-svg-icons/faGithub";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons/faLinkedin";
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons/faEnvelope";
 import { faStar } from "@fortawesome/free-regular-svg-icons/faStar";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons/faEnvelope";
 import { faLink } from "@fortawesome/free-solid-svg-icons/faLink";
+import { faMapPin } from "@fortawesome/free-solid-svg-icons/faMapPin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
@@ -11,10 +12,10 @@ import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/system/Box";
+import { orderBy, uniqBy } from "lodash";
 import { GetStaticProps } from "next";
 import { FC } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";
-import { orderBy, uniqBy } from "lodash";
 
 interface Props {
   repositories: Array<GithubRepository>;
@@ -90,13 +91,22 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
         {repo.name}&nbsp;
         <FontAwesomeIcon width="16px" icon={faGithub} />
       </RepoLink>
-      {repo.stargazerCount > 0 && (
-        <Box display="flex">
-          <Typography fontSize="14px">{repo.stargazerCount}</Typography>
-          &nbsp;
-          <FontAwesomeIcon width="16px" fixedWidth icon={faStar} />
-        </Box>
-      )}
+      <Box display="flex" gap={1} alignItems="center">
+        {repo.stargazerCount > 0 && (
+          <Box display="flex" gap={0.5} alignItems="center" title="Stargazers">
+            <Typography fontSize="14px">{repo.stargazerCount}</Typography>
+            <FontAwesomeIcon width="16px" fixedWidth icon={faStar} />
+          </Box>
+        )}
+        {repo.pinned && (
+          <FontAwesomeIcon
+            title="Pinned"
+            width="10px"
+            fixedWidth
+            icon={faMapPin}
+          />
+        )}
+      </Box>
     </Box>
 
     <Typography fontSize="0.9em" sx={{ flex: "auto" }}>
@@ -217,7 +227,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     user.pinnedItems?.nodes
       ?.map((e) => e?.id)
       .filter((e): e is NonNullable<typeof e> => e != null) ?? [];
-  console.log({ orderedPinnedNodeIds });
   const repos =
     user.topRepositories?.edges?.reduce<GithubRepository[]>((acc, edge) => {
       const repo = edge?.node;
@@ -233,6 +242,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         id: repo.id,
         name: repo.name,
         url: repo.url,
+        pinned: orderedPinnedNodeIds.includes(repo.id),
         description: repo.description ?? null,
         homepageUrl: repo.homepageUrl,
         updatedAt: repo.updatedAt ?? null,
@@ -263,7 +273,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     ],
     ["asc", "desc", "desc"]
   );
-  // TODO: Ordering.
 
   return {
     props: {

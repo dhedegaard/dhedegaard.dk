@@ -5,6 +5,7 @@ export interface GithubRepository {
   id: string;
   name: string;
   url: string;
+  pinned: boolean;
   description: string | null;
   updatedAt: unknown;
   homepageUrl: null | string;
