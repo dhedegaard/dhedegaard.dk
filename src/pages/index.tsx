@@ -248,9 +248,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         updatedAt: repo.updatedAt ?? null,
         stargazerCount: repo.stargazerCount,
         languages: uniqBy(
-          [repo.primaryLanguage, ...(repo.languages?.nodes ?? [])].filter(
-            (e): e is NonNullable<typeof e> => e != null
-          ),
+          [
+            repo.primaryLanguage,
+            ...(repo.languages?.edges?.map((e) => e?.node) ?? []),
+          ].filter((e): e is NonNullable<typeof e> => e != null),
           (e) => e.id
         ),
         topics:
