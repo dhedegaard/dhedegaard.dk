@@ -207,7 +207,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     };
   }
 
-  const orderedPinnedNodeIds = user.pinnedItems?.nodes?.map((e) => e.id) ?? [];
+  const orderedPinnedNodeIds =
+    user.pinnedItems?.nodes
+      ?.map((e) => e?.id)
+      .filter((e): e is NonNullable<typeof e> => e != null) ?? [];
   console.log({ orderedPinnedNodeIds });
   const repos =
     user.topRepositories?.edges?.reduce<GithubRepository[]>((acc, edge) => {
