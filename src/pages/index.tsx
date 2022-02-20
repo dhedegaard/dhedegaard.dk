@@ -99,12 +99,9 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
           </Box>
         )}
         {repo.pinned && (
-          <FontAwesomeIcon
-            title="Pinned"
-            width="10px"
-            fixedWidth
-            icon={faMapPin}
-          />
+          <Box title="Pinned">
+            <FontAwesomeIcon width="10px" fixedWidth icon={faMapPin} />
+          </Box>
         )}
       </Box>
     </Box>
