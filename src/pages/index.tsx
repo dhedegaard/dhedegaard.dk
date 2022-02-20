@@ -113,7 +113,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
     {repo.homepageUrl != null && (
       <Box display="flex" gap={1} alignItems="center">
         <FontAwesomeIcon icon={faLink} fixedWidth width={11} />{" "}
-        <Link
+        <HomepageLink
           variant="body2"
           href={repo.homepageUrl}
           target="_blank"
@@ -121,7 +121,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
           rel="noopener noreferrer"
         >
           {repo.homepageUrl}
-        </Link>
+        </HomepageLink>
       </Box>
     )}
 
@@ -159,6 +159,10 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
   </RepoPaper>
 );
 
+const HomepageLink = styled(Link)`
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+`;
 const Avatar = styled.img`
   width: 90px;
   aspect-ratio: 1;
@@ -199,6 +203,7 @@ const RepoPaper = styled(Paper)`
   gap: 8px;
   @media (max-width: 1023px) {
     flex-basis: 100%;
+    width: 100%;
   }
 `;
 
