@@ -8,10 +8,9 @@ export interface GithubRepository {
   description: string | null;
   updatedAt: unknown;
   homepageUrl: null | string;
-  primaryLanguage: Language | null;
+  languages: Language[];
   stargazerCount: number;
   topics: RepositoryTopic[];
-  // TODO: More languages.
 }
 
 export const getGithubUser = async () => {

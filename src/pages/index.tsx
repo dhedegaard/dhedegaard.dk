@@ -14,7 +14,7 @@ import Box from "@mui/system/Box";
 import { GetStaticProps } from "next";
 import { FC } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";
-import { orderBy } from "lodash";
+import { orderBy, uniqBy } from "lodash";
 
 interface Props {
   repositories: Array<GithubRepository>;
@@ -131,17 +131,23 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
       </Box>
     )}
 
-    {repo.primaryLanguage != null && (
+    {repo.languages.length > 0 && (
       <Typography fontSize="small">
-        Language:&nbsp;
-        <Typography
-          fontWeight="bold"
-          display="inline"
-          fontSize="small"
-          color={repo.primaryLanguage.color ?? undefined}
-        >
-          {repo.primaryLanguage.name}
-        </Typography>
+        Language(s):&nbsp;
+        {repo.languages.map((language, index) => (
+          <>
+            <Typography
+              key={language.id}
+              fontWeight="bold"
+              display="inline"
+              fontSize="small"
+              color={language.color ?? undefined}
+            >
+              {language.name}
+            </Typography>
+            {index < repo.languages.length - 1 ? ", " : null}
+          </>
+        ))}
       </Typography>
     )}
   </RepoPaper>
@@ -231,7 +237,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         homepageUrl: repo.homepageUrl,
         updatedAt: repo.updatedAt ?? null,
         stargazerCount: repo.stargazerCount,
-        primaryLanguage: repo.primaryLanguage ?? null,
+        languages: uniqBy(
+          [repo.primaryLanguage, ...(repo.languages?.nodes ?? [])].filter(
+            (e): e is NonNullable<typeof e> => e != null
+          ),
+          (e) => e.id
+        ),
         topics:
           repo.repositoryTopics.edges
             ?.map((topic) => topic?.node ?? undefined)
