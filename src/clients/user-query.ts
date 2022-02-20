@@ -1,5 +1,9 @@
 import gql from "graphql-tag";
 
+/**
+ * You can build your query from here:
+ * <https://docs.github.com/en/graphql/overview/explorer>
+ */
 export const userQuery = gql`
   {
     user(login: "dhedegaard") {
@@ -31,6 +35,8 @@ export const userQuery = gql`
             }
             name
             url
+            updatedAt
+            pushedAt
             description
             isArchived
             stargazerCount

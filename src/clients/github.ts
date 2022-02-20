@@ -7,7 +7,8 @@ export interface GithubRepository {
   url: string;
   pinned: boolean;
   description: string | null;
-  updatedAt: unknown;
+  updatedAt: string | null;
+  pushedAt: string | null;
   homepageUrl: null | string;
   languages: Language[];
   stargazerCount: number;

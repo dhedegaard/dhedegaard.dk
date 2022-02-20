@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/system/Box";
 import { orderBy, uniqBy } from "lodash";
 import { GetStaticProps } from "next";
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";
 
 interface Props {
@@ -145,9 +145,8 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
       <Typography fontSize="small">
         Language(s):&nbsp;
         {repo.languages.map((language, index) => (
-          <>
+          <Fragment key={language.id}>
             <Typography
-              key={language.id}
               fontWeight="bold"
               display="inline"
               fontSize="small"
@@ -156,7 +155,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
               {language.name}
             </Typography>
             {index < repo.languages.length - 1 ? ", " : null}
-          </>
+          </Fragment>
         ))}
       </Typography>
     )}
@@ -238,6 +237,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       ) {
         return acc;
       }
+
       acc.push({
         id: repo.id,
         name: repo.name,
@@ -246,6 +246,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         description: repo.description ?? null,
         homepageUrl: repo.homepageUrl,
         updatedAt: repo.updatedAt ?? null,
+        pushedAt: repo.pushedAt ?? null,
         stargazerCount: repo.stargazerCount,
         languages: uniqBy(
           [
@@ -270,14 +271,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         return index === -1 ? Infinity : index;
       },
       "stargazerCount",
-      "updatedAt",
+      "pushedAt",
     ],
     ["asc", "desc", "desc"]
   );
 
   return {
     props: {
-      repositories: orderedRepos.slice(0, 30),
+      repositories: orderedRepos.slice(0, 40),
       avatarUrl: user?.avatarUrl ?? null,
       bio: user?.bio ?? null,
     },
