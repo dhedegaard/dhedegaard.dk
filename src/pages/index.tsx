@@ -120,7 +120,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
           underline="none"
           rel="noopener noreferrer"
         >
-          {repo.homepageUrl}
+          {repo.homepageUrl.split("://")[1] ?? repo.homepageUrl}
         </HomepageLink>
       </Box>
     )}
