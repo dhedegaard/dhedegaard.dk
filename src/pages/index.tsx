@@ -261,7 +261,6 @@ const Avatar = styled((props: ImageProps) => (
       priority
       alt="Me"
       objectFit="cover"
-      crossOrigin="anonymous"
       width={90}
       height={90}
       {...props}
