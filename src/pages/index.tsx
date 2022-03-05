@@ -199,7 +199,7 @@ const Bio = styled((props: TypographyProps) => (
       transform: translateX(-20px);
       opacity: 0;
     }
-    50% {
+    33% {
       transform: translateX(-20px);
       opacity: 0;
     }
@@ -208,7 +208,7 @@ const Bio = styled((props: TypographyProps) => (
       opacity: 1;
     }
   }
-  animation: 1s ease-out 0s 1 slideBio;
+  animation: 0.75s ease-out 0s 1 slideBio;
 `;
 
 const FindMe = styled((props: TypographyProps) => (
@@ -220,7 +220,7 @@ const FindMe = styled((props: TypographyProps) => (
       transform: translateX(20px);
       opacity: 0;
     }
-    66% {
+    50% {
       transform: translateX(20px);
       opacity: 0;
     }
@@ -229,7 +229,7 @@ const FindMe = styled((props: TypographyProps) => (
       opacity: 1;
     }
   }
-  animation: 1.5s ease-out 0s 1 slideFindMe;
+  animation: 1s ease-out 0s 1 slideFindMe;
 `;
 
 const HomepageLink = styled(Link)`
@@ -266,14 +266,14 @@ const Repositories = styled.div`
     0% {
       opacity: 0;
     }
-    75% {
+    60% {
       opacity: 0;
     }
     100% {
       opacity: 1;
     }
   }
-  animation: 2s ease-out 0s 1 slideRepositories;
+  animation: 1.25s ease-out 0s 1 slideRepositories;
 `;
 
 const FAIcon = styled(FontAwesomeIcon)`

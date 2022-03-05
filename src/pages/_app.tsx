@@ -1,15 +1,22 @@
+import { css, Global } from "@emotion/react";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import Container from "@mui/material/Container";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { FC } from "react";
 
+const globalStyle = css`
+  html {
+    overflow-y: scroll;
+  }
+`;
 // We don't need the styles, so we just ignore it and style the SVGs ourselves.
 // import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
 
 const Layout: FC<AppProps> = ({ Component, pageProps }) => (
   <>
+    <Global styles={globalStyle} />
     <Head>
       <title>Dennis Hedegaard</title>
       <link rel="icon" href="/favicon.png" />
