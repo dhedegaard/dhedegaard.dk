@@ -25,7 +25,6 @@ interface Props {
 
 const Index: FC<Props> = ({ repositories, avatarUrl, bio }) => (
   <>
-    <Keyframes />
     <Box display="flex" justifyContent="space-between" gap={2} mt={4} mb={8}>
       <Box flex="auto" display="flex" flexDirection="column" gap={3}>
         <Title>Dennis Hedegaard</Title>
@@ -152,27 +151,6 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
   </RepoPaper>
 );
 
-const Keyframes: FC = () => (
-  <Global
-    styles={css`
-      @keyframes slideInLeft {
-        0% {
-          transform: translateX(-20px);
-          opacity: 0;
-        }
-        50% {
-          transform: translateX(-20px);
-          opacity: 0;
-        }
-        100% {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-    `}
-  />
-);
-
 const Title = styled((props: TypographyProps) => (
   // @ts-expect-error
   <Typography component="h1" variant="h3" {...props} />
@@ -187,6 +165,7 @@ const Title = styled((props: TypographyProps) => (
       opacity: 1;
     }
   }
+  will-change: transform, opacity;
   animation: 0.5s ease-out 0s 1 slideTitle;
 `;
 
@@ -208,6 +187,7 @@ const Bio = styled((props: TypographyProps) => (
       opacity: 1;
     }
   }
+  will-change: transform, opacity;
   animation: 0.75s ease-out 0s 1 slideBio;
 `;
 
@@ -229,6 +209,7 @@ const FindMe = styled((props: TypographyProps) => (
       opacity: 1;
     }
   }
+  will-change: transform, opacity;
   animation: 1s ease-out 0s 1 slideFindMe;
 `;
 
@@ -273,6 +254,7 @@ const Repositories = styled.div`
       opacity: 1;
     }
   }
+  will-change: transform, opacity;
   animation: 1.25s ease-out 0s 1 slideRepositories;
 `;
 
