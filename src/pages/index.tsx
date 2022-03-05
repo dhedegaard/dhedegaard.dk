@@ -7,7 +7,6 @@ import { faLink } from "@fortawesome/free-solid-svg-icons/faLink";
 import { faMapPin } from "@fortawesome/free-solid-svg-icons/faMapPin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Chip from "@mui/material/Chip";
-import Divider from "@mui/material/Divider";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -25,13 +24,17 @@ interface Props {
 
 const Index: FC<Props> = ({ repositories, avatarUrl, bio }) => (
   <>
-    <Box display="flex" justifyContent="space-between" gap={1}>
-      <Box flex="auto">
-        <Typography variant="h4" component="h1" paragraph>
+    <Box display="flex" justifyContent="space-between" gap={2} mt={4} mb={8}>
+      <Box flex="auto" display="flex" flexDirection="column" gap={3}>
+        <Typography variant="h3" component="h1">
           Dennis Hedegaard
         </Typography>
-        {bio != null && <Typography paragraph>{bio}</Typography>}
-        <Typography paragraph>
+        {bio != null && (
+          <Typography variant="subtitle1" component="p">
+            {bio}
+          </Typography>
+        )}
+        <Typography variant="subtitle1" component="p">
           Find me on{" "}
           <Link href="https://github.com/dhedegaard" underline="none">
             <FAIcon icon={faGithub} size="sm" />
@@ -62,8 +65,7 @@ const Index: FC<Props> = ({ repositories, avatarUrl, bio }) => (
     </Box>
     {repositories != null && repositories.length > 0 && (
       <>
-        <Divider sx={{ mt: 2, mb: 2 }} />
-        <Typography variant="h5" component="h2" sx={{ mb: 2 }}>
+        <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
           Interresting Github projects
         </Typography>
         <RepositoriesBox>
