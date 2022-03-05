@@ -22,9 +22,17 @@ interface Props {
   repositories: Array<GithubRepository>;
   avatarUrl: string | null;
   bio: string | null;
+  githubUrl: string | null;
+  email: string | null;
 }
 
-const Index: FC<Props> = ({ repositories, avatarUrl, bio }) => (
+const Index: FC<Props> = ({
+  repositories,
+  avatarUrl,
+  bio,
+  githubUrl,
+  email,
+}) => (
   <>
     <Box display="flex" justifyContent="space-between" gap={2} mt={4} mb={8}>
       <Box flex="auto" display="flex" flexDirection="column" gap={3}>
@@ -32,12 +40,16 @@ const Index: FC<Props> = ({ repositories, avatarUrl, bio }) => (
         {bio != null && <Bio>{bio}</Bio>}
         <FindMe>
           Find me on{" "}
-          <Link href="https://github.com/dhedegaard" underline="none">
-            <FAIcon icon={faGithub} size="sm" />
-            &nbsp;
-            <span>Github</span>
-          </Link>
-          ,{" "}
+          {githubUrl != null && (
+            <>
+              <Link href={githubUrl} underline="none">
+                <FAIcon icon={faGithub} size="sm" />
+                &nbsp;
+                <span>Github</span>
+              </Link>
+              ,{" "}
+            </>
+          )}
           <Link
             href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
             underline="none"
@@ -46,13 +58,17 @@ const Index: FC<Props> = ({ repositories, avatarUrl, bio }) => (
             &nbsp;
             <span>LinkedIn</span>
           </Link>{" "}
-          or send me a{" "}
-          <Link href="mailto:dennis@dhedegaard.dk" underline="none">
-            <FAIcon icon={faEnvelope} />
-            &nbsp;
-            <span>mail</span>
-          </Link>
-          .
+          {email != null && (
+            <>
+              or send me a{" "}
+              <Link href={`mailto:${email}`} underline="none">
+                <FAIcon icon={faEnvelope} />
+                &nbsp;
+                <span>mail</span>
+              </Link>
+              .
+            </>
+          )}
         </FindMe>
       </Box>
       {avatarUrl != null && <Avatar src={avatarUrl} />}
@@ -314,6 +330,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         avatarUrl: null,
         bio: null,
         repositories: [],
+        githubUrl: null,
+        email: null,
       },
       revalidate: 5,
     };
@@ -378,6 +396,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       repositories: orderedRepos.slice(0, 40),
       avatarUrl: user?.avatarUrl ?? null,
       bio: user?.bio ?? null,
+      githubUrl: user?.url ?? null,
+      email: user?.email ?? null,
     },
     revalidate: 3600,
   };

@@ -11,6 +11,9 @@ export const userQuery = gql`
       name
       avatarUrl
       bio
+      websiteUrl
+      url
+      email
       pinnedItems(first: 100) {
         nodes {
           ... on Repository {
@@ -24,9 +27,6 @@ export const userQuery = gql`
         first: 100
       ) {
         totalCount
-        pageInfo {
-          hasNextPage
-        }
         edges {
           node {
             id
@@ -44,9 +44,6 @@ export const userQuery = gql`
             homepageUrl
             repositoryTopics(first: 100) {
               totalCount
-              pageInfo {
-                hasNextPage
-              }
               edges {
                 node {
                   id
