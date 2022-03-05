@@ -33,5 +33,5 @@ const csp = [
   "img-src 'self' data: https://avatars.githubusercontent.com",
   "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
   "manifest-src 'self'",
-  "connect-src 'self'",
+  "connect-src 'self' https://vitals.vercel-insights.com",
 ];
