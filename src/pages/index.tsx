@@ -14,6 +14,7 @@ import Typography, { TypographyProps } from "@mui/material/Typography";
 import Box from "@mui/system/Box";
 import { orderBy, uniqBy } from "lodash";
 import { GetStaticProps } from "next";
+import Image, { ImageProps } from "next/image";
 import { FC, Fragment } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";
 
@@ -54,9 +55,7 @@ const Index: FC<Props> = ({ repositories, avatarUrl, bio }) => (
           .
         </FindMe>
       </Box>
-      {avatarUrl != null && (
-        <Avatar src={avatarUrl} alt="Me" crossOrigin="anonymous" />
-      )}
+      {avatarUrl != null && <Avatar src={avatarUrl} />}
     </Box>
     {repositories != null && repositories.length > 0 && (
       <Repositories>
@@ -217,7 +216,8 @@ const HomepageLink = styled(Link)`
   overflow-x: hidden;
   text-overflow: ellipsis;
 `;
-const Avatar = styled.img`
+
+const AvatarBox = styled.div`
   @keyframes slideAvatar {
     0% {
       transform: translateY(-20px);
@@ -230,16 +230,29 @@ const Avatar = styled.img`
   }
   will-change: transform, opacity;
   animation: 0.5s ease-out 0s 1 slideAvatar;
+  align-self: flex-start;
+  flex: none;
   width: 90px;
   aspect-ratio: 1;
-  object-fit: cover;
-  flex: none;
-  border-radius: 50%;
-  align-self: flex-start;
 
   @media (max-width: 768px) {
     width: 60px;
   }
+`;
+const Avatar = styled((props: ImageProps) => (
+  <AvatarBox>
+    <Image
+      priority
+      alt="Me"
+      objectFit="cover"
+      crossOrigin="anonymous"
+      width={90}
+      height={90}
+      {...props}
+    />
+  </AvatarBox>
+))`
+  border-radius: 50%;
 `;
 
 const Repositories = styled.div`
