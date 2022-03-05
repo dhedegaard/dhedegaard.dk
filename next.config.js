@@ -30,7 +30,7 @@ module.exports = {
 
 const csp = [
   "default-src 'unsafe-inline'",
-  "img-src 'self' https://avatars.githubusercontent.com",
+  "img-src 'self' data: https://avatars.githubusercontent.com",
   "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
   "manifest-src 'self'",
   "connect-src 'self'",
