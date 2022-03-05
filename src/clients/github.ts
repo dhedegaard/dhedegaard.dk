@@ -26,9 +26,12 @@ export const getGithubUser = async () => {
       Authorization: `bearer ${process.env.GITHUB_PAT}`,
     },
   })
-    .then(
-      (res) => res.json() as Promise<{ errors?: any; data: { user: User } }>
-    )
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(res.status + ": " + res.statusText);
+      }
+      return res.json() as Promise<{ errors?: any; data: { user: User } }>;
+    })
     .then((res) => {
       if (res.errors != null) {
         console.error("Error in Github response:", res.errors);
