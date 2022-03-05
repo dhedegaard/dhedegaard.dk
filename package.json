@@ -6,7 +6,8 @@
   "scripts": {
     "start": "next start",
     "watch": "next dev",
-    "build": "next build && next export",
+    "build": "next build",
+    "export": "next export",
     "lint": "next lint",
     "codegen": "graphql-codegen --config codegen.yml"
   },
