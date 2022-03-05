@@ -248,7 +248,7 @@ const Avatar = styled.img`
     }
   }
   will-change: transform, opacity;
-  animation: 1s ease-out 0s 1 slideAvatar;
+  animation: 0.5s ease-out 0s 1 slideAvatar;
   width: 90px;
   aspect-ratio: 1;
   object-fit: cover;
