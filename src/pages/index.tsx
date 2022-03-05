@@ -283,7 +283,7 @@ const Repositories = styled.div`
       opacity: 1;
     }
   }
-  will-change: transform, opacity;
+  will-change: opacity;
   animation: 1.25s ease-out 0s 1 slideRepositories;
 `;
 
