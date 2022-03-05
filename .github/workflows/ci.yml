@@ -21,4 +21,5 @@ jobs:
       - run: yarn build
         env:
           CI: true
+          GITHUB_PAT: ${{ secrets._GITHUB_PAT }}
       - run: yarn lint
