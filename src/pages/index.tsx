@@ -358,7 +358,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         url: repo.url,
         pinned: orderedPinnedNodeIds.includes(repo.id),
         description: repo.description ?? null,
-        homepageUrl: repo.homepageUrl === "" ? null : repo.homepageUrl,
+        homepageUrl: ensureHomepageUrl(repo.homepageUrl),
         updatedAt: repo.updatedAt ?? null,
         pushedAt: repo.pushedAt ?? null,
         stargazerCount: repo.stargazerCount,
@@ -403,3 +403,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 };
 
 export default Index;
+
+const ensureHomepageUrl = (url: unknown): string | null => {
+  if (typeof url !== "string" || url === "") {
+    return null;
+  }
+  let result = url;
+  if (!result.startsWith("http")) {
+    result = `https://${result}`;
+  }
+  return result;
+};
