@@ -1406,6 +1406,11 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-2.0.0.tgz#f544a148d3ab35801c1f633a7441fd87c2e484bf"
   integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
 
+"@tsconfig/next-strictest@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@tsconfig/next-strictest/-/next-strictest-1.0.0.tgz#c30b0ad7b21fd92f8633eef0db0bcb86c868acfa"
+  integrity sha512-8p61IurRHIUVoGCGUAZYtq+EsAqhOT4jJ55vYlnkW1XcgKNP2TSsn+QoLWVTUkeJya9VMUdEgOlgSuaJtSUcfw==
+
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/@tsconfig/node10/-/node10-1.0.9.tgz#df4907fc07a886922637b15e02d4cebc4c0021b2"
