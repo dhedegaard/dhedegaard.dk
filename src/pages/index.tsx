@@ -70,7 +70,7 @@ const Index: FC<Props> = ({
           )}
         </FindMe>
       </Box>
-      {avatarUrl != null && <Avatar src={avatarUrl} />}
+      {avatarUrl != null && <Avatar src={avatarUrl} alt="Me" />}
     </Box>
     {repositories != null && repositories.length > 0 && (
       <Repositories>
