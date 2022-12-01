@@ -15,7 +15,7 @@ import Box from "@mui/system/Box";
 import { orderBy, uniqBy } from "lodash";
 import { GetStaticProps } from "next";
 import Image, { ImageProps } from "next/image";
-import { FC, Fragment } from "react";
+import { CSSProperties, FC, Fragment, useMemo } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";
 
 interface Props {
@@ -71,7 +71,7 @@ const Index: FC<Props> = ({
           )}
         </FindMe>
       </Box>
-      {avatarUrl != null && <Avatar src={avatarUrl} alt="Me" />}
+      {avatarUrl != null && <Avatar src={avatarUrl} />}
     </Box>
     {repositories != null && repositories.length > 0 && (
       <Repositories>
@@ -255,14 +255,17 @@ const AvatarBox = styled.div`
     width: 60px;
   }
 `;
+
+const avatarStyle: CSSProperties = { objectFit: "cover" };
 const Avatar = styled((props: ImageProps) => (
   <AvatarBox>
     <Image
       priority
-      style={{ objectFit: "cover" }}
+      style={avatarStyle}
       width={90}
       height={90}
       {...props}
+      alt="Me"
     />
   </AvatarBox>
 ))`
