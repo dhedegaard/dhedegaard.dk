@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "dhedegaard.dk",
   "homepage": "https://www.dhedegaard.dk/",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "next start",
     "watch": "next dev",
