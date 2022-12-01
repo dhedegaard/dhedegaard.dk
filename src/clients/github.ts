@@ -16,6 +16,10 @@ export interface GithubRepository {
 }
 
 export const getGithubUser = async () => {
+  const pat: unknown = process.env["GITHUB_PAT"];
+  if (typeof pat !== "string" || pat === "") {
+    throw new Error("GITHUB_PAT is not set");
+  }
   return await fetch("https://api.github.com/graphql", {
     method: "POST",
     body: JSON.stringify({
@@ -23,7 +27,7 @@ export const getGithubUser = async () => {
     }),
     headers: {
       "Content-Type": "application/json",
-      Authorization: `bearer ${process.env["GITHUB_PAT"]}`,
+      Authorization: `bearer ${pat}`,
     },
   })
     .then((res) => {
