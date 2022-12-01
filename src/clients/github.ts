@@ -23,7 +23,7 @@ export const getGithubUser = async () => {
     }),
     headers: {
       "Content-Type": "application/json",
-      Authorization: `bearer ${process.env.GITHUB_PAT}`,
+      Authorization: `bearer ${process.env["GITHUB_PAT"]}`,
     },
   })
     .then((res) => {
