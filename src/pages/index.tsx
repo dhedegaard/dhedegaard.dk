@@ -71,7 +71,7 @@ const Index: FC<Props> = ({
           )}
         </FindMe>
       </Box>
-      {avatarUrl != null && <Avatar src={avatarUrl} />}
+      {avatarUrl != null && <Avatar src={avatarUrl} alt="Me" />}
     </Box>
     {repositories != null && repositories.length > 0 && (
       <Repositories>
@@ -259,8 +259,7 @@ const Avatar = styled((props: ImageProps) => (
   <AvatarBox>
     <Image
       priority
-      alt="Me"
-      objectFit="cover"
+      style={{ objectFit: "cover" }}
       width={90}
       height={90}
       {...props}
