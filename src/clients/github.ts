@@ -1,4 +1,4 @@
-import { Language, RepositoryTopic, User } from "../codegen/types";
+import type { Language, RepositoryTopic, User } from "../codegen/types";
 import { userQuery } from "./user-query";
 
 export interface GithubRepository {

@@ -12,7 +12,7 @@ import Paper from "@mui/material/Paper";
 import Typography, { TypographyProps } from "@mui/material/Typography";
 import Box from "@mui/system/Box";
 import { orderBy, uniqBy } from "lodash";
-import { GetStaticProps } from "next";
+import type { GetStaticProps } from "next";
 import Image, { ImageProps } from "next/image";
 import { CSSProperties, FC, Fragment } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";

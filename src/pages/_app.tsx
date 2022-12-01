@@ -1,9 +1,9 @@
 import { css, Global } from "@emotion/react";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import Container from "@mui/material/Container";
-import { AppProps } from "next/app";
+import type { AppProps } from "next/app";
 import Head from "next/head";
-import { FC } from "react";
+import type { FC } from "react";
 
 const globalStyle = css`
   html {
