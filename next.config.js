@@ -34,4 +34,5 @@ const csp = [
   "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
   "manifest-src 'self'",
   "connect-src 'self' https://vitals.vercel-insights.com",
+  "style-src-elem 'self'",
 ];
