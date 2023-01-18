@@ -37,7 +37,8 @@ const Index: FC<Props> = ({
       <Box flex="auto" display="flex" flexDirection="column" gap={3}>
         <h1 className="text-5xl animate-slideTitle">Dennis Hedegaard</h1>
         {bio != null && <p className="animate-slideBio">{bio}</p>}
-        <FindMe>
+
+        <p className="animate-slideFindMe">
           Find me on{" "}
           {githubUrl != null && (
             <>
@@ -68,7 +69,7 @@ const Index: FC<Props> = ({
               .
             </>
           )}
-        </FindMe>
+        </p>
       </Box>
       {avatarUrl != null && <Avatar src={avatarUrl} alt="Me" />}
     </Box>
@@ -164,28 +165,6 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
     )}
   </RepoPaper>
 );
-
-const FindMe = styled((props: TypographyProps) => (
-  // @ts-expect-error
-  <Typography variant="subtitle1" component="p" {...props} />
-))`
-  @keyframes slideFindMe {
-    0% {
-      transform: translateX(20px);
-      opacity: 0;
-    }
-    50% {
-      transform: translateX(20px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  will-change: transform, opacity;
-  animation: 1s ease-out 0s 1 slideFindMe;
-`;
 
 const HomepageLink = styled(Link)`
   overflow-x: hidden;

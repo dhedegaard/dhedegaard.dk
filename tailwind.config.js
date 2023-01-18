@@ -6,6 +6,7 @@ module.exports = {
       animation: {
         slideTitle: "0.5s ease-out 0s 1 slideTitle",
         slideBio: "0.75s ease-out 0s 1 slideBio",
+        slideFindMe: "1s ease-out 0s 1 slideFindMe",
       },
       keyframes: {
         slideTitle: {
@@ -25,6 +26,20 @@ module.exports = {
           },
           "33%": {
             transform: "translateX(-20px)",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "translateX(0)",
+            opacity: "1",
+          },
+        },
+        slideFindMe: {
+          "0%": {
+            transform: "translateX(20px)",
+            opacity: "0",
+          },
+          "50%": {
+            transform: "translateX(20px)",
             opacity: "0",
           },
           "100%": {
