@@ -1,6 +1,8 @@
 export default function Head() {
   return (
     <>
+      <meta charSet="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>Dennis Hedegaard</title>
       <link rel="icon" href="/favicon.png" />
       <link rel="manifest" href="/manifest.json" />
