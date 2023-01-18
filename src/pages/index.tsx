@@ -35,8 +35,8 @@ const Index: FC<Props> = ({
   <>
     <Box display="flex" justifyContent="space-between" gap={2} mt={4} mb={8}>
       <Box flex="auto" display="flex" flexDirection="column" gap={3}>
-        <Title>Dennis Hedegaard</Title>
-        {bio != null && <Bio>{bio}</Bio>}
+        <h1 className="text-5xl animate-slideTitle">Dennis Hedegaard</h1>
+        {bio != null && <p className="animate-slideBio">{bio}</p>}
         <FindMe>
           Find me on{" "}
           {githubUrl != null && (
@@ -164,46 +164,6 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
     )}
   </RepoPaper>
 );
-
-const Title = styled((props: TypographyProps) => (
-  // @ts-expect-error
-  <Typography component="h1" variant="h3" {...props} />
-))`
-  @keyframes slideTitle {
-    0% {
-      transform: translateY(-20px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-  will-change: transform, opacity;
-  animation: 0.5s ease-out 0s 1 slideTitle;
-`;
-
-const Bio = styled((props: TypographyProps) => (
-  // @ts-expect-error
-  <Typography component="p" variant="subtitle1" {...props} />
-))`
-  @keyframes slideBio {
-    0% {
-      transform: translateX(-20px);
-      opacity: 0;
-    }
-    33% {
-      transform: translateX(-20px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  will-change: transform, opacity;
-  animation: 0.75s ease-out 0s 1 slideBio;
-`;
 
 const FindMe = styled((props: TypographyProps) => (
   // @ts-expect-error
