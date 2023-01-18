@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { faGithub } from "@fortawesome/free-brands-svg-icons/faGithub";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons/faLinkedin";
 import { faStar } from "@fortawesome/free-regular-svg-icons/faStar";
@@ -78,11 +77,11 @@ const Index: FC<Props> = ({
     {repositories != null && repositories.length > 0 && (
       <div className="animate-slideRepositories">
         <h2 className="text-xl mb-4">Interresting Github projects</h2>
-        <RepositoriesBox>
+        <div className="flex flex-row flex-wrap gap-6 mb-9 justify-between">
           {repositories.map((repo) => (
             <Repo key={repo.id} repo={repo} />
           ))}
-        </RepositoriesBox>
+        </div>
       </div>
     )}
   </>
@@ -170,15 +169,6 @@ const Avatar = (props: ImageProps) => (
     />
   </div>
 );
-
-const RepositoriesBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 24px;
-  margin-bottom: 36px;
-  justify-content: space-between;
-`;
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const user = await getGithubUser().catch((error) => {
