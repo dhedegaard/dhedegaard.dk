@@ -33,7 +33,7 @@ const Index: FC<Props> = ({
 }) => (
   <>
     <div className="flex gap-4 mt-8 mb-16">
-      <Box flex="auto" display="flex" flexDirection="column" gap={3}>
+      <div className="flex flex-auto flex-col gap-6">
         <h1 className="text-5xl animate-slideTitle">Dennis Hedegaard</h1>
         {bio != null && <p className="animate-slideBio">{bio}</p>}
 
@@ -72,7 +72,7 @@ const Index: FC<Props> = ({
             </>
           )}
         </p>
-      </Box>
+      </div>
       {avatarUrl != null && <Avatar src={avatarUrl} alt="Me" />}
     </div>
     {repositories != null && repositories.length > 0 && (
