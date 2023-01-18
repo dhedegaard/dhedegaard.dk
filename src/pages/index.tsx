@@ -38,7 +38,11 @@ const Index: FC<Props> = ({
           {githubUrl != null && (
             <>
               <a className="decoration-none text-blue-600" href={githubUrl}>
-                <FAIcon icon={faGithub} className="inline" size="sm" />
+                <FontAwesomeIcon
+                  icon={faGithub}
+                  className="inline w-4"
+                  size="sm"
+                />
                 &nbsp;
                 <span>Github</span>
               </a>
@@ -49,7 +53,7 @@ const Index: FC<Props> = ({
             className="decoration-none text-blue-600"
             href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
           >
-            <FAIcon className="inline" icon={faLinkedin} />
+            <FontAwesomeIcon className="inline w-4" icon={faLinkedin} />
             &nbsp;
             <span>LinkedIn</span>
           </a>{" "}
@@ -60,7 +64,7 @@ const Index: FC<Props> = ({
                 className="decoration-none text-blue-600"
                 href={`mailto:${email}`}
               >
-                <FAIcon className="inline" icon={faEnvelope} />
+                <FontAwesomeIcon className="inline w-4" icon={faEnvelope} />
                 &nbsp;
                 <span>mail</span>
               </a>
@@ -166,10 +170,6 @@ const Avatar = (props: ImageProps) => (
     />
   </div>
 );
-
-const FAIcon = styled(FontAwesomeIcon)`
-  width: 16px;
-`;
 
 const RepositoriesBox = styled.div`
   display: flex;
