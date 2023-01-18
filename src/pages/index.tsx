@@ -88,7 +88,7 @@ const Index: FC<Props> = ({
 );
 
 const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
-  <div className="border rounded p-4 flex-auto basis-[1px] min-w-fit box-border flex flex-col gap-2 max-md:w-full">
+  <div className="border rounded p-4 flex-auto basis-[1px] min-w-[350px] box-border flex flex-col gap-2 ">
     <div className="flex justify-between items-start">
       <a
         className="text-inherit no-underline flex font-bold"
