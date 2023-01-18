@@ -1,20 +1,16 @@
-import type { FC } from "react";
 import NextLink from "next/link";
-import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
+import type { FC } from "react";
 
 const NotFound: FC = () => (
   <>
-    <Typography variant="h4" component="h1" paragraph>
-      404: Not found
-    </Typography>
-    <Typography paragraph>
+    <h4 className="text-4xl mb-5">404: Not found</h4>
+    <p className="">
       The page does not exist.{" "}
-      <Link component={NextLink} href="/">
+      <NextLink className="text-blue-600" href="/">
         Go to the main page
-      </Link>
+      </NextLink>
       .
-    </Typography>
+    </p>
   </>
 );
 
