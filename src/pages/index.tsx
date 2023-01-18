@@ -6,7 +6,6 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons/faEnvelope";
 import { faLink } from "@fortawesome/free-solid-svg-icons/faLink";
 import { faMapPin } from "@fortawesome/free-solid-svg-icons/faMapPin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { orderBy, uniqBy } from "lodash";
 import type { GetStaticProps } from "next";
@@ -89,7 +88,7 @@ const Index: FC<Props> = ({
 );
 
 const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
-  <RepoPaper variant="outlined">
+  <div className="border rounded p-4 flex-auto basis-[1px] min-w-fit box-border flex flex-col gap-2 max-md:w-full">
     <div className="flex justify-between items-start">
       <a
         className="text-inherit no-underline flex font-bold"
@@ -155,7 +154,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
         ))}
       </span>
     )}
-  </RepoPaper>
+  </div>
 );
 
 const AvatarBox = styled.div`
@@ -208,19 +207,6 @@ const RepositoriesBox = styled.div`
   gap: 24px;
   margin-bottom: 36px;
   justify-content: space-between;
-`;
-
-const RepoPaper = styled(Paper)`
-  padding: 16px;
-  flex: 0 0 calc(50% - 12px);
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  @media (max-width: 1023px) {
-    flex-basis: 100%;
-    width: 100%;
-  }
 `;
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
