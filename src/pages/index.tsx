@@ -102,19 +102,19 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
         {repo.name}&nbsp;
         <FontAwesomeIcon width="16px" icon={faGithub} />
       </a>
-      <Box display="flex" gap={1} alignItems="center">
+      <div className="flex gap-2 items-center">
         {repo.stargazerCount > 0 && (
-          <Box display="flex" gap={0.5} alignItems="center" title="Stargazers">
-            <Typography fontSize="14px">{repo.stargazerCount}</Typography>
+          <div className="flex gap-1 items-center" title="Stargazers">
+            <span className="text-sm">{repo.stargazerCount}</span>
             <FontAwesomeIcon width="16px" fixedWidth icon={faStar} />
-          </Box>
+          </div>
         )}
         {repo.pinned && (
-          <Box title="Pinned">
+          <div title="Pinned">
             <FontAwesomeIcon width="10px" fixedWidth icon={faMapPin} />
-          </Box>
+          </div>
         )}
-      </Box>
+      </div>
     </Box>
 
     <Typography fontSize="0.9em" sx={{ flex: "auto" }}>
