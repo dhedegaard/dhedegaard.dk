@@ -31,8 +31,10 @@ module.exports = {
 const csp = [
   "default-src 'unsafe-inline'",
   "img-src 'self' data: https://avatars.githubusercontent.com",
+  // TODO: Cleanup later
   "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
   "manifest-src 'self'",
   "connect-src 'self' https://vitals.vercel-insights.com",
+  // TODO: Cleanup later
   "style-src-elem 'self' 'unsafe-inline'",
 ];
