@@ -1,5 +1,4 @@
 import { config } from "@fortawesome/fontawesome-svg-core";
-import Container from "@mui/material/Container";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import type { FC } from "react";
@@ -31,9 +30,9 @@ const Layout: FC<AppProps> = ({ Component, pageProps }) => (
       <link rel="apple-touch-icon" href="/favicon.png" />
       <meta name="theme-color" content="#fff" />
     </Head>
-    <Container maxWidth="md">
+    <div className="max-w-4xl mx-auto px-6 max-md:px-4">
       <Component {...pageProps} />
-    </Container>
+    </div>
   </>
 );
 
