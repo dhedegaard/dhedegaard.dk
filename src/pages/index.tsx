@@ -6,7 +6,6 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons/faEnvelope";
 import { faLink } from "@fortawesome/free-solid-svg-icons/faLink";
 import { faMapPin } from "@fortawesome/free-solid-svg-icons/faMapPin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Typography from "@mui/material/Typography";
 import { orderBy, uniqBy } from "lodash";
 import type { GetStaticProps } from "next";
 import Image, { ImageProps } from "next/image";
@@ -74,9 +73,7 @@ const Index: FC<Props> = ({
     </div>
     {repositories != null && repositories.length > 0 && (
       <div className="animate-slideRepositories">
-        <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
-          Interresting Github projects
-        </Typography>
+        <h2 className="text-xl mb-4">Interresting Github projects</h2>
         <RepositoriesBox>
           {repositories.map((repo) => (
             <Repo key={repo.id} repo={repo} />
