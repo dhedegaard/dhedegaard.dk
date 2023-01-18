@@ -6,10 +6,8 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons/faEnvelope";
 import { faLink } from "@fortawesome/free-solid-svg-icons/faLink";
 import { faMapPin } from "@fortawesome/free-solid-svg-icons/faMapPin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Chip from "@mui/material/Chip";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/system/Box";
 import { orderBy, uniqBy } from "lodash";
 import type { GetStaticProps } from "next";
 import Image, { ImageProps } from "next/image";
@@ -92,7 +90,7 @@ const Index: FC<Props> = ({
 
 const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
   <RepoPaper variant="outlined">
-    <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+    <div className="flex justify-between items-start">
       <a
         className="text-inherit no-underline flex font-bold"
         href={repo.url}
@@ -115,7 +113,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
           </div>
         )}
       </div>
-    </Box>
+    </div>
 
     <span className="flex-auto text-sm">{repo.description}</span>
 
@@ -136,12 +134,12 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
     {repo.topics.length > 0 && (
       <div className="inline-flex flex-wrap gap-1 w-full">
         {repo.topics.map(({ topic }) => (
-          <Chip
-            variant="outlined"
+          <div
             key={topic.id}
-            size="small"
-            label={topic.name}
-          />
+            className="border border-gray-400 rounded-2xl text-xs p-1 px-2"
+          >
+            {topic.name}
+          </div>
         ))}
       </div>
     )}
