@@ -7,7 +7,6 @@ import { faLink } from "@fortawesome/free-solid-svg-icons/faLink";
 import { faMapPin } from "@fortawesome/free-solid-svg-icons/faMapPin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Chip from "@mui/material/Chip";
-import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/system/Box";
@@ -33,7 +32,7 @@ const Index: FC<Props> = ({
   email,
 }) => (
   <>
-    <Box display="flex" justifyContent="space-between" gap={2} mt={4} mb={8}>
+    <div className="flex gap-4 mt-8 mb-16">
       <Box flex="auto" display="flex" flexDirection="column" gap={3}>
         <h1 className="text-5xl animate-slideTitle">Dennis Hedegaard</h1>
         {bio != null && <p className="animate-slideBio">{bio}</p>}
@@ -42,37 +41,40 @@ const Index: FC<Props> = ({
           Find me on{" "}
           {githubUrl != null && (
             <>
-              <Link href={githubUrl} underline="none">
+              <a className="decoration-none text-blue-600" href={githubUrl}>
                 <FAIcon icon={faGithub} className="inline" size="sm" />
                 &nbsp;
                 <span>Github</span>
-              </Link>
+              </a>
               ,{" "}
             </>
           )}
-          <Link
+          <a
+            className="decoration-none text-blue-600"
             href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
-            underline="none"
           >
             <FAIcon className="inline" icon={faLinkedin} />
             &nbsp;
             <span>LinkedIn</span>
-          </Link>{" "}
+          </a>{" "}
           {email != null && (
             <>
               or send me a{" "}
-              <Link href={`mailto:${email}`} underline="none">
+              <a
+                className="decoration-none text-blue-600"
+                href={`mailto:${email}`}
+              >
                 <FAIcon className="inline" icon={faEnvelope} />
                 &nbsp;
                 <span>mail</span>
-              </Link>
+              </a>
               .
             </>
           )}
         </p>
       </Box>
       {avatarUrl != null && <Avatar src={avatarUrl} alt="Me" />}
-    </Box>
+    </div>
     {repositories != null && repositories.length > 0 && (
       <Repositories>
         <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
@@ -91,18 +93,15 @@ const Index: FC<Props> = ({
 const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
   <RepoPaper variant="outlined">
     <Box display="flex" justifyContent="space-between" alignItems="flex-start">
-      <RepoLink
-        color="inherit"
-        underline="none"
+      <a
+        className="text-inherit no-underline flex font-bold"
         href={repo.url}
         target="_blank"
         rel="noopener noreferrer"
-        variant="subtitle1"
-        sx={{ display: "flex" }}
       >
         {repo.name}&nbsp;
         <FontAwesomeIcon width="16px" icon={faGithub} />
-      </RepoLink>
+      </a>
       <Box display="flex" gap={1} alignItems="center">
         {repo.stargazerCount > 0 && (
           <Box display="flex" gap={0.5} alignItems="center" title="Stargazers">
@@ -125,15 +124,14 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
     {repo.homepageUrl != null && (
       <Box display="flex" gap={1} alignItems="center">
         <FontAwesomeIcon icon={faLink} fixedWidth width={11} />{" "}
-        <HomepageLink
-          variant="body2"
+        <a
+          className="no-underline text-blue-600 overflow-ellipsis text-xs"
           href={repo.homepageUrl}
           target="_blank"
-          underline="none"
           rel="noopener noreferrer"
         >
           {repo.homepageUrl.split("://")[1] ?? repo.homepageUrl}
-        </HomepageLink>
+        </a>
       </Box>
     )}
 
@@ -165,11 +163,6 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
     )}
   </RepoPaper>
 );
-
-const HomepageLink = styled(Link)`
-  overflow-x: hidden;
-  text-overflow: ellipsis;
-`;
 
 const AvatarBox = styled.div`
   @keyframes slideAvatar {
@@ -228,11 +221,6 @@ const Repositories = styled.div`
 
 const FAIcon = styled(FontAwesomeIcon)`
   width: 16px;
-`;
-
-const RepoLink = styled(Link)`
-  text-decoration: none;
-  font-weight: bold;
 `;
 
 const RepositoriesBox = styled.div`
