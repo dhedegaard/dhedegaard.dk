@@ -1,16 +1,6 @@
-import { config } from "@fortawesome/fontawesome-svg-core";
-import type { AppProps } from "next/app";
-import Head from "next/head";
-import type { FC } from "react";
-import "./globals.css";
-
-// We don't need the styles, so we just ignore it and style the SVGs ourselves.
-// import "@fortawesome/fontawesome-svg-core/styles.css";
-config.autoAddCss = false;
-
-const Layout: FC<AppProps> = ({ Component, pageProps }) => (
-  <>
-    <Head>
+export default function Head() {
+  return (
+    <>
       <title>Dennis Hedegaard</title>
       <link rel="icon" href="/favicon.png" />
       <link rel="manifest" href="/manifest.json" />
@@ -29,11 +19,6 @@ const Layout: FC<AppProps> = ({ Component, pageProps }) => (
       <link rel="canonical" href="https://www.dhedegaard.dk/" />
       <link rel="apple-touch-icon" href="/favicon.png" />
       <meta name="theme-color" content="#fff" />
-    </Head>
-    <div className="max-w-4xl mx-auto px-6 max-md:px-4">
-      <Component {...pageProps} />
-    </div>
-  </>
-);
-
-export default Layout;
+    </>
+  );
+}

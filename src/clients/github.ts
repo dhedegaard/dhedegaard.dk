@@ -29,6 +29,9 @@ export const getGithubUser = async () => {
       "Content-Type": "application/json",
       Authorization: `bearer ${pat}`,
     },
+    next: {
+      revalidate: 3600,
+    },
   })
     .then((res) => {
       if (!res.ok) {

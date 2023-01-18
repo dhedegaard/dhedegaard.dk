@@ -6,9 +6,8 @@ import { faLink } from "@fortawesome/free-solid-svg-icons/faLink";
 import { faMapPin } from "@fortawesome/free-solid-svg-icons/faMapPin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { orderBy, uniqBy } from "lodash";
-import type { GetStaticProps } from "next";
 import Image, { ImageProps } from "next/image";
-import { FC, Fragment } from "react";
+import { FC, Fragment, use, useMemo } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";
 
 interface Props {
@@ -170,7 +169,7 @@ const Avatar = (props: ImageProps) => (
   </div>
 );
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+const getStaticProps = async (): Promise<Props> => {
   const user = await getGithubUser().catch((error) => {
     console.error("Error fetching github user:", error);
     return undefined;
@@ -178,14 +177,11 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   if (user == null) {
     return {
-      props: {
-        avatarUrl: null,
-        bio: null,
-        repositories: [],
-        githubUrl: null,
-        email: null,
-      },
-      revalidate: 5,
+      avatarUrl: null,
+      bio: null,
+      repositories: [],
+      githubUrl: null,
+      email: null,
     };
   }
 
@@ -244,18 +240,18 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   );
 
   return {
-    props: {
-      repositories: orderedRepos.slice(0, 40),
-      avatarUrl: user?.avatarUrl ?? null,
-      bio: user?.bio ?? null,
-      githubUrl: user?.url ?? null,
-      email: user?.email ?? null,
-    },
-    revalidate: 3600,
+    repositories: orderedRepos.slice(0, 40),
+    avatarUrl: user?.avatarUrl ?? null,
+    bio: user?.bio ?? null,
+    githubUrl: user?.url ?? null,
+    email: user?.email ?? null,
   };
 };
 
-export default Index;
+export default function OuterIndex() {
+  const props = use(useMemo(() => getStaticProps(), []));
+  return <Index {...props} />;
+}
 
 const ensureHomepageUrl = (url: unknown): string | null => {
   if (typeof url !== "string" || url === "") {
