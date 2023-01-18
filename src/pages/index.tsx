@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import { orderBy, uniqBy } from "lodash";
 import type { GetStaticProps } from "next";
 import Image, { ImageProps } from "next/image";
-import { CSSProperties, FC, Fragment } from "react";
+import { FC, Fragment } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";
 
 interface Props {
@@ -157,44 +157,18 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
   </div>
 );
 
-const AvatarBox = styled.div`
-  @keyframes slideAvatar {
-    0% {
-      transform: translateY(-20px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  will-change: transform, opacity;
-  animation: 0.5s ease-out 0s 1 slideAvatar;
-  align-self: flex-start;
-  flex: none;
-  width: 90px;
-  aspect-ratio: 1;
-
-  @media (max-width: 768px) {
-    width: 60px;
-  }
-`;
-
-const avatarStyle: CSSProperties = { objectFit: "cover" };
-const Avatar = styled((props: ImageProps) => (
-  <AvatarBox>
+const Avatar = (props: ImageProps) => (
+  <div className="animate-slideAvatar self-start flex-none w-[90px] aspect-square max-md:w-[60px]">
     <Image
+      className="object-cover rounded-[50%] border-separate"
       priority
-      style={avatarStyle}
       width={90}
       height={90}
       {...props}
       alt="Me"
     />
-  </AvatarBox>
-))`
-  border-radius: 50%;
-`;
+  </div>
+);
 
 const FAIcon = styled(FontAwesomeIcon)`
   width: 16px;
