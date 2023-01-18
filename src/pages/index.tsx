@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Chip from "@mui/material/Chip";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
-import Typography, { TypographyProps } from "@mui/material/Typography";
+import Typography from "@mui/material/Typography";
 import Box from "@mui/system/Box";
 import { orderBy, uniqBy } from "lodash";
 import type { GetStaticProps } from "next";
