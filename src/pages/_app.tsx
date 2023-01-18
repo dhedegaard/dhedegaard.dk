@@ -4,6 +4,7 @@ import Container from "@mui/material/Container";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import type { FC } from "react";
+import "./globals.css";
 
 const globalStyle = css`
   html {

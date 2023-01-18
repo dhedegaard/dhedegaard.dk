@@ -42,7 +42,7 @@ const Index: FC<Props> = ({
           {githubUrl != null && (
             <>
               <Link href={githubUrl} underline="none">
-                <FAIcon icon={faGithub} size="sm" />
+                <FAIcon icon={faGithub} className="inline" size="sm" />
                 &nbsp;
                 <span>Github</span>
               </Link>
@@ -53,7 +53,7 @@ const Index: FC<Props> = ({
             href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
             underline="none"
           >
-            <FAIcon icon={faLinkedin} />
+            <FAIcon className="inline" icon={faLinkedin} />
             &nbsp;
             <span>LinkedIn</span>
           </Link>{" "}
@@ -61,7 +61,7 @@ const Index: FC<Props> = ({
             <>
               or send me a{" "}
               <Link href={`mailto:${email}`} underline="none">
-                <FAIcon icon={faEnvelope} />
+                <FAIcon className="inline" icon={faEnvelope} />
                 &nbsp;
                 <span>mail</span>
               </Link>
