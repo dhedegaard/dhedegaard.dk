@@ -3,7 +3,7 @@ import type { FC } from "react";
 
 const NotFound: FC = () => (
   <>
-    <h4 className="text-4xl mb-5">404: Not found</h4>
+    <h1 className="text-4xl mb-5">404: Not found</h1>
     <p className="">
       The page does not exist.{" "}
       <NextLink className="text-blue-600" href="/">
