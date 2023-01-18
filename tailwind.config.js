@@ -7,6 +7,7 @@ module.exports = {
         slideTitle: "0.5s ease-out 0s 1 slideTitle",
         slideBio: "0.75s ease-out 0s 1 slideBio",
         slideFindMe: "1s ease-out 0s 1 slideFindMe",
+        slideRepositories: "1.25s ease-out 0s 1 slideRepositories",
       },
       keyframes: {
         slideTitle: {
@@ -44,6 +45,17 @@ module.exports = {
           },
           "100%": {
             transform: "translateX(0)",
+            opacity: "1",
+          },
+        },
+        slideRepositories: {
+          "0%": {
+            opacity: "0",
+          },
+          "60%": {
+            opacity: "0",
+          },
+          "100%": {
             opacity: "1",
           },
         },

@@ -76,7 +76,7 @@ const Index: FC<Props> = ({
       {avatarUrl != null && <Avatar src={avatarUrl} alt="Me" />}
     </div>
     {repositories != null && repositories.length > 0 && (
-      <Repositories>
+      <div className="animate-slideRepositories">
         <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
           Interresting Github projects
         </Typography>
@@ -85,7 +85,7 @@ const Index: FC<Props> = ({
             <Repo key={repo.id} repo={repo} />
           ))}
         </RepositoriesBox>
-      </Repositories>
+      </div>
     )}
   </>
 );
@@ -197,22 +197,6 @@ const Avatar = styled((props: ImageProps) => (
   </AvatarBox>
 ))`
   border-radius: 50%;
-`;
-
-const Repositories = styled.div`
-  @keyframes slideRepositories {
-    0% {
-      opacity: 0;
-    }
-    60% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-  will-change: opacity;
-  animation: 1.25s ease-out 0s 1 slideRepositories;
 `;
 
 const FAIcon = styled(FontAwesomeIcon)`
