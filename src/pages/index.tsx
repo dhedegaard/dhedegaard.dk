@@ -117,12 +117,10 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
       </div>
     </Box>
 
-    <Typography fontSize="0.9em" sx={{ flex: "auto" }}>
-      {repo.description}
-    </Typography>
+    <span className="flex-auto text-sm">{repo.description}</span>
 
     {repo.homepageUrl != null && (
-      <Box display="flex" gap={1} alignItems="center">
+      <div className="flex items-center gap-2">
         <FontAwesomeIcon icon={faLink} fixedWidth width={11} />{" "}
         <a
           className="no-underline text-blue-600 overflow-ellipsis text-xs"
@@ -132,11 +130,11 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
         >
           {repo.homepageUrl.split("://")[1] ?? repo.homepageUrl}
         </a>
-      </Box>
+      </div>
     )}
 
     {repo.topics.length > 0 && (
-      <Box display="inline-flex" flexWrap="wrap" gap="4px" width="100%">
+      <div className="inline-flex flex-wrap gap-1 w-full">
         {repo.topics.map(({ topic }) => (
           <Chip
             variant="outlined"
@@ -145,21 +143,19 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
             label={topic.name}
           />
         ))}
-      </Box>
+      </div>
     )}
 
     {repo.languages.length > 0 && (
-      <Typography fontSize="small" component="span">
+      <span className="text-xs">
         Language(s):&nbsp;
         {repo.languages.map((language, index) => (
           <Fragment key={language.id}>
-            <Typography fontWeight="bold" display="inline" fontSize="small">
-              {language.name}
-            </Typography>
+            <span className="font-bold inline text-xs">{language.name}</span>
             {index < repo.languages.length - 1 ? ", " : null}
           </Fragment>
         ))}
-      </Typography>
+      </span>
     )}
   </RepoPaper>
 );
