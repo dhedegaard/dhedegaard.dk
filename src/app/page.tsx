@@ -1,7 +1,4 @@
-import { faGithub } from "@fortawesome/free-brands-svg-icons/faGithub";
-import { faLinkedin } from "@fortawesome/free-brands-svg-icons/faLinkedin";
 import { faStar } from "@fortawesome/free-regular-svg-icons/faStar";
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons/faEnvelope";
 import { faLink } from "@fortawesome/free-solid-svg-icons/faLink";
 import { faMapPin } from "@fortawesome/free-solid-svg-icons/faMapPin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,6 +6,9 @@ import { orderBy, uniqBy } from "lodash";
 import Image, { ImageProps } from "next/image";
 import { FC, Fragment, use, useMemo } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";
+import { EnvelopeIcon } from "../icons/envelope";
+import { GithubIcon } from "../icons/github";
+import { LinkedInIcon } from "../icons/linkedin";
 
 interface Props {
   repositories: Array<GithubRepository>;
@@ -36,11 +36,7 @@ const Index: FC<Props> = ({
           {githubUrl != null && (
             <>
               <a className="decoration-none text-blue-600" href={githubUrl}>
-                <FontAwesomeIcon
-                  icon={faGithub}
-                  className="inline w-4"
-                  size="sm"
-                />
+                <GithubIcon className="fill-blue-600  inline" width={16} />
                 &nbsp;
                 <span>Github</span>
               </a>
@@ -51,7 +47,7 @@ const Index: FC<Props> = ({
             className="decoration-none text-blue-600"
             href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
           >
-            <FontAwesomeIcon className="inline w-4" icon={faLinkedin} />
+            <LinkedInIcon className="inline fill-blue-600" width={16} />
             &nbsp;
             <span>LinkedIn</span>
           </a>{" "}
@@ -62,7 +58,7 @@ const Index: FC<Props> = ({
                 className="decoration-none text-blue-600"
                 href={`mailto:${email}`}
               >
-                <FontAwesomeIcon className="inline w-4" icon={faEnvelope} />
+                <EnvelopeIcon className="inline w-4 fill-blue-600" width={16} />
                 &nbsp;
                 <span>mail</span>
               </a>
@@ -96,7 +92,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
         rel="noopener noreferrer"
       >
         {repo.name}&nbsp;
-        <FontAwesomeIcon width="16px" icon={faGithub} />
+        <GithubIcon className="w-4" />
       </a>
       <div className="flex gap-2 items-center">
         {repo.stargazerCount > 0 && (
