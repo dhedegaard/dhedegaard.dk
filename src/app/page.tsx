@@ -1,14 +1,13 @@
-import { faStar } from "@fortawesome/free-regular-svg-icons/faStar";
-import { faLink } from "@fortawesome/free-solid-svg-icons/faLink";
-import { faMapPin } from "@fortawesome/free-solid-svg-icons/faMapPin";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { orderBy, uniqBy } from "lodash";
 import Image, { ImageProps } from "next/image";
 import { FC, Fragment, use, useMemo } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";
 import { EnvelopeIcon } from "../icons/envelope";
 import { GithubIcon } from "../icons/github";
+import { LinkIcon } from "../icons/link";
 import { LinkedInIcon } from "../icons/linkedin";
+import { MapPinIcon } from "../icons/map-pin";
+import { StarIcon } from "../icons/star";
 
 interface Props {
   repositories: Array<GithubRepository>;
@@ -98,12 +97,12 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
         {repo.stargazerCount > 0 && (
           <div className="flex gap-1 items-center" title="Stargazers">
             <span className="text-sm">{repo.stargazerCount}</span>
-            <FontAwesomeIcon width="16px" fixedWidth icon={faStar} />
+            <StarIcon width={16} />
           </div>
         )}
         {repo.pinned && (
           <div title="Pinned">
-            <FontAwesomeIcon width="10px" fixedWidth icon={faMapPin} />
+            <MapPinIcon width={10} />
           </div>
         )}
       </div>
@@ -113,7 +112,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
 
     {repo.homepageUrl != null && (
       <div className="flex items-center gap-2">
-        <FontAwesomeIcon icon={faLink} fixedWidth width={11} />{" "}
+        <LinkIcon width={11} />{" "}
         <a
           className="no-underline text-blue-600 overflow-ellipsis text-xs"
           href={repo.homepageUrl}
