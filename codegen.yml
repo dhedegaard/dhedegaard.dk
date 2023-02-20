@@ -3,6 +3,7 @@ schema:
   - https://api.github.com/graphql:
       headers:
         Authorization: "Bearer ${GITHUB_PAT}"
+        User-Agent: "codegen"
 documents: "src/**/*.ts"
 generates:
   src/codegen/types.ts:
