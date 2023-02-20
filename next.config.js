@@ -33,7 +33,7 @@ module.exports = {
 };
 
 const csp = [
-  "default-src 'unsafe-inline'",
+  "default-src 'unsafe-inline' 'self'",
   "img-src 'self' data: https://avatars.githubusercontent.com",
   "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
   "manifest-src 'self'",
