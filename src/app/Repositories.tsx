@@ -15,7 +15,7 @@ interface Filters {
   toggleKey: (key: string) => void;
   clearFilters: () => void;
 }
-const useFilters = create<Filters>((set, get) => ({
+const useFilters = create<Filters>((set) => ({
   selectedKeys: new Set(),
   toggleKey: (key: string) =>
     set((state) => ({
