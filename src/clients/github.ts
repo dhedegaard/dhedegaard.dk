@@ -30,7 +30,7 @@ export const getGithubUser = async () => {
       Authorization: `bearer ${pat}`,
     },
     next: {
-      revalidate: 86400, // 1 day
+      revalidate: 21_600, // 6 hours
     },
   })
     .then((res) => {
