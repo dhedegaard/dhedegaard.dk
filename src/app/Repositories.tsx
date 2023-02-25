@@ -71,7 +71,7 @@ export const Repositories = memo(function Repositories({
 
 const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
   return (
-    <div className="border rounded p-4 basis-[1px] box-border flex flex-col gap-2 ">
+    <div className="border rounded p-4 box-border flex flex-col gap-2">
       <div className="flex justify-between items-start">
         <a
           className="text-inherit no-underline flex font-bold"
