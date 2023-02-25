@@ -60,7 +60,7 @@ export const Repositories = memo(function Repositories({
           </button>
         )}
       </div>
-      <div className="flex flex-row flex-wrap gap-6 mb-9 justify-between">
+      <div className="grid grid-cols-2 grid-flow-row gap-6 mb-9 w-full max-md:grid-cols-1">
         {filteredRepositories.map((repo) => (
           <Repo key={repo.id} repo={repo} />
         ))}
@@ -71,7 +71,7 @@ export const Repositories = memo(function Repositories({
 
 const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
   return (
-    <div className="border rounded p-4 flex-auto basis-[1px] min-w-[350px] box-border flex flex-col gap-2 ">
+    <div className="border rounded p-4 basis-[1px] box-border flex flex-col gap-2 ">
       <div className="flex justify-between items-start">
         <a
           className="text-inherit no-underline flex font-bold"
