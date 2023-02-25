@@ -8,5 +8,13 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "compilerOptions": {
+    "downlevelIteration": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  }
 }
