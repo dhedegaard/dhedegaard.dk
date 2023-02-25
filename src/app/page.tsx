@@ -118,7 +118,7 @@ const getData = async () => {
         name: repo.name,
         url: repo.url,
         pinned: orderedPinnedNodeIds.includes(repo.id),
-        description: repo.description,
+        description: repo.description ?? null,
         homepageUrl: ensureHomepageUrl(repo.homepageUrl),
         updatedAt: repo.updatedAt,
         pushedAt: repo.pushedAt,
