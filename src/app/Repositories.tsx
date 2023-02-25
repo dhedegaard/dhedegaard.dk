@@ -56,7 +56,7 @@ export const Repositories = memo(function Repositories({
           <button
             type="button"
             onClick={clearFilters}
-            className="border border-black rounded-2xl px-2 hover:shadow text-sm bg-black text-white transition"
+            className="border border-black rounded-2xl p-1 px-2 hover:shadow text-xs bg-black text-white transition"
           >
             Clear fitlers
           </button>
