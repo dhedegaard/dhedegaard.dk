@@ -2,7 +2,7 @@ import { orderBy, uniqBy } from "lodash";
 import Image, { ImageProps } from "next/image";
 import { FC, Fragment, memo, use, useMemo } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";
-import type { Topic } from "../codegen/types";
+import type { Topic as TopicType } from "../codegen/types";
 import { EnvelopeIcon } from "../icons/envelope";
 import { GithubIcon } from "../icons/github";
 import { LinkIcon } from "../icons/link";
@@ -255,7 +255,7 @@ const ensureHomepageUrl = (url: unknown): string | null => {
   return result;
 };
 
-const Topic = memo(function Topic({ topic }: { topic: Topic }) {
+const Topic = memo(function Topic({ topic }: { topic: TopicType }) {
   return (
     <div className="border border-gray-400 rounded-2xl text-xs p-1 px-2">
       {topic.name}
