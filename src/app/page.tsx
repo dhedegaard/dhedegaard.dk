@@ -118,10 +118,10 @@ const getData = async () => {
         name: repo.name,
         url: repo.url,
         pinned: orderedPinnedNodeIds.includes(repo.id),
-        description: repo.description ?? null,
+        description: repo.description,
         homepageUrl: ensureHomepageUrl(repo.homepageUrl),
-        updatedAt: repo.updatedAt ?? null,
-        pushedAt: repo.pushedAt ?? null,
+        updatedAt: repo.updatedAt,
+        pushedAt: repo.pushedAt,
         stargazerCount: repo.stargazerCount,
         languages: uniqBy(
           [
