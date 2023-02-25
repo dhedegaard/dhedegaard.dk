@@ -11,22 +11,20 @@ import { MapPinIcon } from "../icons/map-pin";
 import { StarIcon } from "../icons/star";
 
 const useFilters = create<{
-  selectedTopicIds: Set<string>;
-  toggleTopic: (topicId: string) => void;
+  selectedKeys: Set<string>;
+  toggleKey: (key: string) => void;
   clearFilters: () => void;
 }>((set) => ({
-  selectedTopicIds: new Set(),
-  toggleTopic: (topicName: string) =>
+  selectedKeys: new Set(),
+  toggleKey: (key: string) =>
     set((state) => ({
-      selectedTopicIds: new Set(
-        state.selectedTopicIds.has(topicName)
-          ? [...state.selectedTopicIds].filter(
-              (topicName) => topicName !== topicName
-            )
-          : [...state.selectedTopicIds, topicName]
+      selectedKeys: new Set(
+        state.selectedKeys.has(key)
+          ? [...state.selectedKeys].filter((k) => k !== key)
+          : [...state.selectedKeys, key]
       ),
     })),
-  clearFilters: () => set({ selectedTopicIds: new Set() }),
+  clearFilters: () => set({ selectedKeys: new Set() }),
 }));
 
 export const Repositories = memo(function Repositories({
@@ -34,17 +32,17 @@ export const Repositories = memo(function Repositories({
 }: {
   repositories: readonly GithubRepository[];
 }) {
-  const selectedTopicIds = useFilters((state) => state.selectedTopicIds);
+  const selectedKeys = useFilters((state) => state.selectedKeys);
   const filteredRepositories = useMemo(() => {
-    const selectedTopicIdsList = [...selectedTopicIds];
-    return selectedTopicIds.size === 0
+    const selectedKeysList = [...selectedKeys];
+    return selectedKeys.size === 0
       ? repositories
       : repositories.filter((repo) =>
-          selectedTopicIdsList.every((topicId) =>
-            repo.topics.some(({ topic }) => topic.id === topicId)
+          selectedKeysList.every((key) =>
+            repo.topics.some(({ topic }) => `topic#${topic.id}` === key)
           )
         );
-  }, [repositories, selectedTopicIds]);
+  }, [repositories, selectedKeys]);
 
   const clearFilters = useFilters((state) => state.clearFilters);
 
@@ -52,7 +50,7 @@ export const Repositories = memo(function Repositories({
     <div className="animate-slideRepositories">
       <div className="flex w-full justify-between items-center">
         <h2 className="text-xl mb-4">Interresting Github projects</h2>
-        {selectedTopicIds.size > 0 && (
+        {selectedKeys.size > 0 && (
           <button
             type="button"
             onClick={clearFilters}
@@ -139,16 +137,16 @@ const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
 });
 
 const Topic = memo(function Topic({ topic }: { topic: TopicType }) {
-  const toggleTopic = useFilters((state) => state.toggleTopic);
-  const selectedTopicIds = useFilters((state) => state.selectedTopicIds);
+  const toggleKey = useFilters((state) => state.toggleKey);
+  const selectedTopicIds = useFilters((state) => state.selectedKeys);
   const isSelected = useMemo(
-    () => selectedTopicIds.has(topic.id),
+    () => selectedTopicIds.has(`topic#${topic.id}`),
     [selectedTopicIds, topic.id]
   );
 
   const handleClick = useCallback(
-    () => toggleTopic(topic.id),
-    [toggleTopic, topic.id]
+    () => toggleKey(`topic#${topic.id}`),
+    [toggleKey, topic.id]
   );
 
   return (
