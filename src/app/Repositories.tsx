@@ -10,11 +10,12 @@ import { LinkIcon } from "../icons/link";
 import { MapPinIcon } from "../icons/map-pin";
 import { StarIcon } from "../icons/star";
 
-const useFilters = create<{
+interface Filters {
   selectedKeys: Set<string>;
   toggleKey: (key: string) => void;
   clearFilters: () => void;
-}>((set) => ({
+}
+const useFilters = create<Filters>((set, get) => ({
   selectedKeys: new Set(),
   toggleKey: (key: string) =>
     set((state) => ({
