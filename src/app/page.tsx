@@ -82,83 +82,87 @@ const Index: FC<Props> = ({
   </>
 );
 
-const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
-  <div className="border rounded p-4 flex-auto basis-[1px] min-w-[350px] box-border flex flex-col gap-2 ">
-    <div className="flex justify-between items-start">
-      <a
-        className="text-inherit no-underline flex font-bold"
-        href={repo.url}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {repo.name}&nbsp;
-        <GithubIcon className="w-4" />
-      </a>
-      <div className="flex gap-2 items-center">
-        {repo.stargazerCount > 0 && (
-          <div className="flex gap-1 items-center" title="Stargazers">
-            <span className="text-sm">{repo.stargazerCount}</span>
-            <StarIcon width={16} />
-          </div>
-        )}
-        {repo.pinned && (
-          <div title="Pinned">
-            <MapPinIcon width={10} />
-          </div>
-        )}
-      </div>
-    </div>
-
-    <span className="flex-auto text-sm">{repo.description}</span>
-
-    {repo.homepageUrl != null && (
-      <div className="flex items-center gap-2">
-        <LinkIcon width={11} />{" "}
+const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
+  return (
+    <div className="border rounded p-4 flex-auto basis-[1px] min-w-[350px] box-border flex flex-col gap-2 ">
+      <div className="flex justify-between items-start">
         <a
-          className="no-underline text-blue-600 overflow-ellipsis text-xs"
-          href={repo.homepageUrl}
+          className="text-inherit no-underline flex font-bold"
+          href={repo.url}
           target="_blank"
           rel="noopener noreferrer"
         >
-          {repo.homepageUrl.split("://")[1] ?? repo.homepageUrl}
+          {repo.name}&nbsp;
+          <GithubIcon className="w-4" />
         </a>
+        <div className="flex gap-2 items-center">
+          {repo.stargazerCount > 0 && (
+            <div className="flex gap-1 items-center" title="Stargazers">
+              <span className="text-sm">{repo.stargazerCount}</span>
+              <StarIcon width={16} />
+            </div>
+          )}
+          {repo.pinned && (
+            <div title="Pinned">
+              <MapPinIcon width={10} />
+            </div>
+          )}
+        </div>
       </div>
-    )}
 
-    {repo.topics.length > 0 && (
-      <div className="inline-flex flex-wrap gap-1 w-full">
-        {repo.topics.map(({ topic }) => (
-          <Topic key={topic.id} topic={topic} />
-        ))}
-      </div>
-    )}
+      <span className="flex-auto text-sm">{repo.description}</span>
 
-    {repo.languages.length > 0 && (
-      <span className="text-xs">
-        Language(s):&nbsp;
-        {repo.languages.map((language, index) => (
-          <Fragment key={language.id}>
-            <span className="font-bold inline text-xs">{language.name}</span>
-            {index < repo.languages.length - 1 ? ", " : null}
-          </Fragment>
-        ))}
-      </span>
-    )}
-  </div>
-);
+      {repo.homepageUrl != null && (
+        <div className="flex items-center gap-2">
+          <LinkIcon width={11} />{" "}
+          <a
+            className="no-underline text-blue-600 overflow-ellipsis text-xs"
+            href={repo.homepageUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {repo.homepageUrl.split("://")[1] ?? repo.homepageUrl}
+          </a>
+        </div>
+      )}
 
-const Avatar = (props: ImageProps) => (
-  <div className="animate-slideAvatar self-start flex-none w-[90px] aspect-square max-md:w-[60px]">
-    <Image
-      className="object-cover rounded-[50%] border-separate"
-      priority
-      width={90}
-      height={90}
-      {...props}
-      alt="Me"
-    />
-  </div>
-);
+      {repo.topics.length > 0 && (
+        <div className="inline-flex flex-wrap gap-1 w-full">
+          {repo.topics.map(({ topic }) => (
+            <Topic key={topic.id} topic={topic} />
+          ))}
+        </div>
+      )}
+
+      {repo.languages.length > 0 && (
+        <span className="text-xs">
+          Language(s):&nbsp;
+          {repo.languages.map((language, index) => (
+            <Fragment key={language.id}>
+              <span className="font-bold inline text-xs">{language.name}</span>
+              {index < repo.languages.length - 1 ? ", " : null}
+            </Fragment>
+          ))}
+        </span>
+      )}
+    </div>
+  );
+});
+
+const Avatar = memo(function Avatar(props: ImageProps) {
+  return (
+    <div className="animate-slideAvatar self-start flex-none w-[90px] aspect-square max-md:w-[60px]">
+      <Image
+        className="object-cover rounded-[50%] border-separate"
+        priority
+        width={90}
+        height={90}
+        {...props}
+        alt="Me"
+      />
+    </div>
+  );
+});
 
 const getStaticProps = async (): Promise<Props> => {
   const user = await getGithubUser().catch((error) => {
