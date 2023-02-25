@@ -18,69 +18,74 @@ interface Props {
   email: string | null;
 }
 
-const Index: FC<Props> = ({
+const Index: FC<Props> = memo(function Index({
   repositories,
   avatarUrl,
   bio,
   githubUrl,
   email,
-}) => (
-  <>
-    <div className="flex gap-4 mt-8 mb-16">
-      <div className="flex flex-auto flex-col gap-6">
-        <h1 className="text-5xl animate-slideTitle">Dennis Hedegaard</h1>
-        {bio != null && <p className="animate-slideBio">{bio}</p>}
+}) {
+  return (
+    <>
+      <div className="flex gap-4 mt-8 mb-16">
+        <div className="flex flex-auto flex-col gap-6">
+          <h1 className="text-5xl animate-slideTitle">Dennis Hedegaard</h1>
+          {bio != null && <p className="animate-slideBio">{bio}</p>}
 
-        <p className="animate-slideFindMe">
-          Find me on{" "}
-          {githubUrl != null && (
-            <>
-              <a className="decoration-none text-blue-600" href={githubUrl}>
-                <GithubIcon className="fill-blue-600  inline" width={16} />
-                &nbsp;
-                <span>Github</span>
-              </a>
-              ,{" "}
-            </>
-          )}
-          <a
-            className="decoration-none text-blue-600"
-            href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
-          >
-            <LinkedInIcon className="inline fill-blue-600" width={16} />
-            &nbsp;
-            <span>LinkedIn</span>
-          </a>{" "}
-          {email != null && (
-            <>
-              or send me a{" "}
-              <a
-                className="decoration-none text-blue-600"
-                href={`mailto:${email}`}
-              >
-                <EnvelopeIcon className="inline w-4 fill-blue-600" width={16} />
-                &nbsp;
-                <span>mail</span>
-              </a>
-              .
-            </>
-          )}
-        </p>
-      </div>
-      {avatarUrl != null && <Avatar src={avatarUrl} alt="Me" />}
-    </div>
-    {repositories != null && repositories.length > 0 && (
-      <div className="animate-slideRepositories">
-        <h2 className="text-xl mb-4">Interresting Github projects</h2>
-        <div className="flex flex-row flex-wrap gap-6 mb-9 justify-between">
-          {repositories.map((repo) => (
-            <Repo key={repo.id} repo={repo} />
-          ))}
+          <p className="animate-slideFindMe">
+            Find me on{" "}
+            {githubUrl != null && (
+              <>
+                <a className="decoration-none text-blue-600" href={githubUrl}>
+                  <GithubIcon className="fill-blue-600  inline" width={16} />
+                  &nbsp;
+                  <span>Github</span>
+                </a>
+                ,{" "}
+              </>
+            )}
+            <a
+              className="decoration-none text-blue-600"
+              href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
+            >
+              <LinkedInIcon className="inline fill-blue-600" width={16} />
+              &nbsp;
+              <span>LinkedIn</span>
+            </a>{" "}
+            {email != null && (
+              <>
+                or send me a{" "}
+                <a
+                  className="decoration-none text-blue-600"
+                  href={`mailto:${email}`}
+                >
+                  <EnvelopeIcon
+                    className="inline w-4 fill-blue-600"
+                    width={16}
+                  />
+                  &nbsp;
+                  <span>mail</span>
+                </a>
+                .
+              </>
+            )}
+          </p>
         </div>
+        {avatarUrl != null && <Avatar src={avatarUrl} alt="Me" />}
       </div>
-    )}
-  </>
-);
+      {repositories != null && repositories.length > 0 && (
+        <div className="animate-slideRepositories">
+          <h2 className="text-xl mb-4">Interresting Github projects</h2>
+          <div className="flex flex-row flex-wrap gap-6 mb-9 justify-between">
+            {repositories.map((repo) => (
+              <Repo key={repo.id} repo={repo} />
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  );
+});
 
 const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
   return (
