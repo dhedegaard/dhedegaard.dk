@@ -153,8 +153,8 @@ const Topic = memo(function Topic({ topic }: { topic: TopicType }) {
     <button
       type="button"
       className={clsx(
-        "border border-gray-400 rounded-2xl text-xs p-1 px-2 cursor-pointer hover:shadow-lg transition select-none",
-        isSelected && "bg-black text-white border-black"
+        "border rounded-2xl text-xs p-1 px-2 cursor-pointer hover:shadow-lg transition select-none",
+        isSelected ? "bg-black text-white border-black" : "border-gray-400"
       )}
       onClick={handleClick}
       role="switch"
