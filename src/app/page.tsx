@@ -1,7 +1,8 @@
 import { orderBy, uniqBy } from "lodash";
 import Image, { ImageProps } from "next/image";
-import { FC, Fragment, use, useMemo } from "react";
+import { FC, Fragment, memo, use, useMemo } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";
+import type { Topic } from "../codegen/types";
 import { EnvelopeIcon } from "../icons/envelope";
 import { GithubIcon } from "../icons/github";
 import { LinkIcon } from "../icons/link";
@@ -127,12 +128,7 @@ const Repo: FC<{ repo: GithubRepository }> = ({ repo }) => (
     {repo.topics.length > 0 && (
       <div className="inline-flex flex-wrap gap-1 w-full">
         {repo.topics.map(({ topic }) => (
-          <div
-            key={topic.id}
-            className="border border-gray-400 rounded-2xl text-xs p-1 px-2"
-          >
-            {topic.name}
-          </div>
+          <Topic key={topic.id} topic={topic} />
         ))}
       </div>
     )}
@@ -258,3 +254,11 @@ const ensureHomepageUrl = (url: unknown): string | null => {
   }
   return result;
 };
+
+const Topic = memo(function Topic({ topic }: { topic: Topic }) {
+  return (
+    <div className="border border-gray-400 rounded-2xl text-xs p-1 px-2">
+      {topic.name}
+    </div>
+  );
+});
