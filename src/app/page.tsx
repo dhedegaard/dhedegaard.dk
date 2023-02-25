@@ -1,39 +1,30 @@
 import { orderBy, uniqBy } from "lodash";
 import Image, { ImageProps } from "next/image";
-import { FC, memo, use, useMemo } from "react";
+import { memo, use, useMemo } from "react";
 import { getGithubUser, GithubRepository } from "../clients/github";
 import { EnvelopeIcon } from "../icons/envelope";
 import { GithubIcon } from "../icons/github";
 import { LinkedInIcon } from "../icons/linkedin";
 import { Repositories } from "./Repositories";
 
-interface Props {
-  repositories: Array<GithubRepository>;
-  avatarUrl: string | null;
-  bio: string | null;
-  githubUrl: string | null;
-  email: string | null;
-}
+export default function Index() {
+  const data = use(useMemo(() => getData(), []));
 
-const Index: FC<Props> = memo(function Index({
-  repositories,
-  avatarUrl,
-  bio,
-  githubUrl,
-  email,
-}) {
   return (
     <>
       <div className="flex gap-4 mt-8 mb-16">
         <div className="flex flex-auto flex-col gap-6">
           <h1 className="text-5xl animate-slideTitle">Dennis Hedegaard</h1>
-          {bio != null && <p className="animate-slideBio">{bio}</p>}
+          {data.bio != null && <p className="animate-slideBio">{data.bio}</p>}
 
           <p className="animate-slideFindMe">
             Find me on{" "}
-            {githubUrl != null && (
+            {data.githubUrl != null && (
               <>
-                <a className="decoration-none text-blue-600" href={githubUrl}>
+                <a
+                  className="decoration-none text-blue-600"
+                  href={data.githubUrl}
+                >
                   <GithubIcon className="fill-blue-600  inline" width={16} />
                   &nbsp;
                   <span>Github</span>
@@ -49,12 +40,12 @@ const Index: FC<Props> = memo(function Index({
               &nbsp;
               <span>LinkedIn</span>
             </a>{" "}
-            {email != null && (
+            {data.email != null && (
               <>
                 or send me a{" "}
                 <a
                   className="decoration-none text-blue-600"
-                  href={`mailto:${email}`}
+                  href={`mailto:${data.email}`}
                 >
                   <EnvelopeIcon
                     className="inline w-4 fill-blue-600"
@@ -68,12 +59,12 @@ const Index: FC<Props> = memo(function Index({
             )}
           </p>
         </div>
-        {avatarUrl != null && <Avatar src={avatarUrl} alt="Me" />}
+        {data.avatarUrl != null && <Avatar src={data.avatarUrl} alt="Me" />}
       </div>
-      <Repositories repositories={repositories} />
+      <Repositories repositories={data.repositories} />
     </>
   );
-});
+}
 
 const Avatar = memo(function Avatar(props: ImageProps) {
   return (
@@ -90,7 +81,7 @@ const Avatar = memo(function Avatar(props: ImageProps) {
   );
 });
 
-const getStaticProps = async (): Promise<Props> => {
+const getData = async () => {
   const user = await getGithubUser().catch((error) => {
     console.error("Error fetching github user:", error);
     return undefined;
@@ -162,17 +153,12 @@ const getStaticProps = async (): Promise<Props> => {
 
   return {
     repositories: orderedRepos.slice(0, 40),
-    avatarUrl: user?.avatarUrl ?? null,
-    bio: user?.bio ?? null,
-    githubUrl: user?.url ?? null,
-    email: user?.email ?? null,
+    avatarUrl: user?.avatarUrl,
+    bio: user?.bio,
+    githubUrl: user?.url,
+    email: user?.email,
   };
 };
-
-export default function OuterIndex() {
-  const props = use(useMemo(() => getStaticProps(), []));
-  return <Index {...props} />;
-}
 
 const ensureHomepageUrl = (url: unknown): string | null => {
   if (typeof url !== "string" || url === "") {
