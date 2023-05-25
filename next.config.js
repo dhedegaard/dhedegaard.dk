@@ -2,9 +2,6 @@
  * @type {import('next').NextConfig}
  */
 module.exports = {
-  experimental: {
-    optimizeCss: true,
-  },
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
