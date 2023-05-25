@@ -3,7 +3,6 @@
  */
 module.exports = {
   experimental: {
-    appDir: true,
     optimizeCss: true,
   },
   reactStrictMode: true,
