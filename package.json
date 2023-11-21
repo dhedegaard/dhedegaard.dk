@@ -23,26 +23,26 @@
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
     "lodash": "^4.17.21",
-    "next": "^13.4.19",
+    "next": "^13.5.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
-    "typescript": "^5.1.6",
-    "zustand": "^4.4.1"
+    "typescript": "^5.3.2",
+    "zustand": "^4.4.6"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/typescript": "^4.0.1",
-    "@tsconfig/next": "^2.0.0",
-    "@tsconfig/strictest": "^2.0.1",
-    "@types/lodash": "^4.14.197",
-    "@types/node": "18.17.6",
-    "@types/react": "^18.2.20",
-    "@types/react-dom": "^18.2.7",
-    "autoprefixer": "^10.4.15",
-    "eslint": "^8.47.0",
-    "eslint-config-next": "^13.4.19",
+    "@tsconfig/next": "^2.0.1",
+    "@tsconfig/strictest": "^2.0.2",
+    "@types/lodash": "^4.14.202",
+    "@types/node": "20.9.3",
+    "@types/react": "^18.2.38",
+    "@types/react-dom": "^18.2.16",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.54.0",
+    "eslint-config-next": "^13.5.6",
     "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.3"
+    "tailwindcss": "^3.3.5"
   }
 }
