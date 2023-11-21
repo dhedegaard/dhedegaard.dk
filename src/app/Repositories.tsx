@@ -1,19 +1,19 @@
-"use client";
+'use client'
 
-import clsx from "clsx";
-import { FC, Fragment, memo, useCallback, useMemo } from "react";
-import { create } from "zustand";
-import type { GithubRepository } from "../clients/github";
-import type { Topic as TopicType } from "../codegen/types";
-import { GithubIcon } from "../icons/github";
-import { LinkIcon } from "../icons/link";
-import { MapPinIcon } from "../icons/map-pin";
-import { StarIcon } from "../icons/star";
+import clsx from 'clsx'
+import { FC, Fragment, memo, useCallback, useMemo } from 'react'
+import { create } from 'zustand'
+import type { GithubRepository } from '../clients/github'
+import type { Topic as TopicType } from '../codegen/types'
+import { GithubIcon } from '../icons/github'
+import { LinkIcon } from '../icons/link'
+import { MapPinIcon } from '../icons/map-pin'
+import { StarIcon } from '../icons/star'
 
 interface Filters {
-  selectedKeys: Set<string>;
-  toggleKey: (key: string) => void;
-  clearFilters: () => void;
+  selectedKeys: Set<string>
+  toggleKey: (key: string) => void
+  clearFilters: () => void
 }
 const useFilters = create<Filters>((set) => ({
   selectedKeys: new Set(),
@@ -26,26 +26,26 @@ const useFilters = create<Filters>((set) => ({
       ),
     })),
   clearFilters: () => set({ selectedKeys: new Set() }),
-}));
+}))
 
 export const Repositories = memo(function Repositories({
   repositories,
 }: {
-  repositories: readonly GithubRepository[];
+  repositories: readonly GithubRepository[]
 }) {
-  const selectedKeys = useFilters((state) => state.selectedKeys);
+  const selectedKeys = useFilters((state) => state.selectedKeys)
   const filteredRepositories = useMemo(() => {
-    const selectedKeysList = [...selectedKeys];
+    const selectedKeysList = [...selectedKeys]
     return selectedKeys.size === 0
       ? repositories
       : repositories.filter((repo) =>
           selectedKeysList.every((key) =>
             repo.topics.some(({ topic }) => `topic#${topic.id}` === key)
           )
-        );
-  }, [repositories, selectedKeys]);
+        )
+  }, [repositories, selectedKeys])
 
-  const clearFilters = useFilters((state) => state.clearFilters);
+  const clearFilters = useFilters((state) => state.clearFilters)
 
   return (
     <div className="animate-slideRepositories">
@@ -67,8 +67,8 @@ export const Repositories = memo(function Repositories({
         ))}
       </div>
     </div>
-  );
-});
+  )
+})
 
 const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
   return (
@@ -102,14 +102,14 @@ const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
 
       {repo.homepageUrl != null && (
         <div className="flex items-center gap-2">
-          <LinkIcon width={11} />{" "}
+          <LinkIcon width={11} />{' '}
           <a
             className="no-underline text-blue-600 overflow-ellipsis text-xs"
             href={repo.homepageUrl}
             target="_blank"
             rel="noopener noreferrer"
           >
-            {repo.homepageUrl.split("://")[1] ?? repo.homepageUrl}
+            {repo.homepageUrl.split('://')[1] ?? repo.homepageUrl}
           </a>
         </div>
       )}
@@ -128,40 +128,37 @@ const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
           {repo.languages.map((language, index) => (
             <Fragment key={language.id}>
               <span className="font-bold inline text-xs">{language.name}</span>
-              {index < repo.languages.length - 1 ? ", " : null}
+              {index < repo.languages.length - 1 ? ', ' : null}
             </Fragment>
           ))}
         </span>
       )}
     </div>
-  );
-});
+  )
+})
 
 const Topic = memo(function Topic({ topic }: { topic: TopicType }) {
-  const toggleKey = useFilters((state) => state.toggleKey);
-  const selectedTopicIds = useFilters((state) => state.selectedKeys);
+  const toggleKey = useFilters((state) => state.toggleKey)
+  const selectedTopicIds = useFilters((state) => state.selectedKeys)
   const isSelected = useMemo(
     () => selectedTopicIds.has(`topic#${topic.id}`),
     [selectedTopicIds, topic.id]
-  );
+  )
 
-  const handleClick = useCallback(
-    () => toggleKey(`topic#${topic.id}`),
-    [toggleKey, topic.id]
-  );
+  const handleClick = useCallback(() => toggleKey(`topic#${topic.id}`), [toggleKey, topic.id])
 
   return (
     <button
       type="button"
       className={clsx(
-        "border rounded-2xl text-xs p-1 px-2 cursor-pointer hover:shadow-lg transition select-none",
-        isSelected ? "bg-black text-white border-black" : "border-gray-400"
+        'border rounded-2xl text-xs p-1 px-2 cursor-pointer hover:shadow-lg transition select-none',
+        isSelected ? 'bg-black text-white border-black' : 'border-gray-400'
       )}
       onClick={handleClick}
       role="switch"
-      aria-checked={isSelected ? "true" : "false"}
+      aria-checked={isSelected ? 'true' : 'false'}
     >
       {topic.name}
     </button>
-  );
-});
+  )
+})

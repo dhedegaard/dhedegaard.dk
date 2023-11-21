@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag'
 
 /**
  * You can build your query from here:
@@ -22,10 +22,7 @@ export const userQuery = gql`
           }
         }
       }
-      topRepositories(
-        orderBy: { field: PUSHED_AT, direction: DESC }
-        first: 100
-      ) {
+      topRepositories(orderBy: { field: PUSHED_AT, direction: DESC }, first: 100) {
         totalCount
         edges {
           node {
@@ -74,4 +71,4 @@ export const userQuery = gql`
       }
     }
   }
-`;
+`

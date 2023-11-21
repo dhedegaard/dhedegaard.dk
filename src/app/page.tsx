@@ -1,14 +1,14 @@
-import { orderBy, uniqBy } from "lodash";
-import Image, { ImageProps } from "next/image";
-import { memo, use, useMemo } from "react";
-import { getGithubUser, GithubRepository } from "../clients/github";
-import { EnvelopeIcon } from "../icons/envelope";
-import { GithubIcon } from "../icons/github";
-import { LinkedInIcon } from "../icons/linkedin";
-import { Repositories } from "./Repositories";
+import { orderBy, uniqBy } from 'lodash'
+import Image, { ImageProps } from 'next/image'
+import { memo, use, useMemo } from 'react'
+import { getGithubUser, GithubRepository } from '../clients/github'
+import { EnvelopeIcon } from '../icons/envelope'
+import { GithubIcon } from '../icons/github'
+import { LinkedInIcon } from '../icons/linkedin'
+import { Repositories } from './Repositories'
 
 export default function Index() {
-  const data = use(useMemo(() => getData(), []));
+  const data = use(useMemo(() => getData(), []))
 
   return (
     <>
@@ -18,18 +18,15 @@ export default function Index() {
           {data.bio != null && <p className="animate-slideBio">{data.bio}</p>}
 
           <p className="animate-slideFindMe">
-            Find me on{" "}
+            Find me on{' '}
             {data.githubUrl != null && (
               <>
-                <a
-                  className="decoration-none text-blue-600"
-                  href={data.githubUrl}
-                >
+                <a className="decoration-none text-blue-600" href={data.githubUrl}>
                   <GithubIcon className="fill-blue-600  inline" width={16} />
                   &nbsp;
                   <span>Github</span>
                 </a>
-                ,{" "}
+                ,{' '}
               </>
             )}
             <a
@@ -39,18 +36,12 @@ export default function Index() {
               <LinkedInIcon className="inline fill-blue-600" width={16} />
               &nbsp;
               <span>LinkedIn</span>
-            </a>{" "}
+            </a>{' '}
             {data.email != null && (
               <>
-                or send me a{" "}
-                <a
-                  className="decoration-none text-blue-600"
-                  href={`mailto:${data.email}`}
-                >
-                  <EnvelopeIcon
-                    className="inline w-4 fill-blue-600"
-                    width={16}
-                  />
+                or send me a{' '}
+                <a className="decoration-none text-blue-600" href={`mailto:${data.email}`}>
+                  <EnvelopeIcon className="inline w-4 fill-blue-600" width={16} />
                   &nbsp;
                   <span>mail</span>
                 </a>
@@ -63,7 +54,7 @@ export default function Index() {
       </div>
       <Repositories repositories={data.repositories} />
     </>
-  );
+  )
 }
 
 const Avatar = memo(function Avatar(props: ImageProps) {
@@ -78,14 +69,14 @@ const Avatar = memo(function Avatar(props: ImageProps) {
         alt="Me"
       />
     </div>
-  );
-});
+  )
+})
 
 const getData = async () => {
   const user = await getGithubUser().catch((error) => {
-    console.error("Error fetching github user:", error);
-    return undefined;
-  });
+    console.error('Error fetching github user:', error)
+    return undefined
+  })
 
   if (user == null) {
     return {
@@ -94,23 +85,18 @@ const getData = async () => {
       repositories: [],
       githubUrl: null,
       email: null,
-    };
+    }
   }
 
   const orderedPinnedNodeIds =
     user.pinnedItems?.nodes
       ?.map((e) => e?.id)
-      .filter((e): e is NonNullable<typeof e> => e != null) ?? [];
+      .filter((e): e is NonNullable<typeof e> => e != null) ?? []
   const repos =
     user.topRepositories?.edges?.reduce<GithubRepository[]>((acc, edge) => {
-      const repo = edge?.node;
-      if (
-        repo == null ||
-        repo.isPrivate ||
-        repo.isArchived ||
-        repo.owner.id !== user.id
-      ) {
-        return acc;
+      const repo = edge?.node
+      if (repo == null || repo.isPrivate || repo.isArchived || repo.owner.id !== user.id) {
+        return acc
       }
 
       acc.push({
@@ -124,32 +110,31 @@ const getData = async () => {
         pushedAt: repo.pushedAt,
         stargazerCount: repo.stargazerCount,
         languages: uniqBy(
-          [
-            repo.primaryLanguage,
-            ...(repo.languages?.edges?.map((e) => e?.node) ?? []),
-          ].filter((e): e is NonNullable<typeof e> => e != null),
+          [repo.primaryLanguage, ...(repo.languages?.edges?.map((e) => e?.node) ?? [])].filter(
+            (e): e is NonNullable<typeof e> => e != null
+          ),
           (e) => e.id
         ),
         topics:
           repo.repositoryTopics.edges
             ?.map((topic) => topic?.node ?? undefined)
             ?.filter((e): e is NonNullable<typeof e> => e != null) ?? [],
-      });
-      return acc;
-    }, []) ?? [];
+      })
+      return acc
+    }, []) ?? []
   const orderedRepos = orderBy(
     repos,
     [
       // Pinned repos ascending
       (e) => {
-        const index = orderedPinnedNodeIds.indexOf(e.id);
-        return index === -1 ? Infinity : index;
+        const index = orderedPinnedNodeIds.indexOf(e.id)
+        return index === -1 ? Infinity : index
       },
-      "stargazerCount",
-      "pushedAt",
+      'stargazerCount',
+      'pushedAt',
     ],
-    ["asc", "desc", "desc"]
-  );
+    ['asc', 'desc', 'desc']
+  )
 
   return {
     repositories: orderedRepos.slice(0, 40),
@@ -157,16 +142,16 @@ const getData = async () => {
     bio: user?.bio,
     githubUrl: user?.url,
     email: user?.email,
-  };
-};
+  }
+}
 
 const ensureHomepageUrl = (url: unknown): string | null => {
-  if (typeof url !== "string" || url === "") {
-    return null;
+  if (typeof url !== 'string' || url === '') {
+    return null
   }
-  let result = url;
-  if (!result.startsWith("http")) {
-    result = `https://${result}`;
+  let result = url
+  if (!result.startsWith('http')) {
+    result = `https://${result}`
   }
-  return result;
-};
+  return result
+}
