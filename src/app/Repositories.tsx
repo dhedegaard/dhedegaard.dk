@@ -55,7 +55,7 @@ export const Repositories = memo(function Repositories({
           <button
             type="button"
             onClick={clearFilters}
-            className="border border-black rounded-2xl p-1 px-2 hover:shadow text-xs bg-black text-white transition"
+            className="border border-black rounded-2xl p-1.5 px-2 hover:shadow text-xs bg-black text-white transition"
           >
             Clear filter(s)
           </button>
@@ -151,7 +151,7 @@ const Topic = memo(function Topic({ topic }: { topic: TopicType }) {
     <button
       type="button"
       className={clsx(
-        'border rounded-2xl text-xs p-1 px-2 cursor-pointer hover:shadow-lg transition select-none',
+        'border rounded-2xl text-xs p-1.5 px-2 cursor-pointer hover:shadow-md transition select-none',
         isSelected ? 'bg-black text-white border-black' : 'border-gray-400'
       )}
       onClick={handleClick}
