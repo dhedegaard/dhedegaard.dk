@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
+import favicon from '../../public/favicon.png'
 import '../styles/globals.css'
 
 export const metadata: Metadata = {
   title: 'Dennis Hedegaard',
   description: 'The personal website of Dennis Hedegaard',
   manifest: '/manifest.json',
-  icons: '/favicon.png',
+  icons: favicon.src,
   appleWebApp: {
     capable: true,
     title: 'Dennis Hedegaard',
