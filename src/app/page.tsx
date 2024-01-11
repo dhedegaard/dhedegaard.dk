@@ -1,14 +1,14 @@
 import { orderBy, uniqBy } from 'lodash'
 import Image, { ImageProps } from 'next/image'
-import { memo, use, useMemo } from 'react'
-import { getGithubUser, GithubRepository } from '../clients/github'
+import { memo, use } from 'react'
+import { GithubRepository, getGithubUser } from '../clients/github'
 import { EnvelopeIcon } from '../icons/envelope'
 import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
 import { Repositories } from './Repositories'
 
 export default function Index() {
-  const data = use(useMemo(() => getData(), []))
+  const data = use(getData())
 
   return (
     <>

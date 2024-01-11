@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: 'Dennis Hedegaard',
   description: 'The personal website of Dennis Hedegaard',
   manifest: '/manifest.json',
+  icons: '/favicon.png',
   appleWebApp: {
     capable: true,
     title: 'Dennis Hedegaard',
