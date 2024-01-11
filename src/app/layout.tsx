@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: favicon.src,
   metadataBase: new URL('https://www.dhedegaard.dk/'),
+  robots: 'index, follow',
   appleWebApp: {
     capable: true,
     title: 'Dennis Hedegaard',
