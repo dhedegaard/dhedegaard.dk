@@ -101,10 +101,10 @@ const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
       <span className="flex-auto text-sm">{repo.description}</span>
 
       {repo.homepageUrl != null && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <LinkIcon width={11} />{' '}
           <a
-            className="no-underline text-blue-600 overflow-ellipsis text-xs"
+            className="p-1 no-underline text-blue-600 overflow-ellipsis text-xs"
             href={repo.homepageUrl}
             target="_blank"
             rel="noopener noreferrer"
