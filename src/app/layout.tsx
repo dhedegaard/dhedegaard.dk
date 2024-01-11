@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   description: 'The personal website of Dennis Hedegaard',
   manifest: '/manifest.json',
   icons: favicon.src,
+  metadataBase: new URL('https://www.dhedegaard.dk/'),
   appleWebApp: {
     capable: true,
     title: 'Dennis Hedegaard',
@@ -26,7 +27,10 @@ export const viewport: Viewport = {
   width: 'device-width',
 }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+interface Props {
+  children: ReactNode
+}
+export default function RootLayout({ children }: Readonly<Props>) {
   return (
     <html lang="en">
       <head />
