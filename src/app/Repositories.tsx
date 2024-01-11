@@ -1,8 +1,4 @@
-'use client'
-
-import clsx from 'clsx'
-import { FC, Fragment, memo, useCallback, useMemo } from 'react'
-import { create } from 'zustand'
+import { FC, Fragment, memo } from 'react'
 import type { GithubRepository } from '../clients/github'
 import type { Topic as TopicType } from '../codegen/types'
 import { GithubIcon } from '../icons/github'
@@ -10,59 +6,18 @@ import { LinkIcon } from '../icons/link'
 import { MapPinIcon } from '../icons/map-pin'
 import { StarIcon } from '../icons/star'
 
-interface Filters {
-  selectedKeys: Set<string>
-  toggleKey: (key: string) => void
-  clearFilters: () => void
-}
-const useFilters = create<Filters>((set) => ({
-  selectedKeys: new Set(),
-  toggleKey: (key: string) =>
-    set((state) => ({
-      selectedKeys: new Set(
-        state.selectedKeys.has(key)
-          ? [...state.selectedKeys].filter((k) => k !== key)
-          : [...state.selectedKeys, key]
-      ),
-    })),
-  clearFilters: () => set({ selectedKeys: new Set() }),
-}))
-
 export const Repositories = memo(function Repositories({
   repositories,
 }: {
   repositories: readonly GithubRepository[]
 }) {
-  const selectedKeys = useFilters((state) => state.selectedKeys)
-  const filteredRepositories = useMemo(() => {
-    const selectedKeysList = [...selectedKeys]
-    return selectedKeys.size === 0
-      ? repositories
-      : repositories.filter((repo) =>
-          selectedKeysList.every((key) =>
-            repo.topics.some(({ topic }) => `topic#${topic.id}` === key)
-          )
-        )
-  }, [repositories, selectedKeys])
-
-  const clearFilters = useFilters((state) => state.clearFilters)
-
   return (
     <div className="animate-slideRepositories">
       <div className="flex w-full justify-between items-center">
         <h2 className="text-xl mb-4">Interresting Github projects</h2>
-        {selectedKeys.size > 0 && (
-          <button
-            type="button"
-            onClick={clearFilters}
-            className="border border-black rounded-2xl p-1.5 px-2 hover:shadow text-xs bg-black text-white transition"
-          >
-            Clear filter(s)
-          </button>
-        )}
       </div>
       <div className="grid grid-cols-2 grid-flow-row gap-6 mb-9 w-full max-md:grid-cols-1">
-        {filteredRepositories.map((repo) => (
+        {repositories.map((repo) => (
           <Repo key={repo.id} repo={repo} />
         ))}
       </div>
@@ -138,27 +93,9 @@ const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
 })
 
 const Topic = memo(function Topic({ topic }: { topic: TopicType }) {
-  const toggleKey = useFilters((state) => state.toggleKey)
-  const selectedTopicIds = useFilters((state) => state.selectedKeys)
-  const isSelected = useMemo(
-    () => selectedTopicIds.has(`topic#${topic.id}`),
-    [selectedTopicIds, topic.id]
-  )
-
-  const handleClick = useCallback(() => toggleKey(`topic#${topic.id}`), [toggleKey, topic.id])
-
   return (
-    <button
-      type="button"
-      className={clsx(
-        'border rounded-2xl text-xs p-1.5 px-2 cursor-pointer hover:shadow-md transition select-none',
-        isSelected ? 'bg-black text-white border-black' : 'border-gray-400'
-      )}
-      onClick={handleClick}
-      role="switch"
-      aria-checked={isSelected ? 'true' : 'false'}
-    >
+    <div className="border rounded-2xl text-xs p-1.5 px-2 select-none border-gray-400">
       {topic.name}
-    </button>
+    </div>
   )
 })
