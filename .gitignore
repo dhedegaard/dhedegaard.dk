@@ -65,3 +65,6 @@ out
 .env
 .vscode
 *.tsbuildinfo
+
+# Sentry Config File
+.sentryclirc
