@@ -42,12 +42,12 @@ const csp = [
   "manifest-src 'self'",
   "connect-src 'self' https://vitals.vercel-insights.com",
   "style-src-elem 'self' 'unsafe-inline'",
+  "worker-src 'self' blob:",
 ]
-
 
 // Injected content via Sentry wizard below
 
-const { withSentryConfig } = require("@sentry/nextjs");
+const { withSentryConfig } = require('@sentry/nextjs')
 
 module.exports = withSentryConfig(
   module.exports,
@@ -57,8 +57,8 @@ module.exports = withSentryConfig(
 
     // Suppresses source map uploading logs during build
     silent: true,
-    org: "dennis-hedegaard",
-    project: "dhedegaarddk",
+    org: 'dennis-hedegaard',
+    project: 'dhedegaarddk',
   },
   {
     // For all available options, see:
@@ -71,7 +71,7 @@ module.exports = withSentryConfig(
     transpileClientSDK: true,
 
     // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
-    tunnelRoute: "/monitoring",
+    tunnelRoute: '/monitoring',
 
     // Hides source maps from generated client bundles
     hideSourceMaps: true,
@@ -85,4 +85,4 @@ module.exports = withSentryConfig(
     // https://vercel.com/docs/cron-jobs
     automaticVercelMonitors: true,
   }
-);
+)
