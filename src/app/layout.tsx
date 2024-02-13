@@ -5,6 +5,7 @@ import '../styles/globals.css'
 
 export const metadata: Metadata = {
   title: 'Dennis Hedegaard',
+  keywords: 'Dennis Hedegaard, Dennis Elsborg Heick Hedegaard, dhedegaard',
   description: 'The personal website of Dennis Hedegaard',
   manifest: '/manifest.json',
   icons: favicon.src,
