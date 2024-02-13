@@ -3,13 +3,14 @@ import type { ReactNode } from 'react'
 import favicon from '../../public/favicon.png'
 import '../styles/globals.css'
 
+const metadataBase = new URL('https://www.dhedegaard.dk/')
 export const metadata: Metadata = {
   title: 'Dennis Hedegaard',
   keywords: 'Dennis Hedegaard, Dennis Elsborg Heick Hedegaard, dhedegaard',
   description: 'The personal website of Dennis Hedegaard',
   manifest: '/manifest.json',
   icons: favicon.src,
-  metadataBase: new URL('https://www.dhedegaard.dk/'),
+  metadataBase,
   robots: 'index, follow',
   appleWebApp: {
     capable: true,
@@ -35,7 +36,9 @@ interface Props {
 export default function RootLayout({ children }: Readonly<Props>) {
   return (
     <html lang="en">
-      <head />
+      <head>
+        <link rel="canonical" href={metadataBase.toString()} />
+      </head>
       <body>
         <div className="max-w-4xl mx-auto px-6 max-md:px-4">{children}</div>
       </body>
