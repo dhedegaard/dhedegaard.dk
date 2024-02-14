@@ -21,6 +21,12 @@ export const metadata: Metadata = {
     title: 'Dennis Hedegaard',
     siteName: 'Dennis Hedegaard',
     url: 'https://www.dhedegaard.dk/',
+    description: 'The personal website of Dennis Hedegaard',
+    images: {
+      url: 'https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=512',
+      width: 512,
+      height: 512,
+    },
   },
 }
 
