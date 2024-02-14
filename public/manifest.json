@@ -11,27 +11,27 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/favicon.png",
+      "src": "https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=128",
       "type": "image/png",
       "sizes": "128x128"
     },
     {
-      "src": "/icon-192x192.png",
+      "src": "https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=192",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icon-256x256.png",
+      "src": "https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=256",
       "sizes": "256x256",
       "type": "image/png"
     },
     {
-      "src": "/icon-384x384.png",
+      "src": "https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=384",
       "sizes": "384x384",
       "type": "image/png"
     },
     {
-      "src": "/icon-512x512.png",
+      "src": "https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=512",
       "sizes": "512x512",
       "type": "image/png"
     }

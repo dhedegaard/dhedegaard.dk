@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
-import favicon from '../../public/favicon.png'
 import '../styles/globals.css'
 
 const metadataBase = new URL('https://www.dhedegaard.dk/')
@@ -9,7 +8,8 @@ export const metadata: Metadata = {
   keywords: 'Dennis Hedegaard, Dennis Elsborg Heick Hedegaard, dhedegaard',
   description: 'The personal website of Dennis Hedegaard',
   manifest: '/manifest.json',
-  icons: favicon.src,
+  icons:
+    'https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f',
   metadataBase,
   robots: 'index, follow',
   appleWebApp: {
