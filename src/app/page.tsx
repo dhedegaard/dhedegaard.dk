@@ -1,5 +1,5 @@
 import { orderBy, uniqBy } from 'lodash'
-import Image, { ImageProps } from 'next/image'
+import Image from 'next/image'
 import { memo, use } from 'react'
 import { GithubRepository, getGithubUser } from '../clients/github'
 import { EnvelopeIcon } from '../icons/envelope'
@@ -50,14 +50,14 @@ export default function Index() {
             )}
           </p>
         </div>
-        {data.avatarUrl != null && <Avatar src={data.avatarUrl} alt="Me" />}
+        <Avatar />
       </div>
       <Repositories repositories={data.repositories} />
     </>
   )
 }
 
-const Avatar = memo(function Avatar(props: ImageProps) {
+const Avatar = memo(function Avatar() {
   return (
     <div className="animate-slideAvatar self-start flex-none w-[90px] aspect-square max-md:w-[60px]">
       <Image
