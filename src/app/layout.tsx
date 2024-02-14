@@ -22,11 +22,23 @@ export const metadata: Metadata = {
     siteName: 'Dennis Hedegaard',
     url: 'https://www.dhedegaard.dk/',
     description: 'The personal website of Dennis Hedegaard',
-    images: {
-      url: 'https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=512',
-      width: 512,
-      height: 512,
-    },
+    images: [
+      {
+        url: 'https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=512',
+        width: 512,
+        height: 512,
+      },
+      {
+        url: 'https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=256',
+        width: 256,
+        height: 256,
+      },
+      {
+        url: 'https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=128',
+        width: 128,
+        height: 128,
+      },
+    ],
   },
 }
 
