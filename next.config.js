@@ -1,7 +1,7 @@
 /**
  * @type {import('next').NextConfig}
  */
-module.exports = {
+const config = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
@@ -55,7 +55,7 @@ const csp = [
 const { withSentryConfig } = require('@sentry/nextjs')
 
 module.exports = withSentryConfig(
-  module.exports,
+  config,
   {
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options
