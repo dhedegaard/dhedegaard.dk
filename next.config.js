@@ -11,6 +11,11 @@ module.exports = {
         hostname: 'avatars.githubusercontent.com',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'gravatar.com',
+        pathname: '**',
+      },
     ],
   },
   headers: () =>

@@ -65,7 +65,8 @@ const Avatar = memo(function Avatar(props: ImageProps) {
         priority
         width={90}
         height={90}
-        {...props}
+        src="https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=90"
+        crossOrigin="anonymous"
         alt="Me"
       />
     </div>
