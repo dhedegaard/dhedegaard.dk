@@ -59,15 +59,15 @@ export default function Index() {
 
 const Avatar = memo(function Avatar() {
   return (
-    <div className="animate-slideAvatar self-start flex-none w-[90px] aspect-square max-md:w-[60px]">
+    <div className="animate-slideAvatar self-start flex-none relative w-[90px] aspect-square max-md:w-[60px]">
       <Image
         className="object-cover rounded-[50%] border-separate"
         priority
-        width={90}
-        height={90}
         src="https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=90"
         crossOrigin="anonymous"
         alt="Me"
+        fill
+        sizes="(max-width: 767px) 60px, 90px"
       />
     </div>
   )
