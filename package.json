@@ -20,6 +20,7 @@
   "dependencies": {
     "@sentry/nextjs": "^7.93.0",
     "critters": "^0.0.20",
+    "daisyui": "^4.7.2",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
     "lodash": "^4.17.21",
