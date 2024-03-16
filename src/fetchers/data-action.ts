@@ -3,7 +3,7 @@
 import { captureException } from '@sentry/nextjs'
 import { orderBy, uniqBy } from 'lodash'
 import { z } from 'zod'
-import { GithubRepository, getGithubUser } from '../clients/github'
+import { getGithubUser } from '../clients/github'
 
 const dataRepositorLanguageSchema = z.object({
   id: z.string().min(1),
@@ -12,7 +12,10 @@ const dataRepositorLanguageSchema = z.object({
 })
 export interface DataRepositoryLanguage extends z.TypeOf<typeof dataRepositorLanguageSchema> {}
 
-const dataRepositoryTopicSchema = z.object({})
+const dataRepositoryTopicSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+})
 export interface DataRepositoryTopic extends z.TypeOf<typeof dataRepositoryTopicSchema> {}
 
 const dataRepositorySchema = z.object({
@@ -54,13 +57,37 @@ const getData = async (): Promise<DataResult> => {
       ?.map((e) => e?.id)
       .filter((e): e is NonNullable<typeof e> => e != null) ?? []
   const repos =
-    user.topRepositories?.edges?.reduce<GithubRepository[]>((acc, edge) => {
+    user.topRepositories?.edges?.reduce<DataRepository[]>((acc, edge) => {
       const repo = edge?.node
       if (repo == null || repo.isPrivate || repo.isArchived || repo.owner.id !== user.id) {
         return acc
       }
 
-      acc.push({
+      const languages: DataRepositoryLanguage[] = uniqBy(
+        [repo.primaryLanguage, ...(repo.languages?.edges?.map((e) => e?.node) ?? [])].filter(
+          (e): e is NonNullable<typeof e> => e != null
+        ),
+        (e) => e.id
+      ).map((language) => {
+        const result: DataRepositoryLanguage = {
+          id: language.id,
+          name: language.name,
+          color: language.color ?? null,
+        }
+        return result
+      })
+      const topics: DataRepositoryTopic[] =
+        repo.repositoryTopics.edges
+          ?.map((topic) => topic?.node ?? undefined)
+          ?.filter((e): e is NonNullable<typeof e> => e != null)
+          .map((topic) => {
+            const result: DataRepositoryTopic = {
+              id: topic.topic.id,
+              name: topic.topic.name,
+            }
+            return result
+          }) ?? []
+      const newItem: DataRepository = {
         id: repo.id,
         name: repo.name,
         url: repo.url,
@@ -70,17 +97,10 @@ const getData = async (): Promise<DataResult> => {
         updatedAt: repo.updatedAt,
         pushedAt: repo.pushedAt,
         stargazerCount: repo.stargazerCount,
-        languages: uniqBy(
-          [repo.primaryLanguage, ...(repo.languages?.edges?.map((e) => e?.node) ?? [])].filter(
-            (e): e is NonNullable<typeof e> => e != null
-          ),
-          (e) => e.id
-        ),
-        topics:
-          repo.repositoryTopics.edges
-            ?.map((topic) => topic?.node ?? undefined)
-            ?.filter((e): e is NonNullable<typeof e> => e != null) ?? [],
-      })
+        languages,
+        topics,
+      }
+      acc.push(newItem)
       return acc
     }, []) ?? []
   const orderedRepos = orderBy(

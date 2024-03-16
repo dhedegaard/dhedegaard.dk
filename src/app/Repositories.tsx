@@ -1,6 +1,5 @@
 import { FC, Fragment, memo } from 'react'
-import type { GithubRepository } from '../clients/github'
-import type { Topic as TopicType } from '../codegen/types'
+import { DataRepository, DataRepositoryTopic } from '../fetchers/data-action'
 import { GithubIcon } from '../icons/github'
 import { LinkIcon } from '../icons/link'
 import { MapPinIcon } from '../icons/map-pin'
@@ -9,7 +8,7 @@ import { StarIcon } from '../icons/star'
 export const Repositories = memo(function Repositories({
   repositories,
 }: {
-  repositories: readonly GithubRepository[]
+  repositories: readonly DataRepository[]
 }) {
   return (
     <div className="animate-slideRepositories">
@@ -25,7 +24,7 @@ export const Repositories = memo(function Repositories({
   )
 })
 
-const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
+const Repo: FC<{ repo: DataRepository }> = memo(function Repo({ repo }) {
   return (
     <div className="border rounded p-4 box-border flex flex-col gap-2">
       <div className="flex justify-between items-start">
@@ -71,7 +70,7 @@ const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
 
       {repo.topics.length > 0 && (
         <div className="inline-flex flex-wrap gap-1 w-full">
-          {repo.topics.map(({ topic }) => (
+          {repo.topics.map((topic) => (
             <Topic key={topic.id} topic={topic} />
           ))}
         </div>
@@ -92,7 +91,7 @@ const Repo: FC<{ repo: GithubRepository }> = memo(function Repo({ repo }) {
   )
 })
 
-const Topic = memo(function Topic({ topic }: { topic: TopicType }) {
+const Topic = memo(function Topic({ topic }: { topic: DataRepositoryTopic }) {
   return (
     <div className="border rounded-2xl text-xs p-1.5 px-2 select-none border-gray-400">
       {topic.name}
