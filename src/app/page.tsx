@@ -7,7 +7,7 @@ import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
 import { Repositories } from './Repositories'
 
-export const runtime = 'edge'
+export const dynamic: 'force-static' = 'force-static'
 
 export default function Index() {
   const data = use(getData())
