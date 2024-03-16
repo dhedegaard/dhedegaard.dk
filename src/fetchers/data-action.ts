@@ -100,8 +100,7 @@ const getData = async (): Promise<DataResult> => {
         languages,
         topics,
       }
-      acc.push(newItem)
-      return acc
+      return [...acc, newItem]
     }, []) ?? []
   const orderedRepos = orderBy(
     repos,
