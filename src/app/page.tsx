@@ -6,7 +6,7 @@ import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
 import { Repositories } from './Repositories'
 
-export const dynamic = 'force-static'
+export const dynamic = 'error'
 
 export default function Index() {
   const data = use(getDataAction())
