@@ -2,22 +2,51 @@
 
 import { captureException } from '@sentry/nextjs'
 import { orderBy, uniqBy } from 'lodash'
+import { z } from 'zod'
 import { GithubRepository, getGithubUser } from '../clients/github'
 
-const getData = async () => {
+const dataRepositorLanguageSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  color: z.nullable(z.string().min(1)),
+})
+export interface DataRepositoryLanguage extends z.TypeOf<typeof dataRepositorLanguageSchema> {}
+
+const dataRepositoryTopicSchema = z.object({})
+export interface DataRepositoryTopic extends z.TypeOf<typeof dataRepositoryTopicSchema> {}
+
+const dataRepositorySchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  url: z.string().url(),
+  pinned: z.boolean(),
+  description: z.nullable(z.string().min(1)),
+  homepageUrl: z.nullable(z.string().url()),
+  updatedAt: z.nullable(z.string().datetime({ offset: true })),
+  pushedAt: z.nullable(z.string().datetime({ offset: true })),
+  stargazerCount: z.number().int().nonnegative(),
+  languages: z.array(dataRepositorLanguageSchema as z.ZodType<DataRepositoryLanguage>),
+  topics: z.array(dataRepositoryTopicSchema as z.ZodType<DataRepositoryTopic>),
+})
+export interface DataRepository extends z.TypeOf<typeof dataRepositorySchema> {}
+
+const dataResultSchema = z.object({
+  avatarUrl: z.string().url(),
+  bio: z.nullable(z.string().min(1)),
+  githubUrl: z.string().url(),
+  email: z.string().email(),
+  repositories: z.array(dataRepositorySchema as z.ZodType<DataRepository>),
+})
+export interface DataResult extends z.TypeOf<typeof dataResultSchema> {}
+
+const getData = async (): Promise<DataResult> => {
   const user = await getGithubUser().catch((error) => {
     console.error('Error fetching github user:', error)
     return undefined
   })
 
   if (user == null) {
-    return {
-      avatarUrl: null,
-      bio: null,
-      repositories: [],
-      githubUrl: null,
-      email: null,
-    }
+    throw new Error('Github user not found')
   }
 
   const orderedPinnedNodeIds =
@@ -66,15 +95,16 @@ const getData = async () => {
       'pushedAt',
     ],
     ['asc', 'desc', 'desc']
-  )
+  ).map((repo) => dataRepositorySchema.parse(repo))
 
-  return {
+  const result: DataResult = {
     repositories: orderedRepos.slice(0, 40),
-    avatarUrl: user?.avatarUrl,
-    bio: user?.bio,
-    githubUrl: user?.url,
-    email: user?.email,
+    avatarUrl: user.avatarUrl,
+    bio: user.bio ?? null,
+    githubUrl: user.url,
+    email: user.email,
   }
+  return await dataResultSchema.parseAsync(result)
 }
 
 export async function getDataAction() {
