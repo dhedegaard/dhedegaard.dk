@@ -115,7 +115,7 @@ const getData = async (): Promise<DataResult> => {
       'pushedAt',
     ],
     ['asc', 'desc', 'desc']
-  ).map((repo) => dataRepositorySchema.parse(repo))
+  )
 
   const result: DataResult = {
     repositories: orderedRepos.slice(0, 40),
