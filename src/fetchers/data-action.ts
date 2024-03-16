@@ -1,6 +1,8 @@
 'use server'
 
 import { captureException } from '@sentry/nextjs'
+import { orderBy, uniqBy } from 'lodash'
+import { GithubRepository, getGithubUser } from '../clients/github'
 
 const getData = async () => {
   const user = await getGithubUser().catch((error) => {
