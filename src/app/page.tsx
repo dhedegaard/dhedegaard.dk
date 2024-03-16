@@ -7,6 +7,8 @@ import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
 import { Repositories } from './Repositories'
 
+export const runtime = 'edge'
+
 export default function Index() {
   const data = use(getData())
 

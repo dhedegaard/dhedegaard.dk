@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import '../styles/globals.css'
 
+export const runtime = 'edge'
+
 const metadataBase = new URL('https://www.dhedegaard.dk/')
 export const metadata: Metadata = {
   title: 'Dennis Hedegaard',
