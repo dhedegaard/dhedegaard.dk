@@ -4,6 +4,9 @@
 const config = {
   reactStrictMode: true,
   poweredByHeader: false,
+  experimental: {
+    optimizeCss: true,
+  },
   images: {
     remotePatterns: [
       {
