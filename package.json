@@ -18,13 +18,14 @@
   "private": true,
   "license": "UNLICENSED",
   "dependencies": {
-    "@sentry/nextjs": "^7.107.0",
+    "@sentry/nextjs": "^7.109.0",
+    "@vercel/speed-insights": "^1.0.10",
     "critters": "^0.0.22",
-    "daisyui": "^4.7.3",
+    "daisyui": "^4.9.0",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
     "lodash": "^4.17.21",
-    "next": "^14.1.3",
+    "next": "^14.1.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
@@ -34,16 +35,16 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/typescript": "^4.0.6",
-    "@tsconfig/next": "^2.0.1",
-    "@tsconfig/strictest": "^2.0.3",
+    "@tsconfig/next": "^2.0.3",
+    "@tsconfig/strictest": "^2.0.5",
     "@types/lodash": "^4.17.0",
-    "@types/node": "20.11.28",
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22",
-    "autoprefixer": "^10.4.18",
+    "@types/node": "20.12.2",
+    "@types/react": "^18.2.73",
+    "@types/react-dom": "^18.2.23",
+    "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
-    "eslint-config-next": "^14.1.3",
-    "postcss": "^8.4.35",
-    "tailwindcss": "^3.4.1"
+    "eslint-config-next": "^14.1.4",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3"
   }
 }
