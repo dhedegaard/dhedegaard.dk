@@ -4,7 +4,7 @@
   "description": "dhedegaard.dk",
   "homepage": "https://www.dhedegaard.dk/",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "start": "next start",
