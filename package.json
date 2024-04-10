@@ -19,7 +19,6 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@sentry/nextjs": "^7.109.0",
-    "@vercel/speed-insights": "^1.0.10",
     "critters": "^0.0.22",
     "daisyui": "^4.9.0",
     "graphql": "^16.8.1",
