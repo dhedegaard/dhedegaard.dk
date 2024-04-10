@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -16,10 +16,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm install -g yarn
-      - run: yarn
-      - run: yarn build
+      - run: npm ci
+      - run: npm run build
         env:
           CI: true
           GITHUB_PAT: ${{ secrets._GITHUB_PAT }}
-      - run: yarn lint
+      - run: npm run lint
