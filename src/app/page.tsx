@@ -13,17 +13,17 @@ export default function Index() {
 
   return (
     <>
-      <div className="flex gap-4 mt-8 mb-16">
+      <div className="mb-16 mt-8 flex gap-4">
         <div className="flex flex-auto flex-col gap-6">
-          <h1 className="text-5xl animate-slideTitle">Dennis Hedegaard</h1>
+          <h1 className="animate-slideTitle text-5xl">Dennis Hedegaard</h1>
           {data.bio != null && <p className="animate-slideBio">{data.bio}</p>}
 
           <p className="animate-slideFindMe">
             Find me on{' '}
             {data.githubUrl != null && (
               <>
-                <a className="decoration-none text-blue-600" href={data.githubUrl}>
-                  <GithubIcon className="fill-blue-600  inline" width={16} />
+                <a className="text-blue-600" href={data.githubUrl}>
+                  <GithubIcon className="inline  fill-blue-600" width={16} />
                   &nbsp;
                   <span>Github</span>
                 </a>
@@ -31,7 +31,7 @@ export default function Index() {
               </>
             )}
             <a
-              className="decoration-none text-blue-600"
+              className="text-blue-600"
               href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
             >
               <LinkedInIcon className="inline fill-blue-600" width={16} />
@@ -41,7 +41,7 @@ export default function Index() {
             {data.email != null && (
               <>
                 or send me a{' '}
-                <a className="decoration-none text-blue-600" href={`mailto:${data.email}`}>
+                <a className="text-blue-600" href={`mailto:${data.email}`}>
                   <EnvelopeIcon className="inline w-4 fill-blue-600" width={16} />
                   &nbsp;
                   <span>mail</span>
@@ -60,9 +60,9 @@ export default function Index() {
 
 const Avatar = memo(function Avatar() {
   return (
-    <div className="animate-slideAvatar self-start flex-none relative w-[90px] aspect-square max-md:w-[60px]">
+    <div className="relative aspect-square w-[90px] flex-none animate-slideAvatar self-start max-md:w-[60px]">
       <Image
-        className="object-cover rounded-[50%] border-separate"
+        className="border-separate rounded-[50%] object-cover"
         priority
         src="https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=360"
         crossOrigin="anonymous"

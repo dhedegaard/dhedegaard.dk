@@ -12,10 +12,10 @@ export const Repositories = memo(function Repositories({
 }) {
   return (
     <div className="animate-slideRepositories">
-      <div className="flex w-full justify-between items-center">
-        <h2 className="text-xl mb-4">Interresting Github projects</h2>
+      <div className="flex w-full items-center justify-between">
+        <h2 className="mb-4 text-xl">Interresting Github projects</h2>
       </div>
-      <div className="grid grid-cols-2 grid-flow-row gap-6 mb-9 w-full max-md:grid-cols-1">
+      <div className="mb-9 grid w-full grid-flow-row grid-cols-2 gap-6 max-md:grid-cols-1">
         {repositories.map((repo) => (
           <Repo key={repo.id} repo={repo} />
         ))}
@@ -26,10 +26,10 @@ export const Repositories = memo(function Repositories({
 
 const Repo: FC<{ repo: DataRepository }> = memo(function Repo({ repo }) {
   return (
-    <div className="border rounded p-4 box-border flex flex-col gap-2">
-      <div className="flex justify-between items-start">
+    <div className="box-border flex flex-col gap-2 rounded border p-4">
+      <div className="flex items-start justify-between">
         <a
-          className="text-inherit no-underline flex font-bold"
+          className="flex font-bold text-inherit no-underline"
           href={repo.url}
           target="_blank"
           rel="noopener noreferrer"
@@ -37,9 +37,9 @@ const Repo: FC<{ repo: DataRepository }> = memo(function Repo({ repo }) {
           {repo.name}&nbsp;
           <GithubIcon className="w-4" />
         </a>
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           {repo.stargazerCount > 0 && (
-            <div className="flex gap-1 items-center" title="Stargazers">
+            <div className="flex items-center gap-1" title="Stargazers">
               <span className="text-sm">{repo.stargazerCount}</span>
               <StarIcon width={16} />
             </div>
@@ -58,7 +58,7 @@ const Repo: FC<{ repo: DataRepository }> = memo(function Repo({ repo }) {
         <div className="flex items-center gap-1">
           <LinkIcon width={11} />{' '}
           <a
-            className="p-1 no-underline text-blue-600 overflow-ellipsis text-xs"
+            className="text-ellipsis p-1 text-xs text-blue-600 no-underline"
             href={repo.homepageUrl}
             target="_blank"
             rel="noopener noreferrer"
@@ -69,7 +69,7 @@ const Repo: FC<{ repo: DataRepository }> = memo(function Repo({ repo }) {
       )}
 
       {repo.topics.length > 0 && (
-        <div className="inline-flex flex-wrap gap-1 w-full">
+        <div className="inline-flex w-full flex-wrap gap-1">
           {repo.topics.map((topic) => (
             <Topic key={topic.id} topic={topic} />
           ))}
@@ -81,7 +81,7 @@ const Repo: FC<{ repo: DataRepository }> = memo(function Repo({ repo }) {
           Language(s):&nbsp;
           {repo.languages.map((language, index) => (
             <Fragment key={language.id}>
-              <span className="font-bold inline text-xs">{language.name}</span>
+              <span className="inline text-xs font-bold">{language.name}</span>
               {index < repo.languages.length - 1 ? ', ' : null}
             </Fragment>
           ))}
@@ -93,7 +93,7 @@ const Repo: FC<{ repo: DataRepository }> = memo(function Repo({ repo }) {
 
 const Topic = memo(function Topic({ topic }: { topic: DataRepositoryTopic }) {
   return (
-    <div className="border rounded-2xl text-xs p-1.5 px-2 select-none border-gray-400">
+    <div className="select-none rounded-2xl border border-gray-400 p-1.5 px-2 text-xs">
       {topic.name}
     </div>
   )
