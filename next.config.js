@@ -2,6 +2,9 @@
  * @type {import('next').NextConfig}
  */
 const config = {
+  experimental: {
+    instrumentationHook: true,
+  },
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
@@ -45,7 +48,7 @@ const csp = [
   "img-src 'self' data: https://avatars.githubusercontent.com https://gravatar.com",
   "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
   "manifest-src 'self'",
-  "connect-src 'self' https://vitals.vercel-insights.com",
+  "connect-src 'self' https://vitals.vercel-insights.com https://o59230.ingest.sentry.io",
   "style-src-elem 'self' 'unsafe-inline'",
   "worker-src 'self' blob:",
 ]
