@@ -20,16 +20,12 @@ export default function Index() {
 
           <p className="animate-slideFindMe">
             Find me on{' '}
-            {data.githubUrl != null && (
-              <>
-                <a className="text-blue-600" href={data.githubUrl}>
-                  <GithubIcon className="inline  fill-blue-600" width={16} />
-                  &nbsp;
-                  <span>Github</span>
-                </a>
-                ,{' '}
-              </>
-            )}
+            <a className="text-blue-600" href={data.githubUrl}>
+              <GithubIcon className="inline fill-blue-600" width={16} />
+              &nbsp;
+              <span>Github</span>
+            </a>
+            ,{' '}
             <a
               className="text-blue-600"
               href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
@@ -38,17 +34,13 @@ export default function Index() {
               &nbsp;
               <span>LinkedIn</span>
             </a>{' '}
-            {data.email != null && (
-              <>
-                or send me a{' '}
-                <a className="text-blue-600" href={`mailto:${data.email}`}>
-                  <EnvelopeIcon className="inline w-4 fill-blue-600" width={16} />
-                  &nbsp;
-                  <span>mail</span>
-                </a>
-                .
-              </>
-            )}
+            or send me a{' '}
+            <a className="text-blue-600" href={`mailto:${data.email}`}>
+              <EnvelopeIcon className="inline w-4 fill-blue-600" width={16} />
+              &nbsp;
+              <span>mail</span>
+            </a>
+            .
           </p>
         </div>
         <Avatar />

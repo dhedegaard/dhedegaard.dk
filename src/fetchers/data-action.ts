@@ -5,20 +5,20 @@ import { orderBy, uniqBy } from 'lodash'
 import { z } from 'zod'
 import { getGithubUser } from '../clients/github'
 
-const dataRepositorLanguageSchema = z.object({
+const DataRepositorLanguage = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   color: z.nullable(z.string().min(1)),
 })
-export interface DataRepositoryLanguage extends z.TypeOf<typeof dataRepositorLanguageSchema> {}
+export interface DataRepositoryLanguage extends z.TypeOf<typeof DataRepositorLanguage> {}
 
-const dataRepositoryTopicSchema = z.object({
+const DataRepositoryTopic = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
 })
-export interface DataRepositoryTopic extends z.TypeOf<typeof dataRepositoryTopicSchema> {}
+export interface DataRepositoryTopic extends z.TypeOf<typeof DataRepositoryTopic> {}
 
-const dataRepositorySchema = z.object({
+const DataRepository = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   url: z.string().url(),
@@ -28,22 +28,22 @@ const dataRepositorySchema = z.object({
   updatedAt: z.nullable(z.string().datetime({ offset: true })),
   pushedAt: z.nullable(z.string().datetime({ offset: true })),
   stargazerCount: z.number().int().nonnegative(),
-  languages: z.array(dataRepositorLanguageSchema as z.ZodType<DataRepositoryLanguage>),
-  topics: z.array(dataRepositoryTopicSchema as z.ZodType<DataRepositoryTopic>),
+  languages: z.array(DataRepositorLanguage as z.ZodType<DataRepositoryLanguage>),
+  topics: z.array(DataRepositoryTopic as z.ZodType<DataRepositoryTopic>),
 })
-export interface DataRepository extends z.TypeOf<typeof dataRepositorySchema> {}
+export interface DataRepository extends z.TypeOf<typeof DataRepository> {}
 
-const dataResultSchema = z.object({
+const DataResult = z.object({
   avatarUrl: z.string().url(),
   bio: z.nullable(z.string().min(1)),
   githubUrl: z.string().url(),
   email: z.string().email(),
-  repositories: z.array(dataRepositorySchema as z.ZodType<DataRepository>),
+  repositories: z.array(DataRepository as z.ZodType<DataRepository>),
 })
-export interface DataResult extends z.TypeOf<typeof dataResultSchema> {}
+export interface DataResult extends z.TypeOf<typeof DataResult> {}
 
 const getData = async (): Promise<DataResult> => {
-  const user = await getGithubUser().catch((error) => {
+  const user = await getGithubUser().catch((error: unknown) => {
     console.error('Error fetching github user:', error)
     return undefined
   })
@@ -53,11 +53,11 @@ const getData = async (): Promise<DataResult> => {
   }
 
   const orderedPinnedNodeIds =
-    user.pinnedItems?.nodes
+    user.pinnedItems.nodes
       ?.map((e) => e?.id)
       .filter((e): e is NonNullable<typeof e> => e != null) ?? []
   const repos =
-    user.topRepositories?.edges?.reduce<DataRepository[]>((acc, edge) => {
+    user.topRepositories.edges?.reduce<DataRepository[]>((acc, edge) => {
       const repo = edge?.node
       if (repo == null || repo.isPrivate || repo.isArchived || repo.owner.id !== user.id) {
         return acc
@@ -68,38 +68,38 @@ const getData = async (): Promise<DataResult> => {
           (e): e is NonNullable<typeof e> => e != null
         ),
         (e) => e.id
-      ).map((language) => {
-        const result: DataRepositoryLanguage = {
-          id: language.id,
-          name: language.name,
-          color: language.color ?? null,
-        }
-        return result
-      })
+      ).map(
+        (language) =>
+          ({
+            id: language.id,
+            name: language.name,
+            color: language.color ?? null,
+          }) satisfies DataRepositoryLanguage
+      )
       const topics: DataRepositoryTopic[] =
         repo.repositoryTopics.edges
           ?.map((topic) => topic?.node ?? undefined)
-          ?.filter((e): e is NonNullable<typeof e> => e != null)
-          .map((topic) => {
-            const result: DataRepositoryTopic = {
-              id: topic.topic.id,
-              name: topic.topic.name,
-            }
-            return result
-          }) ?? []
-      const newItem: DataRepository = {
+          .filter((e): e is NonNullable<typeof e> => e != null)
+          .map(
+            (topic) =>
+              ({
+                id: topic.topic.id,
+                name: topic.topic.name,
+              }) satisfies DataRepositoryTopic
+          ) ?? []
+      const newItem: DataRepository = DataRepository.parse({
         id: repo.id,
         name: repo.name,
-        url: repo.url,
+        url: repo.url as string,
         pinned: orderedPinnedNodeIds.includes(repo.id),
         description: repo.description ?? null,
         homepageUrl: ensureHomepageUrl(repo.homepageUrl),
-        updatedAt: repo.updatedAt,
-        pushedAt: repo.pushedAt,
+        updatedAt: repo.updatedAt as string,
+        pushedAt: repo.pushedAt as string,
         stargazerCount: repo.stargazerCount,
         languages,
         topics,
-      }
+      } satisfies DataRepository)
       return [...acc, newItem]
     }, []) ?? []
   const orderedRepos = orderBy(
@@ -116,14 +116,13 @@ const getData = async (): Promise<DataResult> => {
     ['asc', 'desc', 'desc']
   )
 
-  const result: DataResult = {
+  return await DataResult.parseAsync({
     repositories: orderedRepos.slice(0, 40),
-    avatarUrl: user.avatarUrl,
+    avatarUrl: user.avatarUrl as string,
     bio: user.bio ?? null,
-    githubUrl: user.url,
+    githubUrl: user.url as string,
     email: user.email,
-  }
-  return await dataResultSchema.parseAsync(result)
+  } satisfies DataResult)
 }
 
 export async function getDataAction() {
