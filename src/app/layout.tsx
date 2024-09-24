@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import '../styles/globals.css'
+import { Analytics } from '@vercel/analytics/react'
 
 const metadataBase = new URL('https://www.dhedegaard.dk/')
 export const metadata: Metadata = {
@@ -81,13 +82,16 @@ interface Props {
 }
 export default function RootLayout({ children }: Readonly<Props>) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="canonical" href={metadataBase.toString()} />
-      </head>
-      <body>
-        <div className="mx-auto max-w-4xl px-6 max-md:px-4">{children}</div>
-      </body>
-    </html>
+    <>
+      <Analytics />
+      <html lang="en">
+        <head>
+          <link rel="canonical" href={metadataBase.toString()} />
+        </head>
+        <body>
+          <div className="mx-auto max-w-4xl px-6 max-md:px-4">{children}</div>
+        </body>
+      </html>
+    </>
   )
 }
