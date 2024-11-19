@@ -2,9 +2,7 @@
  * @type {import('next').NextConfig}
  */
 const config = {
-  experimental: {
-    instrumentationHook: true,
-  },
+  experimental: {},
   reactStrictMode: true,
   poweredByHeader: false,
   images: {

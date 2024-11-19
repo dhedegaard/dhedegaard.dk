@@ -23,6 +23,7 @@
     "@typescript-eslint/restrict-template-expressions": [
       "error",
       { "allowBoolean": true, "allowNumber": true, "allowNullish": true }
-    ]
+    ],
+    "@typescript-eslint/no-empty-object-type": "off"
   }
 }
