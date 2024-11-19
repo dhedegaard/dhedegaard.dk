@@ -45,7 +45,7 @@ export interface DataResult extends z.TypeOf<typeof DataResult> {}
 const getData = async (): Promise<DataResult> => {
   const user = await getGithubUser().catch((error: unknown) => {
     console.error('Error fetching github user:', error)
-    return undefined
+    return null
   })
 
   if (user == null) {
@@ -54,20 +54,20 @@ const getData = async (): Promise<DataResult> => {
 
   const orderedPinnedNodeIds =
     user.pinnedItems.nodes
-      ?.map((e) => e?.id)
-      .filter((e): e is NonNullable<typeof e> => e != null) ?? []
+      ?.map((node) => node?.id)
+      .filter((node): node is NonNullable<typeof node> => node != null) ?? []
   const repos =
-    user.topRepositories.edges?.reduce<DataRepository[]>((acc, edge) => {
+    user.topRepositories.edges?.reduce<DataRepository[]>((result, edge) => {
       const repo = edge?.node
       if (repo == null || repo.isPrivate || repo.isArchived || repo.owner.id !== user.id) {
-        return acc
+        return result
       }
 
       const languages: DataRepositoryLanguage[] = uniqBy(
-        [repo.primaryLanguage, ...(repo.languages?.edges?.map((e) => e?.node) ?? [])].filter(
-          (e): e is NonNullable<typeof e> => e != null
+        [repo.primaryLanguage, ...(repo.languages?.edges?.map((edge) => edge?.node) ?? [])].filter(
+          (language): language is NonNullable<typeof language> => language != null
         ),
-        (e) => e.id
+        (language) => language.id
       ).map(
         (language) =>
           ({
@@ -79,7 +79,7 @@ const getData = async (): Promise<DataResult> => {
       const topics: DataRepositoryTopic[] =
         repo.repositoryTopics.edges
           ?.map((topic) => topic?.node ?? undefined)
-          .filter((e): e is NonNullable<typeof e> => e != null)
+          .filter((topic): topic is NonNullable<typeof topic> => topic != null)
           .map(
             (topic) =>
               ({
@@ -100,14 +100,14 @@ const getData = async (): Promise<DataResult> => {
         languages,
         topics,
       } satisfies DataRepository)
-      return [...acc, newItem]
+      return [...result, newItem]
     }, []) ?? []
   const orderedRepos = orderBy(
     repos,
     [
       // Pinned repos ascending
-      (e) => {
-        const index = orderedPinnedNodeIds.indexOf(e.id)
+      (repository) => {
+        const index = orderedPinnedNodeIds.indexOf(repository.id)
         return index === -1 ? Infinity : index
       },
       'stargazerCount',

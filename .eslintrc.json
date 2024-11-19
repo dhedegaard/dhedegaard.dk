@@ -2,10 +2,11 @@
   "extends": [
     "next/core-web-vitals",
     "plugin:tailwindcss/recommended",
-    "plugin:@typescript-eslint/strict-type-checked"
+    "plugin:@typescript-eslint/strict-type-checked",
+    "plugin:unicorn/recommended"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "unicorn"],
   "parserOptions": {
     "project": true
   },
@@ -24,6 +25,16 @@
       "error",
       { "allowBoolean": true, "allowNumber": true, "allowNullish": true }
     ],
-    "@typescript-eslint/no-empty-object-type": "off"
+    "@typescript-eslint/no-empty-object-type": "off",
+    "unicorn/no-null": "off",
+    "unicorn/prevent-abbreviations": [
+      "error",
+      {
+        "allowList": {
+          "props": true,
+          "Props": true
+        }
+      }
+    ]
   }
 }

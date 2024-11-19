@@ -4,7 +4,7 @@ import { getDataAction } from '../fetchers/data-action'
 import { EnvelopeIcon } from '../icons/envelope'
 import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
-import { Repositories } from './Repositories'
+import { Repositories } from './repositories'
 
 export const dynamic = 'error'
 
