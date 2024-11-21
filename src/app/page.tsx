@@ -1,9 +1,8 @@
 import Image from 'next/image'
 import { memo, use } from 'react'
 import { getDataAction } from '../fetchers/data-action'
-import { EnvelopeIcon } from '../icons/envelope'
-import { GithubIcon } from '../icons/github'
-import { LinkedInIcon } from '../icons/linkedin'
+import { BioElement } from './bio-element.tsx'
+import { FindMeElement } from './find-me-element.tsx'
 import { Repositories } from './repositories'
 
 export const dynamic = 'force-static'
@@ -16,36 +15,13 @@ export default function Index() {
       <div className="mb-16 mt-8 flex gap-4">
         <div className="flex flex-auto flex-col gap-6">
           <h1 className="animate-slideTitle text-5xl">Dennis Hedegaard</h1>
-          {data.bio != null && <p className="animate-slideBio">{data.bio}</p>}
+          <BioElement seededBio={data.bio} />
 
-          <p className="animate-slideFindMe">
-            Find me on{' '}
-            <a className="text-blue-600" href={data.githubUrl}>
-              <GithubIcon className="inline fill-blue-600" width={16} />
-              &nbsp;
-              <span>Github</span>
-            </a>
-            ,{' '}
-            <a
-              className="text-blue-600"
-              href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"
-            >
-              <LinkedInIcon className="inline fill-blue-600" width={16} />
-              &nbsp;
-              <span>LinkedIn</span>
-            </a>{' '}
-            or send me a{' '}
-            <a className="text-blue-600" href={`mailto:${data.email}`}>
-              <EnvelopeIcon className="inline w-4 fill-blue-600" width={16} />
-              &nbsp;
-              <span>mail</span>
-            </a>
-            .
-          </p>
+          <FindMeElement seededData={data} />
         </div>
         <Avatar />
       </div>
-      <Repositories repositories={data.repositories} />
+      <Repositories seededRepositories={data.repositories} />
     </>
   )
 }
