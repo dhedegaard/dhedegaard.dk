@@ -31,6 +31,7 @@ export const getGithubUser = async (): Promise<User | null> => {
       'Content-Type': 'application/json',
       Authorization: `bearer ${pat}`,
     },
+    cache: 'force-cache',
     next: {
       revalidate: 21_600, // 6 hours
     },
