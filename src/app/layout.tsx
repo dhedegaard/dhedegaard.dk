@@ -1,7 +1,8 @@
+import '../styles/globals.css'
+
+import { Analytics } from '@vercel/analytics/react'
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
-import '../styles/globals.css'
-import { Analytics } from '@vercel/analytics/react'
 
 const metadataBase = new URL('https://www.dhedegaard.dk/')
 export const metadata: Metadata = {
