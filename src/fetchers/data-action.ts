@@ -1,7 +1,8 @@
 'use server'
 
 import { captureException } from '@sentry/nextjs'
-import { orderBy, uniqBy } from 'lodash'
+import orderBy from 'lodash/orderBy'
+import uniqBy from 'lodash/uniqBy'
 import { z } from 'zod'
 import { getGithubUser } from '../clients/github'
 
