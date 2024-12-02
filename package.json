@@ -4,7 +4,7 @@
   "description": "dhedegaard.dk",
   "homepage": "https://www.dhedegaard.dk/",
   "engines": {
-    "node": ">=20"
+    "node": "22"
   },
   "scripts": {
     "start": "next start",
@@ -17,7 +17,7 @@
   "private": true,
   "license": "UNLICENSED",
   "dependencies": {
-    "@sentry/nextjs": "^8.40.0",
+    "@sentry/nextjs": "^8.42.0",
     "@vercel/analytics": "^1.4.1",
     "daisyui": "^4.12.14",
     "graphql": "^16.9.0",
@@ -36,12 +36,12 @@
     "@tsconfig/next": "^2.0.3",
     "@tsconfig/strictest": "^2.0.5",
     "@types/lodash": "^4.17.13",
-    "@types/node": "20.17.7",
+    "@types/node": "22.10.1",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
-    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
     "autoprefixer": "^10.4.20",
-    "eslint": "^9.15.0",
+    "eslint": "^9.16.0",
     "eslint-config-next": "15.0.3",
     "eslint-plugin-tailwindcss": "^3.17.5",
     "eslint-plugin-unicorn": "^56.0.1",
