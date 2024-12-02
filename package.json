@@ -9,7 +9,7 @@
   "scripts": {
     "start": "next start",
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "ANALYZE=true next build",
     "lint": "next lint",
     "codegen": "graphql-codegen --config codegen.yml"
   },
@@ -17,6 +17,7 @@
   "private": true,
   "license": "UNLICENSED",
   "dependencies": {
+    "@next/bundle-analyzer": "^15.0.3",
     "@sentry/nextjs": "^8.42.0",
     "@vercel/analytics": "^1.4.1",
     "daisyui": "^4.12.14",
