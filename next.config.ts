@@ -1,7 +1,7 @@
-/**
- * @type {import('next').NextConfig}
- */
-const config = {
+import { withSentryConfig } from '@sentry/nextjs'
+import type { NextConfig } from 'next'
+
+const config: NextConfig = {
   experimental: {},
   reactStrictMode: true,
   poweredByHeader: false,
@@ -53,9 +53,7 @@ const csp = [
 
 // Injected content via Sentry wizard below
 
-const { withSentryConfig } = require('@sentry/nextjs')
-
-module.exports = withSentryConfig(config, {
+export default withSentryConfig(config, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
