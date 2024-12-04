@@ -6,7 +6,6 @@ const config: NextConfig = {
   experimental: {},
   reactStrictMode: true,
   poweredByHeader: false,
-  outp
   images: {
     remotePatterns: [
       {
