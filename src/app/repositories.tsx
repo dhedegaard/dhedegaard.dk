@@ -29,8 +29,6 @@ const Repo: FC<{ repo: DataRepository }> = memo(function Repo({ repo }) {
     <article className="box-border flex flex-col gap-2 rounded border p-4">
       <div className="flex items-start justify-between">
         <a
-          role="heading"
-          aria-level={2}
           className="flex font-bold text-inherit no-underline"
           href={repo.url}
           target="_blank"
