@@ -1,24 +1,15 @@
-'use client'
-
-import { FC, Fragment, memo, useMemo } from 'react'
+import { FC, Fragment, memo } from 'react'
 import { DataRepository, DataRepositoryTopic } from '../fetchers/data-action'
-import { useData } from '../fetchers/data-hook'
 import { GithubIcon } from '../icons/github'
 import { LinkIcon } from '../icons/link'
 import { MapPinIcon } from '../icons/map-pin'
 import { StarIcon } from '../icons/star'
 
 export const Repositories = memo(function Repositories({
-  seededRepositories,
+  repositories,
 }: {
-  seededRepositories: readonly DataRepository[]
+  repositories: readonly DataRepository[]
 }) {
-  const { data } = useData()
-  const repositories = useMemo(
-    () => data?.repositories ?? seededRepositories,
-    [data?.repositories, seededRepositories]
-  )
-
   return (
     <div className="animate-slideRepositories">
       <div className="flex w-full items-center justify-between">

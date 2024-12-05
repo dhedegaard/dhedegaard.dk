@@ -45,13 +45,8 @@ export interface DataResult extends z.TypeOf<typeof DataResult> {}
 
 const getData = async (): Promise<DataResult> => {
   const user = await getGithubUser().catch((error: unknown) => {
-    console.error('Error fetching github user:', error)
-    return null
+    throw new Error(`Error fetching github user: ${String(error)}`, { cause: error })
   })
-
-  if (user == null) {
-    throw new Error('Github user not found')
-  }
 
   const orderedPinnedNodeIds =
     user.pinnedItems.nodes

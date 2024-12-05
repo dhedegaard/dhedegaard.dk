@@ -1,23 +1,15 @@
-'use client'
-
-import { memo, useMemo } from 'react'
+import { memo } from 'react'
 import type { DataResult } from '../fetchers/data-action'
-import { useData } from '../fetchers/data-hook'
 import { EnvelopeIcon } from '../icons/envelope'
 import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
 
-interface FindMeElementProps {
-  seededData: DataResult
-}
-export const FindMeElement = memo<FindMeElementProps>(function FindMeElement({ seededData }) {
-  const { data: freshData } = useData()
-  const data = useMemo(() => freshData ?? seededData, [freshData, seededData])
-
+interface FindMeElementProps extends Pick<DataResult, 'githubUrl' | 'email'> {}
+export const FindMeElement = memo<FindMeElementProps>(function FindMeElement({ githubUrl, email }) {
   return (
     <p className="animate-slideFindMe">
       Find me on{' '}
-      <a className="text-blue-600" href={data.githubUrl}>
+      <a className="text-blue-600" href={githubUrl}>
         <GithubIcon className="inline fill-blue-600" width={16} />
         &nbsp;
         <span>Github</span>
@@ -29,7 +21,7 @@ export const FindMeElement = memo<FindMeElementProps>(function FindMeElement({ s
         <span>LinkedIn</span>
       </a>{' '}
       or send me a{' '}
-      <a className="text-blue-600" href={`mailto:${data.email}`}>
+      <a className="text-blue-600" href={`mailto:${email}`}>
         <EnvelopeIcon className="inline w-4 fill-blue-600" width={16} />
         &nbsp;
         <span>mail</span>

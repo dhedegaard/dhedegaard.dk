@@ -15,7 +15,7 @@ export interface GithubRepository {
   topics: RepositoryTopic[]
 }
 
-export const getGithubUser = async (): Promise<User | null> => {
+export const getGithubUser = async (): Promise<User> => {
   const pat: unknown = process.env['GITHUB_PAT']
   if (typeof pat !== 'string' || pat === '') {
     throw new Error('GITHUB_PAT is not set')
@@ -31,9 +31,8 @@ export const getGithubUser = async (): Promise<User | null> => {
       'Content-Type': 'application/json',
       Authorization: `bearer ${pat}`,
     },
-    cache: 'force-cache',
     next: {
-      revalidate: 21_600, // 6 hours
+      revalidate: 3600,
     },
   })
     .then((response) => {
@@ -44,8 +43,9 @@ export const getGithubUser = async (): Promise<User | null> => {
     })
     .then((response) => {
       if (response.errors != null) {
-        console.error('Error in Github response:', response.errors)
-        return null
+        throw new Error(`Error in Github response: ${JSON.stringify(response.errors)}`, {
+          cause: response.errors,
+        })
       }
       return response.data.user
     })
