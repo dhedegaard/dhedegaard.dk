@@ -91,8 +91,8 @@ export default function RootLayout({ children }: Readonly<Props>) {
       <body className="overflow-y-visible">
         <div className="mx-auto max-w-4xl px-6 max-md:px-4">{children}</div>
 
-        <Analytics />
-        <SpeedInsights />
+        <Analytics debug={false} />
+        <SpeedInsights debug={false} />
       </body>
     </html>
   )
