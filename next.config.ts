@@ -76,6 +76,10 @@ export default withBundleAnalyzer({
     // https://vercel.com/docs/cron-jobs
     automaticVercelMonitors: true,
 
+    sourcemaps: {
+      deleteSourcemapsAfterUpload: true,
+    },
+
     bundleSizeOptimizations: {
       excludeDebugStatements: true,
       excludeReplayIframe: true,
