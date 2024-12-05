@@ -1,5 +1,6 @@
 import '../styles/globals.css'
 
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
@@ -84,7 +85,6 @@ interface Props {
 export default function RootLayout({ children }: Readonly<Props>) {
   return (
     <>
-      <Analytics />
       <html lang="en">
         <head>
           <link rel="canonical" href={metadataBase.toString()} />
@@ -93,6 +93,9 @@ export default function RootLayout({ children }: Readonly<Props>) {
           <div className="mx-auto max-w-4xl px-6 max-md:px-4">{children}</div>
         </body>
       </html>
+
+      <Analytics />
+      <SpeedInsights />
     </>
   )
 }
