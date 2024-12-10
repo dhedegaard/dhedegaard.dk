@@ -3,6 +3,7 @@
 import { captureException } from '@sentry/nextjs'
 import orderBy from 'lodash-es/orderBy'
 import uniqBy from 'lodash-es/uniqBy'
+import { cache } from 'react'
 import { z } from 'zod'
 import { getGithubUser } from '../clients/github'
 
@@ -121,9 +122,11 @@ const getData = async (): Promise<DataResult> => {
   } satisfies DataResult)
 }
 
+const cachedGetData = cache(getData)
+
 export async function getDataAction() {
   try {
-    return await getData()
+    return await cachedGetData()
   } catch (error: unknown) {
     captureException(error)
     throw error
