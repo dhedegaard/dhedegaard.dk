@@ -3,9 +3,7 @@ import { withSentryConfig } from '@sentry/nextjs'
 import type { NextConfig } from 'next'
 
 const config: NextConfig = {
-  experimental: {},
   reactStrictMode: true,
-  poweredByHeader: false,
   images: {
     remotePatterns: [
       {
