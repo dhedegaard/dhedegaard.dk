@@ -5,6 +5,7 @@ import { FindMeElement } from './find-me-element.tsx'
 import { Repositories } from './repositories'
 
 export const revalidate = false
+export const runtime = 'edge'
 
 export default async function Index() {
   const data = await getDataAction()
