@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
+import { preconnect } from 'react-dom'
 
 const metadataBase = new URL('https://www.dhedegaard.dk/')
 export const metadata: Metadata = {
@@ -83,6 +84,8 @@ interface Props {
   children: ReactNode
 }
 export default function RootLayout({ children }: Readonly<Props>) {
+  preconnect('https://gravatar.com')
+
   return (
     <html lang="en">
       <head>
