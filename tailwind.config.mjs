@@ -6,11 +6,11 @@ const config = {
   theme: {
     extend: {
       animation: {
-        slideTitle: '0.5s ease-out 0s 1 slideTitle',
-        slideAvatar: '0.5s ease-out 0s 1 slideAvatar',
-        slideBio: '0.75s ease-out 0s 1 slideBio',
-        slideFindMe: '1s ease-out 0s 1 slideFindMe',
-        slideRepositories: '1.25s ease-out 0s 1 slideRepositories',
+        slideTitle: '0.25s ease-out 0s 1 slideTitle',
+        slideAvatar: '0.25s ease-out 0s 1 slideAvatar',
+        slideBio: '0.50s ease-out 0s 1 slideBio',
+        slideFindMe: '0.5s ease-out 0s 1 slideFindMe',
+        slideRepositories: '0.75s ease-out 0s 1 slideRepositories',
       },
       keyframes: {
         slideTitle: {
