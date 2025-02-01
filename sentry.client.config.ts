@@ -21,8 +21,6 @@ Sentry.init({
   // Define how likely Replay events are sampled when an error occurs.
   replaysOnErrorSampleRate: 1.0,
 
-  defaultIntegrations: false,
-
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
   debug: false,
 
