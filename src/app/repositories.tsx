@@ -1,15 +1,14 @@
-import { FC, Fragment, memo } from 'react'
+import { Fragment, memo } from 'react'
 import { DataRepository, DataRepositoryTopic } from '../fetchers/data-action'
 import { GithubIcon } from '../icons/github'
 import { LinkIcon } from '../icons/link'
 import { MapPinIcon } from '../icons/map-pin'
 import { StarIcon } from '../icons/star'
 
-export const Repositories = memo(function Repositories({
-  repositories,
-}: {
+interface RepositoriesProps {
   repositories: readonly DataRepository[]
-}) {
+}
+export const Repositories = memo<RepositoriesProps>(function Repositories({ repositories }) {
   return (
     <div className="animate-slideRepositories">
       <div className="flex w-full items-center justify-between">
@@ -24,7 +23,10 @@ export const Repositories = memo(function Repositories({
   )
 })
 
-const Repo: FC<{ repo: DataRepository }> = memo(function Repo({ repo }) {
+interface RepoProps {
+  repo: DataRepository
+}
+const Repo = memo<RepoProps>(function Repo({ repo }) {
   return (
     <article className="box-border flex flex-col gap-2 rounded border p-4">
       <div className="flex items-start justify-between">
@@ -91,7 +93,10 @@ const Repo: FC<{ repo: DataRepository }> = memo(function Repo({ repo }) {
   )
 })
 
-const Topic = memo(function Topic({ topic }: { topic: DataRepositoryTopic }) {
+interface TopicProps {
+  topic: DataRepositoryTopic
+}
+const Topic = memo<TopicProps>(function Topic({ topic }) {
   return (
     <div className="select-none rounded-2xl border border-gray-400 p-1.5 px-2 text-xs">
       {topic.name}
