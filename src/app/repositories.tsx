@@ -81,12 +81,14 @@ const Repo = memo<RepoProps>(function Repo({ repo }) {
       {repo.languages.length > 0 && (
         <span className="text-xs">
           Language(s):&nbsp;
-          {repo.languages.map((language, index) => (
-            <Fragment key={language.id}>
-              <span className="inline text-xs font-bold">{language.name}</span>
-              {index < repo.languages.length - 1 ? ', ' : null}
-            </Fragment>
-          ))}
+          <span className="inline text-xs font-bold">
+            {repo.languages.map((language, index) => (
+              <Fragment key={language.id}>
+                {language.name}
+                {index < repo.languages.length - 1 ? ', ' : null}
+              </Fragment>
+            ))}
+          </span>
         </span>
       )}
     </article>
