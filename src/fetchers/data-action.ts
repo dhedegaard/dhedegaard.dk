@@ -124,14 +124,14 @@ const getData = async (): Promise<DataResult> => {
 
 const cachedGetData = cache(getData)
 
-export async function getDataAction() {
+export const getDataAction = cache(async function getDataAction() {
   try {
     return await cachedGetData()
   } catch (error: unknown) {
     captureException(error)
     throw error
   }
-}
+})
 
 const ensureHomepageUrl = (url: unknown): string | null => {
   if (typeof url !== 'string' || url === '') {
