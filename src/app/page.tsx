@@ -1,3 +1,4 @@
+import { unstable_cache } from 'next/cache'
 import { getDataAction } from '../fetchers/data-action'
 import { Avatar } from './avatar'
 import { BioElement } from './bio-element.tsx'
@@ -7,8 +8,12 @@ import { Repositories } from './repositories'
 export const revalidate = false
 export const runtime = 'edge'
 
+const cachedGetDataAction = unstable_cache(() => getDataAction(), ['getDataAction'], {
+  revalidate: 60 * 60 * 24 * 7,
+})
+
 export default async function Index() {
-  const data = await getDataAction()
+  const data = await cachedGetDataAction()
 
   return (
     <>
