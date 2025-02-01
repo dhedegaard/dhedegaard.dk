@@ -11,7 +11,7 @@
     "project": true
   },
   "root": true,
-
+  "ignorePatterns": ["node_modules", ".next", "public", "src/codegen"],
   "rules": {
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "eqeqeq": ["error", "smart"],
