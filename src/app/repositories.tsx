@@ -57,17 +57,16 @@ const Repo = memo<RepoProps>(function Repo({ repo }) {
       <span className="flex-auto text-sm">{repo.description}</span>
 
       {repo.homepageUrl != null && (
-        <div className="flex items-center gap-1">
-          <LinkIcon width={11} />{' '}
-          <a
-            className="text-ellipsis p-1 text-xs text-blue-600 no-underline"
-            href={repo.homepageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {repo.homepageUrl.split('://')[1] ?? repo.homepageUrl}
-          </a>
-        </div>
+        <a
+          className="inline-block text-ellipsis p-1 text-xs text-blue-600 no-underline"
+          href={repo.homepageUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <LinkIcon width={11} className="inline-block text-base-content" />
+          &nbsp;
+          {repo.homepageUrl.split('://')[1] ?? repo.homepageUrl}
+        </a>
       )}
 
       {repo.topics.length > 0 && (
