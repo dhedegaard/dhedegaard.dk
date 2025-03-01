@@ -3,7 +3,7 @@ import { memo } from 'react'
 
 export const Avatar = memo(function Avatar() {
   return (
-    <div className="relative aspect-square w-[90px] flex-none animate-slideAvatar self-start max-md:w-[60px]">
+    <div className="animate-slideAvatar relative aspect-square w-[90px] flex-none self-start max-md:w-[60px]">
       <Image
         className="border-separate rounded-[50%] object-cover"
         priority
