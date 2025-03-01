@@ -28,7 +28,7 @@ interface RepoProps {
 }
 const Repo = memo<RepoProps>(function Repo({ repo }) {
   return (
-    <article className="box-border flex flex-col gap-2 rounded border p-4">
+    <article className="box-border flex flex-col gap-2 rounded-sm border border-slate-300 p-4">
       <div className="flex items-start justify-between">
         <a
           className="flex font-bold text-inherit no-underline"
@@ -58,12 +58,12 @@ const Repo = memo<RepoProps>(function Repo({ repo }) {
 
       {repo.homepageUrl != null && (
         <a
-          className="inline-block text-ellipsis p-1 text-xs text-blue-600 no-underline"
+          className="inline-block p-1 text-xs text-ellipsis text-blue-600 no-underline"
           href={repo.homepageUrl}
           target="_blank"
           rel="noopener noreferrer"
         >
-          <LinkIcon width={11} className="inline-block text-base-content" />
+          <LinkIcon width={11} className="text-base-content inline-block" />
           &nbsp;
           {repo.homepageUrl.split('://')[1] ?? repo.homepageUrl}
         </a>
@@ -99,7 +99,7 @@ interface TopicProps {
 }
 const Topic = memo<TopicProps>(function Topic({ topic }) {
   return (
-    <div className="select-none rounded-2xl border border-gray-400 p-1.5 px-2 text-xs">
+    <div className="rounded-2xl border border-gray-400 p-1.5 px-2 text-xs select-none">
       {topic.name}
     </div>
   )
