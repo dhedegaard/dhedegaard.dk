@@ -18,14 +18,14 @@
   "private": true,
   "license": "UNLICENSED",
   "dependencies": {
-    "@next/bundle-analyzer": "15.2.2",
+    "@next/bundle-analyzer": "15.2.4",
     "@sentry/nextjs": "^9.5.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
     "lodash-es": "^4.17.21",
-    "next": "15.2.2",
+    "next": "15.2.4",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "typescript": "^5.7.3",
@@ -41,19 +41,19 @@
     "@tsconfig/strictest": "^2.0.5",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "22.13.10",
-    "@types/react": "19.0.10",
+    "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
     "@typescript-eslint/eslint-plugin": "^8.26.1",
     "daisyui": "^5.0.4",
     "eslint": "^9.22.0",
-    "eslint-config-next": "15.2.2",
+    "eslint-config-next": "15.2.4",
     "eslint-plugin-unicorn": "^56.0.1",
     "postcss": "^8.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4.0.14"
   },
   "overrides": {
-    "@types/react": "19.0.10",
+    "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4"
   }
 }
