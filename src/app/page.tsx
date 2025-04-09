@@ -1,8 +1,8 @@
 import { unstable_cache } from 'next/cache'
 import { getDataAction } from '../fetchers/data-action'
 import { Avatar } from './avatar'
-import { BioElement } from './bio-element.tsx'
-import { FindMeElement } from './find-me-element.tsx'
+import { BioElement } from './bio-element'
+import { FindMeElement } from './find-me-element'
 import { Repositories } from './repositories'
 
 export const revalidate = false
