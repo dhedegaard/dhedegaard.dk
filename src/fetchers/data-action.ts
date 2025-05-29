@@ -4,45 +4,45 @@ import { captureException } from '@sentry/nextjs'
 import orderBy from 'lodash-es/orderBy'
 import uniqBy from 'lodash-es/uniqBy'
 import { cache } from 'react'
-import { z } from 'zod'
+import { z } from 'zod/v4-mini'
 import { getGithubUser } from '../clients/github'
 
 const DataRepositorLanguage = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  color: z.nullable(z.string().min(1)),
+  id: z.string().check(z.minLength(1)),
+  name: z.string().check(z.minLength(1)),
+  color: z.nullable(z.string().check(z.minLength(1))),
 })
-export interface DataRepositoryLanguage extends z.TypeOf<typeof DataRepositorLanguage> {}
+export interface DataRepositoryLanguage extends z.infer<typeof DataRepositorLanguage> {}
 
 const DataRepositoryTopic = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
+  id: z.string().check(z.minLength(1)),
+  name: z.string().check(z.minLength(1)),
 })
-export interface DataRepositoryTopic extends z.TypeOf<typeof DataRepositoryTopic> {}
+export interface DataRepositoryTopic extends z.infer<typeof DataRepositoryTopic> {}
 
 const DataRepository = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  url: z.string().url(),
+  id: z.string().check(z.minLength(1)),
+  name: z.string().check(z.minLength(1)),
+  url: z.url(),
   pinned: z.boolean(),
-  description: z.nullable(z.string().min(1)),
-  homepageUrl: z.nullable(z.string().url()),
-  updatedAt: z.nullable(z.string().datetime({ offset: true })),
-  pushedAt: z.nullable(z.string().datetime({ offset: true })),
-  stargazerCount: z.number().int().nonnegative(),
-  languages: z.array(DataRepositorLanguage as z.ZodType<DataRepositoryLanguage>),
-  topics: z.array(DataRepositoryTopic as z.ZodType<DataRepositoryTopic>),
+  description: z.nullable(z.string().check(z.minLength(1))),
+  homepageUrl: z.nullable(z.url()),
+  updatedAt: z.nullable(z.iso.datetime({ offset: true })),
+  pushedAt: z.nullable(z.iso.datetime({ offset: true })),
+  stargazerCount: z.int().check(z.nonnegative()),
+  languages: z.array(DataRepositorLanguage as z.ZodMiniType<DataRepositoryLanguage>),
+  topics: z.array(DataRepositoryTopic as z.ZodMiniType<DataRepositoryTopic>),
 })
-export interface DataRepository extends z.TypeOf<typeof DataRepository> {}
+export interface DataRepository extends z.infer<typeof DataRepository> {}
 
 const DataResult = z.object({
-  avatarUrl: z.string().url(),
-  bio: z.nullable(z.string().min(1)),
-  githubUrl: z.string().url(),
-  email: z.string().email(),
-  repositories: z.array(DataRepository as z.ZodType<DataRepository>),
+  avatarUrl: z.url(),
+  bio: z.nullable(z.string().check(z.minLength(1))),
+  githubUrl: z.url(),
+  email: z.email(),
+  repositories: z.array(DataRepository as z.ZodMiniType<DataRepository>),
 })
-export interface DataResult extends z.TypeOf<typeof DataResult> {}
+export interface DataResult extends z.infer<typeof DataResult> {}
 
 const getData = async (): Promise<DataResult> => {
   const user = await getGithubUser().catch((error: unknown) => {
