@@ -1,4 +1,3 @@
-import withBundleAnalyzer from '@next/bundle-analyzer'
 import { withSentryConfig } from '@sentry/nextjs'
 import type { NextConfig } from 'next'
 
@@ -24,11 +23,7 @@ const config: NextConfig = {
 
 // Injected content via Sentry wizard below
 
-export default withBundleAnalyzer({
-  enabled: process.env['ANALYZE'] === 'true',
-  openAnalyzer: false,
-})(
-  withSentryConfig(config, {
+export default   withSentryConfig(config, {
     // Suppresses source map uploading logs during build
     silent: true,
     org: 'dennis-hedegaard',
@@ -49,4 +44,3 @@ export default withBundleAnalyzer({
       excludeTracing: true,
     },
   })
-)
