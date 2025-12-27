@@ -37,7 +37,7 @@ export const getGithubUser = async (): Promise<User> => {
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error(`${response.status}: ${response.statusText}`)
+        throw new Error(`${response.status.toString()}: ${response.statusText}`)
       }
       return response.json() as Promise<{ errors?: unknown; data: { user: User } }>
     })

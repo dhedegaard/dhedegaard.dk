@@ -5,6 +5,7 @@ import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
 
 interface FindMeElementProps extends Pick<DataResult, 'githubUrl' | 'email'> {}
+
 export const FindMeElement = memo<FindMeElementProps>(function FindMeElement({ githubUrl, email }) {
   return (
     <p className="animate-slideFindMe">
