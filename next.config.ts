@@ -21,26 +21,24 @@ const config: NextConfig = {
   },
 }
 
-// Injected content via Sentry wizard below
+export default withSentryConfig(config, {
+  // Suppresses source map uploading logs during build
+  silent: true,
+  org: 'dennis-hedegaard',
+  project: 'dhedegaarddk',
 
-export default   withSentryConfig(config, {
-    // Suppresses source map uploading logs during build
-    silent: true,
-    org: 'dennis-hedegaard',
-    project: 'dhedegaarddk',
+  // Upload a larger set of source maps for prettier stack traces (increases build time)
+  widenClientFileUpload: true,
 
-    // Upload a larger set of source maps for prettier stack traces (increases build time)
-    widenClientFileUpload: true,
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true,
+  },
 
-    sourcemaps: {
-      deleteSourcemapsAfterUpload: true,
-    },
-
-    bundleSizeOptimizations: {
-      excludeDebugStatements: true,
-      excludeReplayIframe: true,
-      excludeReplayShadowDom: true,
-      excludeReplayWorker: true,
-      excludeTracing: true,
-    },
-  })
+  bundleSizeOptimizations: {
+    excludeDebugStatements: true,
+    excludeReplayIframe: true,
+    excludeReplayShadowDom: true,
+    excludeReplayWorker: true,
+    excludeTracing: true,
+  },
+})
