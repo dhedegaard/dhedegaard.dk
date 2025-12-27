@@ -5,9 +5,6 @@ import { BioElement } from './bio-element'
 import { FindMeElement } from './find-me-element'
 import { Repositories } from './repositories'
 
-export const revalidate = false
-export const runtime = 'edge'
-
 const cachedGetDataAction = unstable_cache(() => getDataAction(), ['getDataAction'], {
   revalidate: 60 * 60 * 24 * 7,
 })
