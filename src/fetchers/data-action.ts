@@ -30,8 +30,10 @@ const DataRepository = z.object({
   updatedAt: z.nullable(z.iso.datetime({ offset: true })),
   pushedAt: z.nullable(z.iso.datetime({ offset: true })),
   stargazerCount: z.int().check(z.nonnegative()),
-  languages: z.array(DataRepositorLanguage as z.ZodMiniType<DataRepositoryLanguage>),
-  topics: z.array(DataRepositoryTopic as z.ZodMiniType<DataRepositoryTopic>),
+  languages: z.array(
+    DataRepositorLanguage as z.ZodMiniType<DataRepositoryLanguage, DataRepositoryLanguage>
+  ),
+  topics: z.array(DataRepositoryTopic as z.ZodMiniType<DataRepositoryTopic, DataRepositoryTopic>),
 })
 export interface DataRepository extends z.infer<typeof DataRepository> {}
 
@@ -40,7 +42,7 @@ const DataResult = z.object({
   bio: z.nullable(z.string().check(z.minLength(1))),
   githubUrl: z.url(),
   email: z.email(),
-  repositories: z.array(DataRepository as z.ZodMiniType<DataRepository>),
+  repositories: z.array(DataRepository as z.ZodMiniType<DataRepository, DataRepository>),
 })
 export interface DataResult extends z.infer<typeof DataResult> {}
 
