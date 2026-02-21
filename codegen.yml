@@ -4,8 +4,12 @@ schema:
       headers:
         Authorization: "Bearer ${GITHUB_PAT}"
         User-Agent: "codegen"
-documents: "src/**/*.ts"
+documents:
+  - "src/**/*.ts"
+  - "!src/codegen/**"
 generates:
   src/codegen/types.ts:
     plugins:
       - "typescript"
+      - "typescript-operations"
+      - "typed-document-node"

@@ -54,8 +54,7 @@ type GithubRepoNode = NonNullable<NonNullable<GithubRepoEdge>['node']>
 
 const getOrderedPinnedNodeIds = (user: GithubUserData): string[] =>
   user.pinnedItems.nodes
-    ?.map((node) => node?.id)
-    .filter((node): node is NonNullable<typeof node> => node != null) ?? []
+    ?.flatMap((node) => (node?.__typename === 'Repository' ? [node.id] : [])) ?? []
 
 const buildPinnedRankMap = (orderedPinnedNodeIds: readonly string[]): ReadonlyMap<string, number> => {
   const pinnedRankMap = new Map<string, number>()
@@ -101,12 +100,12 @@ const toDataRepository = (
   return DataRepository.parse({
     id: repo.id,
     name: repo.name,
-    url: repo.url as string,
+    url: ensureString(repo.url, 'repository url'),
     pinned: getPinnedRank(repo.id, pinnedRankMap) !== Infinity,
     description: repo.description ?? null,
     homepageUrl: ensureHomepageUrl(repo.homepageUrl),
-    updatedAt: repo.updatedAt as string,
-    pushedAt: repo.pushedAt as string,
+    updatedAt: ensureNullableString(repo.updatedAt),
+    pushedAt: ensureNullableString(repo.pushedAt),
     stargazerCount: repo.stargazerCount,
     languages: extractLanguages(repo),
     topics: extractTopics(repo),
@@ -165,9 +164,9 @@ const getData = async (): Promise<DataResult> => {
 
   return await DataResult.parseAsync({
     repositories: orderedRepos.slice(0, 40),
-    avatarUrl: user.avatarUrl as string,
+    avatarUrl: ensureString(user.avatarUrl, 'user avatar URL'),
     bio: user.bio ?? null,
-    githubUrl: user.url as string,
+    githubUrl: ensureString(user.url, 'user profile URL'),
     email: user.email,
   } satisfies DataResult)
 }
@@ -193,3 +192,13 @@ const ensureHomepageUrl = (url: unknown): string | null => {
   }
   return result
 }
+
+const ensureString = (value: unknown, fieldName: string): string => {
+  if (typeof value !== 'string' || value === '') {
+    throw new Error(`Expected ${fieldName} to be a non-empty string`)
+  }
+  return value
+}
+
+const ensureNullableString = (value: unknown): string | null =>
+  typeof value === 'string' ? value : null

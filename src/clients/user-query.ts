@@ -5,7 +5,7 @@ import gql from 'graphql-tag'
  * <https://docs.github.com/en/graphql/overview/explorer>
  */
 export const userQuery = gql`
-  {
+  query UserQuery {
     user(login: "dhedegaard") {
       id
       name

@@ -1,21 +1,9 @@
-import type { Language, RepositoryTopic, User } from '../codegen/types'
+import type { UserQueryQuery } from '../codegen/types'
 import { userQuery } from './user-query'
 
-export interface GithubRepository {
-  id: string
-  name: string
-  url: string
-  pinned: boolean
-  description: string | null
-  updatedAt: string | null
-  pushedAt: string | null
-  homepageUrl: null | string
-  languages: Language[]
-  stargazerCount: number
-  topics: RepositoryTopic[]
-}
+export type GithubUser = NonNullable<UserQueryQuery['user']>
 
-export const getGithubUser = async (): Promise<User> => {
+export const getGithubUser = async (): Promise<GithubUser> => {
   const pat: unknown = process.env['GITHUB_PAT']
   if (typeof pat !== 'string' || pat === '') {
     throw new Error('GITHUB_PAT is not set')
@@ -40,7 +28,7 @@ export const getGithubUser = async (): Promise<User> => {
   }
   const responseJson = await (response.json() as Promise<{
     errors?: unknown
-    data: { user: User }
+    data: UserQueryQuery
   }>)
 
   if (responseJson.errors != null) {
@@ -48,5 +36,10 @@ export const getGithubUser = async (): Promise<User> => {
       cause: responseJson.errors,
     })
   }
-  return responseJson.data.user
+  const user = responseJson.data.user
+  if (user == null) {
+    throw new Error('Github user was not found')
+  }
+
+  return user
 }
