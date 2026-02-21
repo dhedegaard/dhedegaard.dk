@@ -1,11 +1,13 @@
 import { defineConfig, globalIgnores } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
-import eslint from '@eslint/js'
+import nextTs from 'eslint-config-next/typescript'
 import tseslint from 'typescript-eslint'
+import prettier from 'eslint-config-prettier/flat'
 
 const eslintConfig = defineConfig([
   ...nextVitals,
-  eslint.configs.recommended,
+  ...nextTs,
+  prettier,
   tseslint.configs.strictTypeChecked,
   {
     rules: {
