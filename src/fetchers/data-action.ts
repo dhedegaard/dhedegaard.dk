@@ -1,7 +1,6 @@
 'use server'
 
 import { captureException } from '@sentry/nextjs'
-import orderBy from 'lodash-es/orderBy'
 import uniqBy from 'lodash-es/uniqBy'
 import { cache } from 'react'
 import { z } from 'zod/v4-mini'
@@ -46,74 +45,123 @@ const DataResult = z.object({
 })
 export interface DataResult extends z.infer<typeof DataResult> {}
 
+type GithubUserData = Awaited<ReturnType<typeof getGithubUser>>
+type GithubRepoEdge =
+  GithubUserData['topRepositories']['edges'] extends readonly (infer Edge)[] | null | undefined
+    ? Edge
+    : never
+type GithubRepoNode = NonNullable<NonNullable<GithubRepoEdge>['node']>
+
+const getOrderedPinnedNodeIds = (user: GithubUserData): string[] =>
+  user.pinnedItems.nodes
+    ?.map((node) => node?.id)
+    .filter((node): node is NonNullable<typeof node> => node != null) ?? []
+
+const buildPinnedRankMap = (orderedPinnedNodeIds: readonly string[]): ReadonlyMap<string, number> => {
+  const pinnedRankMap = new Map<string, number>()
+  for (const [index, repositoryId] of orderedPinnedNodeIds.entries()) {
+    pinnedRankMap.set(repositoryId, index)
+  }
+  return pinnedRankMap
+}
+
+const extractLanguages = (repo: GithubRepoNode): DataRepositoryLanguage[] =>
+  uniqBy(
+    [repo.primaryLanguage, ...(repo.languages?.edges?.map((edge) => edge?.node) ?? [])].filter(
+      (language): language is NonNullable<typeof language> => language != null
+    ),
+    (language) => language.id
+  ).map((language) => ({
+    id: language.id,
+    name: language.name,
+    color: language.color ?? null,
+  }))
+
+const extractTopics = (repo: GithubRepoNode): DataRepositoryTopic[] =>
+  repo.repositoryTopics.edges
+    ?.map((topic) => topic?.node ?? undefined)
+    .filter((topic): topic is NonNullable<typeof topic> => topic != null)
+    .map((topic) => ({
+      id: topic.topic.id,
+      name: topic.topic.name,
+    })) ?? []
+
+const getPinnedRank = (repositoryId: string, pinnedRankMap: ReadonlyMap<string, number>): number =>
+  pinnedRankMap.get(repositoryId) ?? Infinity
+
+const toDataRepository = (
+  repo: GithubRepoNode,
+  userId: string,
+  pinnedRankMap: ReadonlyMap<string, number>
+): DataRepository | null => {
+  if (repo.isPrivate || repo.isArchived || repo.owner.id !== userId) {
+    return null
+  }
+
+  return DataRepository.parse({
+    id: repo.id,
+    name: repo.name,
+    url: repo.url as string,
+    pinned: getPinnedRank(repo.id, pinnedRankMap) !== Infinity,
+    description: repo.description ?? null,
+    homepageUrl: ensureHomepageUrl(repo.homepageUrl),
+    updatedAt: repo.updatedAt as string,
+    pushedAt: repo.pushedAt as string,
+    stargazerCount: repo.stargazerCount,
+    languages: extractLanguages(repo),
+    topics: extractTopics(repo),
+  })
+}
+
+const compareRepositories = (
+  left: DataRepository,
+  right: DataRepository,
+  pinnedRankMap: ReadonlyMap<string, number>
+): number => {
+  const pinnedRankDiff =
+    getPinnedRank(left.id, pinnedRankMap) - getPinnedRank(right.id, pinnedRankMap)
+  if (pinnedRankDiff !== 0) {
+    return pinnedRankDiff
+  }
+
+  const stargazerCountDiff = right.stargazerCount - left.stargazerCount
+  if (stargazerCountDiff !== 0) {
+    return stargazerCountDiff
+  }
+
+  const leftPushedAt = left.pushedAt ?? ''
+  const rightPushedAt = right.pushedAt ?? ''
+  if (leftPushedAt > rightPushedAt) {
+    return -1
+  }
+  if (leftPushedAt < rightPushedAt) {
+    return 1
+  }
+
+  return 0
+}
+
 const getData = async (): Promise<DataResult> => {
   const user = await getGithubUser().catch((error: unknown) => {
     throw new Error(`Error fetching github user: ${String(error)}`, { cause: error })
   })
 
-  const orderedPinnedNodeIds =
-    user.pinnedItems.nodes
-      ?.map((node) => node?.id)
-      .filter((node): node is NonNullable<typeof node> => node != null) ?? []
-  const repos =
-    user.topRepositories.edges?.reduce<DataRepository[]>((result, edge) => {
-      const repo = edge?.node
-      if (repo == null || repo.isPrivate || repo.isArchived || repo.owner.id !== user.id) {
-        return result
-      }
+  const orderedPinnedNodeIds = getOrderedPinnedNodeIds(user)
+  const pinnedRankMap = buildPinnedRankMap(orderedPinnedNodeIds)
+  const repos: DataRepository[] = []
 
-      const languages: DataRepositoryLanguage[] = uniqBy(
-        [repo.primaryLanguage, ...(repo.languages?.edges?.map((edge) => edge?.node) ?? [])].filter(
-          (language): language is NonNullable<typeof language> => language != null
-        ),
-        (language) => language.id
-      ).map(
-        (language) =>
-          ({
-            id: language.id,
-            name: language.name,
-            color: language.color ?? null,
-          }) satisfies DataRepositoryLanguage
-      )
-      const topics: DataRepositoryTopic[] =
-        repo.repositoryTopics.edges
-          ?.map((topic) => topic?.node ?? undefined)
-          .filter((topic): topic is NonNullable<typeof topic> => topic != null)
-          .map(
-            (topic) =>
-              ({
-                id: topic.topic.id,
-                name: topic.topic.name,
-              }) satisfies DataRepositoryTopic
-          ) ?? []
-      const newItem: DataRepository = DataRepository.parse({
-        id: repo.id,
-        name: repo.name,
-        url: repo.url as string,
-        pinned: orderedPinnedNodeIds.includes(repo.id),
-        description: repo.description ?? null,
-        homepageUrl: ensureHomepageUrl(repo.homepageUrl),
-        updatedAt: repo.updatedAt as string,
-        pushedAt: repo.pushedAt as string,
-        stargazerCount: repo.stargazerCount,
-        languages,
-        topics,
-      } satisfies DataRepository)
-      return [...result, newItem]
-    }, []) ?? []
-  const orderedRepos = orderBy(
-    repos,
-    [
-      // Pinned repos ascending
-      (repository) => {
-        const index = orderedPinnedNodeIds.indexOf(repository.id)
-        return index === -1 ? Infinity : index
-      },
-      'stargazerCount',
-      'pushedAt',
-    ],
-    ['asc', 'desc', 'desc']
-  )
+  for (const edge of user.topRepositories.edges ?? []) {
+    const repo = edge?.node
+    if (repo == null) {
+      continue
+    }
+    const dataRepository = toDataRepository(repo, user.id, pinnedRankMap)
+    if (dataRepository != null) {
+      repos.push(dataRepository)
+    }
+  }
+
+  const orderedRepos = repos.sort((left, right) => compareRepositories(left, right, pinnedRankMap))
 
   return await DataResult.parseAsync({
     repositories: orderedRepos.slice(0, 40),
