@@ -12,7 +12,7 @@
     "dev": "next dev --turbopack",
     "build": "concurrently -c auto -n 'build,list' 'next build' 'npm run -q lint'",
     "lint": "eslint src",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "codegen": "graphql-codegen --config codegen.yml && prettier --write src/codegen/types.ts"
   },
   "author": "Dennis Hedegaard <dennis@dhedegaard.dk>",
   "private": true,
@@ -46,6 +46,7 @@
     "eslint-config-next": "16.1.6",
     "eslint-config-prettier": "^10.1.8",
     "postcss": "^8.5.6",
+    "prettier": "^3.8.0",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4.2.0",
     "typescript": "^5.9.3",
