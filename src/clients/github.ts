@@ -24,7 +24,7 @@ export const getGithubUser = async (): Promise<User> => {
   if (query == null) {
     throw new Error('Failed to read user query')
   }
-  return await fetch('https://api.github.com/graphql', {
+  const response = await fetch('https://api.github.com/graphql', {
     method: 'POST',
     body: JSON.stringify({ query }),
     headers: {
@@ -35,18 +35,18 @@ export const getGithubUser = async (): Promise<User> => {
       revalidate: 3600,
     },
   })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`${response.status.toString()}: ${response.statusText}`)
-      }
-      return response.json() as Promise<{ errors?: unknown; data: { user: User } }>
+  if (!response.ok) {
+    throw new Error(`${response.status.toString()}: ${response.statusText}`)
+  }
+  const responseJson = await (response.json() as Promise<{
+    errors?: unknown
+    data: { user: User }
+  }>)
+
+  if (responseJson.errors != null) {
+    throw new Error(`Error in Github response: ${JSON.stringify(responseJson.errors)}`, {
+      cause: responseJson.errors,
     })
-    .then((response) => {
-      if (response.errors != null) {
-        throw new Error(`Error in Github response: ${JSON.stringify(response.errors)}`, {
-          cause: response.errors,
-        })
-      }
-      return response.data.user
-    })
+  }
+  return responseJson.data.user
 }
