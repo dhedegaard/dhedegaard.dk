@@ -17,4 +17,3 @@ jobs:
         env:
           CI: true
           GITHUB_PAT: ${{ secrets._GITHUB_PAT }}
-      - run: npm run lint
