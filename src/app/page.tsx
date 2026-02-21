@@ -1,16 +1,14 @@
-import { unstable_cache } from 'next/cache'
+import { cacheLife } from 'next/cache'
 import { getDataAction } from '../fetchers/data-action'
 import { Avatar } from './avatar'
 import { BioElement } from './bio-element'
 import { FindMeElement } from './find-me-element'
 import { Repositories } from './repositories'
 
-const cachedGetDataAction = unstable_cache(() => getDataAction(), ['getDataAction'], {
-  revalidate: 60 * 60 * 24 * 7,
-})
-
 export default async function Index() {
-  const data = await cachedGetDataAction()
+  'use cache'
+  cacheLife('days')
+  const data = await getDataAction()
 
   return (
     <>
