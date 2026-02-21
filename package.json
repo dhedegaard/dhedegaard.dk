@@ -10,7 +10,7 @@
   "scripts": {
     "start": "next start",
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "concurrently -c auto -n 'build,list' 'next build' 'npm run -q lint'",
     "lint": "eslint src",
     "codegen": "graphql-codegen --config codegen.yml"
   },
@@ -40,6 +40,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
+    "concurrently": "^9.2.1",
     "daisyui": "^5.5.19",
     "eslint": "^9.39.3",
     "eslint-config-next": "16.1.6",
