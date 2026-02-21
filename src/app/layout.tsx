@@ -72,13 +72,13 @@ export const metadata: Metadata = {
       },
     ],
   },
-}
+} satisfies Metadata
 
 export const viewport: Viewport = {
   themeColor: '#fff',
   initialScale: 1,
   width: 'device-width',
-}
+} satisfies Viewport
 
 interface Props {
   children: ReactNode
