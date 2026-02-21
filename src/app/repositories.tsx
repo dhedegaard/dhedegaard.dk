@@ -14,7 +14,7 @@ export const Repositories = memo<RepositoriesProps>(function Repositories({ repo
   return (
     <div className="animate-slideRepositories">
       <div className="flex w-full items-center justify-between">
-        <h2 className="mb-4 text-xl">Interresting Github projects</h2>
+        <h2 className="mb-4 text-xl">Interesting Github projects</h2>
       </div>
       <div className="mb-9 grid w-full grid-flow-row grid-cols-2 gap-6 max-md:grid-cols-1">
         {repositories.map((repo) => (
