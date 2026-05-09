@@ -36983,7 +36983,9 @@ export type UserQueryQuery = {
     url: unknown
     email: string
     pinnedItems: {
-      nodes: Array<{ id: string; name: string } | Record<PropertyKey, never> | null> | null
+      nodes: Array<
+        { __typename: 'Gist' } | { __typename: 'Repository'; id: string; name: string } | null
+      > | null
     }
     topRepositories: {
       totalCount: number
@@ -37066,6 +37068,7 @@ export const UserQueryDocument = {
                         selectionSet: {
                           kind: 'SelectionSet',
                           selections: [
+                            { kind: 'Field', name: { kind: 'Name', value: '__typename' } },
                             {
                               kind: 'InlineFragment',
                               typeCondition: {

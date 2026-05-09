@@ -16,6 +16,7 @@ export const userQuery = gql`
       email
       pinnedItems(first: 100) {
         nodes {
+          __typename
           ... on Repository {
             id
             name
