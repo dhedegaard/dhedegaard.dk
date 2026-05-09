@@ -46,17 +46,21 @@ const DataResult = z.object({
 export interface DataResult extends z.infer<typeof DataResult> {}
 
 type GithubUserData = Awaited<ReturnType<typeof getGithubUser>>
-type GithubRepoEdge =
-  GithubUserData['topRepositories']['edges'] extends readonly (infer Edge)[] | null | undefined
-    ? Edge
-    : never
+type GithubRepoEdge = GithubUserData['topRepositories']['edges'] extends
+  | readonly (infer Edge)[]
+  | null
+  | undefined
+  ? Edge
+  : never
 type GithubRepoNode = NonNullable<NonNullable<GithubRepoEdge>['node']>
 
 const getOrderedPinnedNodeIds = (user: GithubUserData): string[] =>
-  user.pinnedItems.nodes
-    ?.flatMap((node) => (node?.__typename === 'Repository' ? [node.id] : [])) ?? []
+  user.pinnedItems.nodes?.flatMap((node) => (node?.__typename === 'Repository' ? [node.id] : [])) ??
+  []
 
-const buildPinnedRankMap = (orderedPinnedNodeIds: readonly string[]): ReadonlyMap<string, number> => {
+const buildPinnedRankMap = (
+  orderedPinnedNodeIds: readonly string[]
+): ReadonlyMap<string, number> => {
   const pinnedRankMap = new Map<string, number>()
   for (const [index, repositoryId] of orderedPinnedNodeIds.entries()) {
     pinnedRankMap.set(repositoryId, index)
