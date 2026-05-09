@@ -19,6 +19,9 @@ const config: NextConfig = {
       },
     ],
   },
+  experimental: {
+    optimizePackageImports: ['zod'],
+  },
 }
 
 export default withSentryConfig(config, {
