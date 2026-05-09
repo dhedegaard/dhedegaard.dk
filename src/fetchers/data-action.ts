@@ -3,7 +3,7 @@
 import { captureException } from '@sentry/nextjs'
 import uniqBy from 'lodash-es/uniqBy'
 import { cache } from 'react'
-import { z } from 'zod/v4-mini'
+import * as z from 'zod/mini'
 import { getGithubUser } from '../clients/github'
 
 const DataRepositorLanguage = z.object({
