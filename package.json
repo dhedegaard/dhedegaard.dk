@@ -30,8 +30,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^6.2.1",
-    "@graphql-codegen/typescript": "^5.0.9",
+    "@graphql-codegen/cli": "^7.0.0",
+    "@graphql-codegen/typescript": "^6.0.1",
     "@tailwindcss/postcss": "^4.3.0",
     "@tsconfig/next": "^2.0.6",
     "@tsconfig/strictest": "^2.0.8",
