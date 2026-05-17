@@ -1,4 +1,4 @@
-export default function InboxLoading() {
+export default function Loading() {
   return (
     <div className="mt-8 mb-16 flex gap-4">
       <div className="flex flex-auto flex-col gap-6">
