@@ -166,13 +166,16 @@ const getData = async (): Promise<DataResult> => {
 
   const orderedRepos = repos.sort((left, right) => compareRepositories(left, right, pinnedRankMap))
 
-  return await DataResult.parseAsync({
-    repositories: orderedRepos.slice(0, 40),
-    avatarUrl: ensureString(user.avatarUrl, 'user avatar URL'),
-    bio: user.bio ?? null,
-    githubUrl: ensureString(user.url, 'user profile URL'),
-    email: user.email,
-  } satisfies DataResult)
+  return DataResult.parse(
+    {
+      repositories: orderedRepos.slice(0, 40),
+      avatarUrl: ensureString(user.avatarUrl, 'user avatar URL'),
+      bio: user.bio ?? null,
+      githubUrl: ensureString(user.url, 'user profile URL'),
+      email: user.email,
+    } satisfies DataResult,
+    { reportInput: true }
+  )
 }
 
 export const getDataAction = cache(async function getDataAction() {
