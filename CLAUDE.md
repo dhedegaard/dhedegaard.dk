@@ -33,8 +33,11 @@ Personal site built with Next.js App Router, TypeScript (strictest config), Tail
 - Components are server-side by default; `'use client'` only when hooks/browser APIs are needed.
 - `src/codegen/types.ts` is generated — never hand-edit it. After modifying GraphQL documents in `src/**/*.ts`, run `npm run codegen` and commit both files together.
 - Zod schemas use `zod/mini` (not the full `zod` package) — follow existing import patterns.
-- Repository sort order: pinned first (by pin position), then by star count, then by `pushedAt`. This logic lives in `data-action.ts`.
+- Repository sort order: pinned first, then by star count, then by `pushedAt`. This logic lives in `data-action.ts`.
+- Caching has two layers: React `cache()` for per-request deduping, and `fetch({ next: { revalidate: 3600 } })` / `unstable_cache()` for ISR. Don't collapse these layers.
 
 ## Code Style
 
-ESLint uses `typescript-eslint` strict + `prettier` flat config. Formatter (via `biome.json`): single quotes, no semicolons, 2-space indent, 100-char line width. `src/codegen/` is excluded from both lint and format.
+ESLint uses `typescript-eslint` strict + `prettier` flat config. `src/codegen/` is excluded from both lint and format.
+
+Sentry is wired across three runtimes via `src/instrumentation.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`, and `instrumentation-client.ts`.
