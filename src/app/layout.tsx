@@ -84,7 +84,7 @@ interface Props {
   children: ReactNode
 }
 export default function RootLayout({ children }: Readonly<Props>) {
-  preconnect('https://gravatar.com')
+  preconnect('https://avatars.githubusercontent.com')
 
   return (
     <html lang="en">

@@ -1,12 +1,15 @@
 import Image from 'next/image'
 
-export function Avatar() {
+interface AvatarProps {
+  src: string
+}
+export function Avatar({ src }: AvatarProps) {
   return (
     <div className="animate-slideAvatar relative aspect-square w-[90px] flex-none self-start max-md:w-[60px]">
       <Image
         className="border-separate rounded-[50%] object-cover"
         priority
-        src="https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=360"
+        src={src}
         crossOrigin="anonymous"
         alt="Me"
         fill

@@ -19,7 +19,7 @@ export default async function Index() {
 
           <FindMeElement githubUrl={data.githubUrl} email={data.email} />
         </div>
-        <Avatar />
+        <Avatar src={data.avatarUrl} />
       </div>
       <Repositories repositories={data.repositories} />
     </>
