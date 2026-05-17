@@ -3286,6 +3286,23 @@ export type ConnectedEvent = Node & {
   subject: ReferencedSubject
 }
 
+/** The content warning for a repository */
+export type ContentWarning = {
+  __typename?: 'ContentWarning'
+  /** The content warning' category. E.g. 'mis_dis_information' */
+  category: Scalars['String']['output']
+  /** The content warning's custom sub category text. E.g. 'dangerous stuff.' */
+  customSubCategory?: Maybe<Scalars['String']['output']>
+  /** The content warning's sub category. E.g. 'medical_scientific' */
+  subCategory?: Maybe<Scalars['String']['output']>
+  /** The content warning's sub title. E.g. 'The information contained in this page has not been verified.' */
+  subTitle?: Maybe<Scalars['String']['output']>
+  /** The content warning's title. E.g. 'This page may contain false or misleading information.' */
+  title: Scalars['String']['output']
+  /** The type of content warning. E.g. 'interstitial' */
+  type: Scalars['String']['output']
+}
+
 /** The Contributing Guidelines for a repository. */
 export type ContributingGuidelines = {
   __typename?: 'ContributingGuidelines'
@@ -20795,6 +20812,10 @@ export enum ProjectV2FieldOrderField {
 export enum ProjectV2FieldType {
   /** Assignees */
   Assignees = 'ASSIGNEES',
+  /** Closed */
+  Closed = 'CLOSED',
+  /** Created */
+  Created = 'CREATED',
   /** Date */
   Date = 'DATE',
   /** Issue type */
@@ -20827,6 +20848,8 @@ export enum ProjectV2FieldType {
   TrackedBy = 'TRACKED_BY',
   /** Tracks */
   Tracks = 'TRACKS',
+  /** Updated */
+  Updated = 'UPDATED',
 }
 
 /** The values that can be used to update a field of an item inside a Project. Only 1 value can be updated at a time. */
@@ -27311,6 +27334,8 @@ export type Repository = Node &
     viewerCanSubscribe: Scalars['Boolean']['output']
     /** Indicates whether the viewer can update the topics of this repository. */
     viewerCanUpdateTopics: Scalars['Boolean']['output']
+    /** The content warning for this repository for the viewer. */
+    viewerContentWarning?: Maybe<ContentWarning>
     /** The last commit email for the viewer. */
     viewerDefaultCommitEmail?: Maybe<Scalars['String']['output']>
     /** The last used merge method by the viewer or the default for the repository. */
@@ -28715,7 +28740,7 @@ export type RepositoryRulesetBypassActorEdge = {
   node?: Maybe<RepositoryRulesetBypassActor>
 }
 
-/** Specifies the attributes for a new or updated ruleset bypass actor. Only one of `actor_id`, `repository_role_database_id`, `organization_admin`, or `deploy_key` should be specified. */
+/** Specifies the attributes for a new or updated ruleset bypass actor. Only one of `actor_id`, `repository_role_database_id`, `organization_admin`, `enterprise_owner`, or `deploy_key` should be specified. */
 export type RepositoryRulesetBypassActorInput = {
   /** For Team, Integration and User bypasses, the Team, Integration, or User ID */
   actorId?: InputMaybe<Scalars['ID']['input']>
@@ -37044,7 +37069,17 @@ export const UserQueryDocument = {
               selections: [
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'avatarUrl' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'avatarUrl' },
+                  arguments: [
+                    {
+                      kind: 'Argument',
+                      name: { kind: 'Name', value: 'size' },
+                      value: { kind: 'IntValue', value: '360' },
+                    },
+                  ],
+                },
                 { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'websiteUrl' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'url' } },

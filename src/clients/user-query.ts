@@ -9,7 +9,7 @@ export const userQuery = gql`
     user(login: "dhedegaard") {
       id
       name
-      avatarUrl
+      avatarUrl(size: 360)
       bio
       websiteUrl
       url
