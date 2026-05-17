@@ -11,6 +11,9 @@ export default function GlobalError({ error }: Readonly<{ error: Error }>) {
 
   return (
     <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+      </head>
       <body>
         <h1 className="text-4xl">500: Internal Server Error</h1>
       </body>
