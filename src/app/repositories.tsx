@@ -1,5 +1,3 @@
-'use cache'
-
 import { Fragment } from 'react'
 import { DataRepository, DataRepositoryTopic } from '../fetchers/data-action'
 import { GithubIcon } from '../icons/github'
