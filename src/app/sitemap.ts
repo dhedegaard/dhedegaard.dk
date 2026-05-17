@@ -1,5 +1,5 @@
-import { cacheLife } from 'next/cache'
 import { MetadataRoute } from 'next'
+import { cacheLife } from 'next/cache'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   'use cache'
