@@ -15,7 +15,7 @@ export default async function Index() {
   return (
     <>
       <div className="mt-8 mb-16 flex gap-4">
-        <div className="flex flex-auto flex-col gap-6">
+        <div className="flex flex-auto flex-col gap-4">
           <h1 className="animate-slideTitle text-5xl">Dennis Hedegaard</h1>
           <Tagline />
           <BioElement bio={data.bio} />
