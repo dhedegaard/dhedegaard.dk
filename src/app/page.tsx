@@ -5,6 +5,7 @@ import { BioElement } from './bio-element'
 import { FindMeElement } from './find-me-element'
 import { Repositories } from './repositories'
 import { Tagline } from './tagline'
+import { TechStack } from './tech-stack'
 
 export default async function Index() {
   'use cache'
@@ -18,7 +19,7 @@ export default async function Index() {
           <h1 className="animate-slideTitle text-5xl">Dennis Hedegaard</h1>
           <Tagline />
           <BioElement bio={data.bio} />
-
+          <TechStack />
           <FindMeElement githubUrl={data.githubUrl} email={data.email} />
         </div>
         <Avatar src={data.avatarUrl} />
