@@ -175,11 +175,9 @@ const getData = async (): Promise<DataResult> => {
   } satisfies DataResult)
 }
 
-const cachedGetData = cache(getData)
-
 export const getDataAction = cache(async function getDataAction() {
   try {
-    return await cachedGetData()
+    return await getData()
   } catch (error: unknown) {
     captureException(error)
     throw error
