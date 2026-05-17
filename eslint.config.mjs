@@ -3,12 +3,14 @@ import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
 import tseslint from 'typescript-eslint'
 import prettier from 'eslint-config-prettier/flat'
+import reactCompiler from 'eslint-plugin-react-compiler'
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   prettier,
   tseslint.configs.strictTypeChecked,
+  reactCompiler.configs.recommended,
   {
     rules: {
       '@typescript-eslint/no-empty-object-type': 'off',
