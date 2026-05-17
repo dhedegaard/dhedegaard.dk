@@ -10,7 +10,7 @@ interface RepositoriesProps {
 }
 export function Repositories({ repositories }: RepositoriesProps) {
   return (
-    <div className="animate-slideRepositories">
+    <div>
       <div className="flex w-full items-center justify-between">
         <h2 className="mb-4 text-xl">Interesting Github projects</h2>
       </div>

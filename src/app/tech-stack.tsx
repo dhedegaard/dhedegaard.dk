@@ -8,7 +8,7 @@ const STACK = [
 
 export function TechStack() {
   return (
-    <div className="animate-slideTechStack flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       {STACK.map(({ category, items }) => (
         <div key={category} className="flex items-start gap-3">
           <span className="w-20 shrink-0 pt-1 text-xs text-base-content/60">{category}</span>

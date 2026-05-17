@@ -5,7 +5,7 @@ interface AvatarProps {
 }
 export function Avatar({ src }: AvatarProps) {
   return (
-    <div className="animate-slideAvatar relative aspect-square w-[90px] flex-none self-start max-md:w-[60px]">
+    <div className="relative aspect-square w-[90px] flex-none self-start max-md:w-[60px]">
       <Image
         className="border-separate rounded-[50%] object-cover"
         priority

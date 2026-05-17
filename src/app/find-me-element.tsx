@@ -9,7 +9,7 @@ interface FindMeElementProps extends Pick<DataResult, 'githubUrl' | 'email'> {}
 
 export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
   return (
-    <div className="animate-slideFindMe flex flex-col gap-3">
+    <div className="flex flex-col gap-3">
       <p className="text-sm text-base-content/60">
         Interested in working together? Browse my work on GitHub, drop me a mail, or find me on
         LinkedIn.
