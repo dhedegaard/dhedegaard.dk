@@ -37001,10 +37001,8 @@ export type UserQueryQueryVariables = Exact<{ [key: string]: never }>
 export type UserQueryQuery = {
   user: {
     id: string
-    name: string | null
     avatarUrl: unknown
     bio: string | null
-    websiteUrl: unknown
     url: unknown
     email: string
     pinnedItems: {
@@ -37013,13 +37011,11 @@ export type UserQueryQuery = {
       > | null
     }
     topRepositories: {
-      totalCount: number
       edges: Array<{
         node: {
           id: string
           name: string
           url: unknown
-          updatedAt: unknown
           pushedAt: unknown
           description: string | null
           isArchived: boolean
@@ -37028,14 +37024,12 @@ export type UserQueryQuery = {
           homepageUrl: unknown
           owner: { id: string } | { id: string }
           repositoryTopics: {
-            totalCount: number
             edges: Array<{
               node: { id: string; topic: { id: string; name: string } } | null
             } | null> | null
           }
           primaryLanguage: { id: string; color: string | null; name: string } | null
           languages: {
-            totalCount: number
             edges: Array<{ node: { id: string; color: string | null; name: string } } | null> | null
           } | null
         } | null
@@ -37068,7 +37062,6 @@ export const UserQueryDocument = {
               kind: 'SelectionSet',
               selections: [
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'name' } },
                 {
                   kind: 'Field',
                   name: { kind: 'Name', value: 'avatarUrl' },
@@ -37081,7 +37074,6 @@ export const UserQueryDocument = {
                   ],
                 },
                 { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'websiteUrl' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'url' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'email' } },
                 {
@@ -37156,7 +37148,6 @@ export const UserQueryDocument = {
                   selectionSet: {
                     kind: 'SelectionSet',
                     selections: [
-                      { kind: 'Field', name: { kind: 'Name', value: 'totalCount' } },
                       {
                         kind: 'Field',
                         name: { kind: 'Name', value: 'edges' },
@@ -37182,7 +37173,6 @@ export const UserQueryDocument = {
                                   },
                                   { kind: 'Field', name: { kind: 'Name', value: 'name' } },
                                   { kind: 'Field', name: { kind: 'Name', value: 'url' } },
-                                  { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
                                   { kind: 'Field', name: { kind: 'Name', value: 'pushedAt' } },
                                   { kind: 'Field', name: { kind: 'Name', value: 'description' } },
                                   { kind: 'Field', name: { kind: 'Name', value: 'isArchived' } },
@@ -37205,10 +37195,6 @@ export const UserQueryDocument = {
                                     selectionSet: {
                                       kind: 'SelectionSet',
                                       selections: [
-                                        {
-                                          kind: 'Field',
-                                          name: { kind: 'Name', value: 'totalCount' },
-                                        },
                                         {
                                           kind: 'Field',
                                           name: { kind: 'Name', value: 'edges' },
@@ -37276,10 +37262,6 @@ export const UserQueryDocument = {
                                     selectionSet: {
                                       kind: 'SelectionSet',
                                       selections: [
-                                        {
-                                          kind: 'Field',
-                                          name: { kind: 'Name', value: 'totalCount' },
-                                        },
                                         {
                                           kind: 'Field',
                                           name: { kind: 'Name', value: 'edges' },

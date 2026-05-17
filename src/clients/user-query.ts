@@ -8,10 +8,8 @@ export const userQuery = gql`
   query UserQuery {
     user(login: "dhedegaard") {
       id
-      name
       avatarUrl(size: 360)
       bio
-      websiteUrl
       url
       email
       pinnedItems(first: 100) {
@@ -24,7 +22,6 @@ export const userQuery = gql`
         }
       }
       topRepositories(orderBy: { field: PUSHED_AT, direction: DESC }, first: 100) {
-        totalCount
         edges {
           node {
             id
@@ -33,7 +30,6 @@ export const userQuery = gql`
             }
             name
             url
-            updatedAt
             pushedAt
             description
             isArchived
@@ -41,7 +37,6 @@ export const userQuery = gql`
             isPrivate
             homepageUrl
             repositoryTopics(first: 100) {
-              totalCount
               edges {
                 node {
                   id
@@ -58,7 +53,6 @@ export const userQuery = gql`
               name
             }
             languages(first: 100) {
-              totalCount
               edges {
                 node {
                   id

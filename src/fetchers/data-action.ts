@@ -25,7 +25,6 @@ const DataRepository = z.object({
   pinned: z.boolean(),
   description: z.nullable(z.string().check(z.minLength(1))),
   homepageUrl: z.nullable(z.url()),
-  updatedAt: z.nullable(z.iso.datetime({ offset: true })),
   pushedAt: z.nullable(z.iso.datetime({ offset: true })),
   stargazerCount: z.int().check(z.nonnegative()),
   languages: z.array(
@@ -107,7 +106,6 @@ const toDataRepository = (
     pinned: getPinnedRank(repo.id, pinnedRankMap) !== Infinity,
     description: repo.description ?? null,
     homepageUrl: ensureHomepageUrl(repo.homepageUrl),
-    updatedAt: ensureNullableString(repo.updatedAt),
     pushedAt: ensureNullableString(repo.pushedAt),
     stargazerCount: repo.stargazerCount,
     languages: extractLanguages(repo),
