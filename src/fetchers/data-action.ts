@@ -1,5 +1,3 @@
-'use server'
-
 import { captureException } from '@sentry/nextjs'
 import uniqBy from 'lodash-es/uniqBy'
 import * as z from 'zod/mini'
@@ -38,13 +36,13 @@ const DataResult = z.object({
   avatarUrl: z.url(),
   bio: z.nullable(z.string().check(z.minLength(1))),
   githubUrl: z.url(),
-  email: z.email(),
+  email: z.nullable(z.email()),
   repositories: z.array(DataRepository as z.ZodMiniType<DataRepository, DataRepository>),
 })
 export interface DataResult extends z.infer<typeof DataResult> {}
 
 type GithubUserData = Awaited<ReturnType<typeof getGithubUser>>
-type GithubRepoEdge = GithubUserData['topRepositories']['edges'] extends
+type GithubRepoEdge = GithubUserData['repositories']['edges'] extends
   | readonly (infer Edge)[]
   | null
   | undefined
@@ -104,7 +102,7 @@ const toDataRepository = (
     name: repo.name,
     url: ensureString(repo.url, 'repository url'),
     pinned: getPinnedRank(repo.id, pinnedRankMap) !== Infinity,
-    description: repo.description ?? null,
+    description: ensureNonEmptyNullableString(repo.description),
     homepageUrl: ensureHomepageUrl(repo.homepageUrl),
     pushedAt: ensureNullableString(repo.pushedAt),
     stargazerCount: repo.stargazerCount,
@@ -118,10 +116,10 @@ const compareRepositories = (
   right: DataRepository,
   pinnedRankMap: ReadonlyMap<string, number>
 ): number => {
-  const pinnedRankDiff =
-    getPinnedRank(left.id, pinnedRankMap) - getPinnedRank(right.id, pinnedRankMap)
-  if (pinnedRankDiff !== 0) {
-    return pinnedRankDiff
+  const leftPinnedRank = getPinnedRank(left.id, pinnedRankMap)
+  const rightPinnedRank = getPinnedRank(right.id, pinnedRankMap)
+  if (leftPinnedRank !== rightPinnedRank) {
+    return leftPinnedRank - rightPinnedRank
   }
 
   const stargazerCountDiff = right.stargazerCount - left.stargazerCount
@@ -141,16 +139,12 @@ const compareRepositories = (
   return 0
 }
 
-const getData = async (): Promise<DataResult> => {
-  const user = await getGithubUser().catch((error: unknown) => {
-    throw new Error(`Error fetching github user: ${String(error)}`, { cause: error })
-  })
-
+export const transformGithubUserToData = (user: GithubUserData): DataResult => {
   const orderedPinnedNodeIds = getOrderedPinnedNodeIds(user)
   const pinnedRankMap = buildPinnedRankMap(orderedPinnedNodeIds)
   const repos: DataRepository[] = []
 
-  for (const edge of user.topRepositories.edges ?? []) {
+  for (const edge of user.repositories.edges ?? []) {
     const repo = edge?.node
     if (repo == null) {
       continue
@@ -167,12 +161,20 @@ const getData = async (): Promise<DataResult> => {
     {
       repositories: orderedRepos.slice(0, 40),
       avatarUrl: ensureString(user.avatarUrl, 'user avatar URL'),
-      bio: user.bio ?? null,
+      bio: ensureNonEmptyNullableString(user.bio),
       githubUrl: ensureString(user.url, 'user profile URL'),
-      email: user.email,
+      email: ensureEmail(user.email),
     } satisfies DataResult,
     { reportInput: true }
   )
+}
+
+const getData = async (): Promise<DataResult> => {
+  const user = await getGithubUser().catch((error: unknown) => {
+    throw new Error(`Error fetching github user: ${String(error)}`, { cause: error })
+  })
+
+  return transformGithubUserToData(user)
 }
 
 export async function getDataAction() {
@@ -185,11 +187,11 @@ export async function getDataAction() {
 }
 
 const ensureHomepageUrl = (url: unknown): string | null => {
-  if (typeof url !== 'string' || url === '') {
+  if (typeof url !== 'string' || url.trim() === '') {
     return null
   }
-  let result = url
-  if (!result.startsWith('http')) {
+  let result = url.trim()
+  if (!/^[a-z][a-z\d+.-]*:\/\//i.test(result)) {
     result = `https://${result}`
   }
   return result
@@ -204,3 +206,20 @@ const ensureString = (value: unknown, fieldName: string): string => {
 
 const ensureNullableString = (value: unknown): string | null =>
   typeof value === 'string' ? value : null
+
+const ensureNonEmptyNullableString = (value: unknown): string | null => {
+  if (typeof value !== 'string') {
+    return null
+  }
+  const trimmed = value.trim()
+  return trimmed === '' ? null : trimmed
+}
+
+const Email = z.email()
+const ensureEmail = (value: unknown): string | null => {
+  if (typeof value !== 'string' || value.trim() === '') {
+    return null
+  }
+  const result = Email.safeParse(value)
+  return result.success ? result.data : null
+}

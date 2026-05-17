@@ -99,8 +99,6 @@ interface TopicProps {
 }
 function Topic({ topic }: TopicProps) {
   return (
-    <div className="select-none rounded bg-base-content/10 px-1.5 py-0.5 text-xs">
-      {topic.name}
-    </div>
+    <div className="bg-base-content/10 rounded px-1.5 py-0.5 text-xs select-none">{topic.name}</div>
   )
 }

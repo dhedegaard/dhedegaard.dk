@@ -11,6 +11,7 @@
     "start": "next start",
     "dev": "next dev",
     "build": "concurrently -c auto -n 'build,list' 'next build' 'npm run -q lint'",
+    "test": "vitest run",
     "lint": "eslint src",
     "codegen": "graphql-codegen --config codegen.yml && prettier --write src/codegen/types.ts"
   },
@@ -39,6 +40,7 @@
     "@types/node": "^25.6.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
     "babel-plugin-react-compiler": "^1.0.0",
     "concurrently": "^9.2.1",
     "daisyui": "^5.5.19",
@@ -51,7 +53,8 @@
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.59.2"
+    "typescript-eslint": "^8.59.2",
+    "vitest": "^4.1.6"
   },
   "overrides": {
     "@types/react": "19.2.14",

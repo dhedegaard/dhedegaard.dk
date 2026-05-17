@@ -11,12 +11,12 @@ export function TechStack() {
     <div className="flex flex-col gap-2">
       {STACK.map(({ category, items }) => (
         <div key={category} className="flex items-start gap-3">
-          <span className="w-20 shrink-0 pt-1 text-xs text-base-content/60">{category}</span>
+          <span className="text-base-content/60 w-20 shrink-0 pt-1 text-xs">{category}</span>
           <div className="flex flex-wrap gap-1">
             {items.map((item) => (
               <span
                 key={item}
-                className="select-none rounded bg-base-content/10 px-1.5 py-0.5 text-xs"
+                className="bg-base-content/10 rounded px-1.5 py-0.5 text-xs select-none"
               >
                 {item}
               </span>

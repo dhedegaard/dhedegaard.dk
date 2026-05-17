@@ -21,7 +21,7 @@ export const userQuery = gql`
           }
         }
       }
-      topRepositories(orderBy: { field: PUSHED_AT, direction: DESC }, first: 100) {
+      repositories(orderBy: { field: PUSHED_AT, direction: DESC }, privacy: PUBLIC, first: 100) {
         edges {
           node {
             id

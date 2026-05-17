@@ -37010,7 +37010,7 @@ export type UserQueryQuery = {
         { __typename: 'Gist' } | { __typename: 'Repository'; id: string; name: string } | null
       > | null
     }
-    topRepositories: {
+    repositories: {
       edges: Array<{
         node: {
           id: string
@@ -37118,7 +37118,7 @@ export const UserQueryDocument = {
                 },
                 {
                   kind: 'Field',
-                  name: { kind: 'Name', value: 'topRepositories' },
+                  name: { kind: 'Name', value: 'repositories' },
                   arguments: [
                     {
                       kind: 'Argument',
@@ -37138,6 +37138,11 @@ export const UserQueryDocument = {
                           },
                         ],
                       },
+                    },
+                    {
+                      kind: 'Argument',
+                      name: { kind: 'Name', value: 'privacy' },
+                      value: { kind: 'EnumValue', value: 'PUBLIC' },
                     },
                     {
                       kind: 'Argument',
