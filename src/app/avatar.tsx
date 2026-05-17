@@ -1,7 +1,6 @@
 import Image from 'next/image'
-import { memo } from 'react'
 
-export const Avatar = memo(function Avatar() {
+export function Avatar() {
   return (
     <div className="animate-slideAvatar relative aspect-square w-[90px] flex-none self-start max-md:w-[60px]">
       <Image
@@ -15,4 +14,4 @@ export const Avatar = memo(function Avatar() {
       />
     </div>
   )
-})
+}

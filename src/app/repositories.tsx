@@ -1,6 +1,6 @@
 'use cache'
 
-import { Fragment, memo } from 'react'
+import { Fragment } from 'react'
 import { DataRepository, DataRepositoryTopic } from '../fetchers/data-action'
 import { GithubIcon } from '../icons/github'
 import { LinkIcon } from '../icons/link'
@@ -10,7 +10,7 @@ import { StarIcon } from '../icons/star'
 interface RepositoriesProps {
   repositories: readonly DataRepository[]
 }
-export const Repositories = memo<RepositoriesProps>(function Repositories({ repositories }) {
+export function Repositories({ repositories }: RepositoriesProps) {
   return (
     <div className="animate-slideRepositories">
       <div className="flex w-full items-center justify-between">
@@ -23,12 +23,12 @@ export const Repositories = memo<RepositoriesProps>(function Repositories({ repo
       </div>
     </div>
   )
-})
+}
 
 interface RepoProps {
   repo: DataRepository
 }
-const Repo = memo<RepoProps>(function Repo({ repo }) {
+function Repo({ repo }: RepoProps) {
   return (
     <article className="box-border flex flex-col gap-2 rounded-sm border border-slate-300 p-4">
       <div className="flex items-start justify-between">
@@ -94,15 +94,15 @@ const Repo = memo<RepoProps>(function Repo({ repo }) {
       )}
     </article>
   )
-})
+}
 
 interface TopicProps {
   topic: DataRepositoryTopic
 }
-const Topic = memo<TopicProps>(function Topic({ topic }) {
+function Topic({ topic }: TopicProps) {
   return (
     <div className="rounded-2xl border border-gray-400 p-1.5 px-2 text-xs select-none">
       {topic.name}
     </div>
   )
-})
+}

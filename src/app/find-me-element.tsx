@@ -1,4 +1,3 @@
-import { memo } from 'react'
 import type { DataResult } from '../fetchers/data-action'
 import { EnvelopeIcon } from '../icons/envelope'
 import { GithubIcon } from '../icons/github'
@@ -6,7 +5,7 @@ import { LinkedInIcon } from '../icons/linkedin'
 
 interface FindMeElementProps extends Pick<DataResult, 'githubUrl' | 'email'> {}
 
-export const FindMeElement = memo<FindMeElementProps>(function FindMeElement({ githubUrl, email }) {
+export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
   return (
     <p className="animate-slideFindMe">
       Find me on{' '}
@@ -30,4 +29,4 @@ export const FindMeElement = memo<FindMeElementProps>(function FindMeElement({ g
       .
     </p>
   )
-})
+}
