@@ -6,6 +6,8 @@ import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import { preconnect } from 'react-dom'
 
+preconnect('https://gravatar.com')
+
 const metadataBase = new URL('https://www.dhedegaard.dk/')
 export const metadata: Metadata = {
   title: 'Dennis Hedegaard',
@@ -84,8 +86,6 @@ interface Props {
   children: ReactNode
 }
 export default function RootLayout({ children }: Readonly<Props>) {
-  preconnect('https://gravatar.com')
-
   return (
     <html lang="en">
       <head>
