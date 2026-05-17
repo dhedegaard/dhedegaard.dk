@@ -19,9 +19,6 @@ export const getGithubUser = async (): Promise<GithubUser> => {
       'Content-Type': 'application/json',
       Authorization: `bearer ${pat}`,
     },
-    next: {
-      revalidate: 3600,
-    },
   })
   if (!response.ok) {
     throw new Error(`${response.status.toString()}: ${response.statusText}`)
