@@ -2,7 +2,6 @@
 
 import { captureException } from '@sentry/nextjs'
 import uniqBy from 'lodash-es/uniqBy'
-import { cache } from 'react'
 import * as z from 'zod/mini'
 import { getGithubUser } from '../clients/github'
 
@@ -178,14 +177,14 @@ const getData = async (): Promise<DataResult> => {
   )
 }
 
-export const getDataAction = cache(async function getDataAction() {
+export async function getDataAction() {
   try {
     return await getData()
   } catch (error: unknown) {
     captureException(error)
     throw error
   }
-})
+}
 
 const ensureHomepageUrl = (url: unknown): string | null => {
   if (typeof url !== 'string' || url === '') {
