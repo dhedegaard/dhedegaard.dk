@@ -6,29 +6,25 @@ type RepositoryEdge = NonNullable<GithubUser['repositories']['edges']>[number]
 type RepositoryNode = NonNullable<NonNullable<RepositoryEdge>['node']>
 type PinnedItem = NonNullable<GithubUser['pinnedItems']['nodes']>[number]
 
-let repositoryIndex = 0
-
-const makeRepository = (overrides: Partial<RepositoryNode> = {}): RepositoryNode => {
-  const id = overrides.id ?? `repo-${repositoryIndex.toString()}`
-  repositoryIndex += 1
-
-  return {
-    id,
-    owner: { id: 'user-1' },
-    name: id,
-    url: `https://github.com/dhedegaard/${id}`,
-    pushedAt: '2026-01-01T00:00:00Z',
-    description: `${id} description`,
-    isArchived: false,
-    stargazerCount: 0,
-    isPrivate: false,
-    homepageUrl: null,
-    repositoryTopics: { edges: [] },
-    primaryLanguage: null,
-    languages: { edges: [] },
-    ...overrides,
-  }
-}
+const makeRepository = ({
+  id,
+  ...overrides
+}: { id: string } & Partial<Omit<RepositoryNode, 'id'>>): RepositoryNode => ({
+  id,
+  owner: { id: 'user-1' },
+  name: id,
+  url: `https://github.com/dhedegaard/${id}`,
+  pushedAt: '2026-01-01T00:00:00Z',
+  description: `${id} description`,
+  isArchived: false,
+  stargazerCount: 0,
+  isPrivate: false,
+  homepageUrl: null,
+  repositoryTopics: { edges: [] },
+  primaryLanguage: null,
+  languages: { edges: [] },
+  ...overrides,
+})
 
 interface MakeUserOptions extends Partial<Omit<GithubUser, 'pinnedItems' | 'repositories'>> {
   pinnedItems?: readonly PinnedItem[] | null
