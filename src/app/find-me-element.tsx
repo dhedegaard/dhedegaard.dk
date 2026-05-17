@@ -9,26 +9,35 @@ interface FindMeElementProps extends Pick<DataResult, 'githubUrl' | 'email'> {}
 
 export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
   return (
-    <p className="animate-slideFindMe">
-      Find me on{' '}
-      <a className="text-blue-600" href={githubUrl}>
-        <GithubIcon className="inline fill-blue-600" width={16} />
-        &nbsp;
-        <span>Github</span>
-      </a>
-      ,{' '}
-      <a className="text-blue-600" href={LINKEDIN_URL}>
-        <LinkedInIcon className="inline fill-blue-600" width={16} />
-        &nbsp;
-        <span>LinkedIn</span>
-      </a>{' '}
-      or send me a{' '}
-      <a className="text-blue-600" href={`mailto:${email}`}>
-        <EnvelopeIcon className="inline w-4 fill-blue-600" width={16} />
-        &nbsp;
-        <span>mail</span>
-      </a>
-      .
-    </p>
+    <div className="animate-slideFindMe flex flex-col gap-3">
+      <p className="text-sm text-base-content/60">
+        Interested in working together? Find me on LinkedIn or drop me a mail.
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <a
+          className="flex items-center gap-1.5 rounded-2xl border-2 border-blue-600 px-3 py-1.5 text-sm text-blue-600 no-underline"
+          href={LINKEDIN_URL}
+        >
+          <LinkedInIcon className="fill-blue-600" width={14} height={14} />
+          <span>LinkedIn</span>
+        </a>
+        <a
+          className="flex items-center gap-1.5 rounded-2xl border border-gray-400 px-3 py-1.5 text-sm no-underline"
+          href={`mailto:${email}`}
+        >
+          <EnvelopeIcon className="fill-current" width={14} height={14} />
+          <span>Email</span>
+        </a>
+        <a
+          className="flex items-center gap-1.5 rounded-2xl border border-gray-400 px-3 py-1.5 text-sm no-underline"
+          href={githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <GithubIcon className="fill-current" width={14} height={14} />
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
   )
 }
