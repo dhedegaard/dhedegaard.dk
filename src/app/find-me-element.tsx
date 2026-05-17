@@ -3,6 +3,8 @@ import { EnvelopeIcon } from '../icons/envelope'
 import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
 
+const LINKEDIN_URL = 'https://www.linkedin.com/in/dennis-hedegaard-39a02a22/'
+
 interface FindMeElementProps extends Pick<DataResult, 'githubUrl' | 'email'> {}
 
 export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
@@ -15,7 +17,7 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
         <span>Github</span>
       </a>
       ,{' '}
-      <a className="text-blue-600" href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/">
+      <a className="text-blue-600" href={LINKEDIN_URL}>
         <LinkedInIcon className="inline fill-blue-600" width={16} />
         &nbsp;
         <span>LinkedIn</span>
