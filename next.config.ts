@@ -12,11 +12,6 @@ const config: NextConfig = {
         hostname: 'avatars.githubusercontent.com',
         pathname: '**',
       },
-      {
-        protocol: 'https',
-        hostname: 'gravatar.com',
-        pathname: '**',
-      },
     ],
   },
   experimental: {
