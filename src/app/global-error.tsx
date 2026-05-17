@@ -1,7 +1,7 @@
 'use client'
 
+import '../styles/globals.css'
 import * as Sentry from '@sentry/nextjs'
-import NextError from 'next/error'
 import { useEffect } from 'react'
 
 export default function GlobalError({ error }: Readonly<{ error: Error }>) {
@@ -12,7 +12,7 @@ export default function GlobalError({ error }: Readonly<{ error: Error }>) {
   return (
     <html lang="en">
       <body>
-        <NextError statusCode={500} />
+        <h1 className="text-4xl">500: Internal Server Error</h1>
       </body>
     </html>
   )
