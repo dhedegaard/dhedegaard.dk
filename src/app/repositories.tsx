@@ -12,7 +12,7 @@ export function Repositories({ repositories }: RepositoriesProps) {
   return (
     <div>
       <div className="flex w-full items-center justify-between">
-        <h2 className="mb-4 text-xl">Interesting Github projects</h2>
+        <h2 className="mb-4 text-xl">Open source projects</h2>
       </div>
       <div className="mb-9 grid w-full grid-flow-row grid-cols-2 gap-6 max-md:grid-cols-1">
         {repositories.map((repo) => (
@@ -28,7 +28,7 @@ interface RepoProps {
 }
 function Repo({ repo }: RepoProps) {
   return (
-    <article className="box-border flex flex-col gap-2 rounded-md border border-slate-300 p-4 transition-shadow hover:shadow-sm">
+    <article className="flex flex-col gap-2 rounded-md border border-slate-300 p-4 transition-shadow hover:shadow-sm">
       <div className="flex items-start justify-between">
         <a
           className="flex font-bold text-inherit no-underline"

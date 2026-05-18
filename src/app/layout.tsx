@@ -92,7 +92,7 @@ export default function RootLayout({ children }: Readonly<Props>) {
       <head>
         <link rel="canonical" href={metadataBase.toString()} />
       </head>
-      <body className="overflow-y-visible">
+      <body>
         <div className="mx-auto max-w-4xl px-6 max-md:px-4">{children}</div>
 
         <Analytics debug={false} />
