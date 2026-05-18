@@ -20,9 +20,16 @@ export default async function Index() {
           <Tagline />
           <BioElement bio={data.bio} />
           <TechStack />
-          <FindMeElement githubUrl={data.githubUrl} email={data.email} />
+          <div className="md:hidden">
+            <FindMeElement githubUrl={data.githubUrl} email={data.email} direction="row" />
+          </div>
         </div>
-        <Avatar src={data.avatarUrl} />
+        <div className="flex w-32 max-md:w-[60px] flex-none flex-col gap-3 self-start">
+          <Avatar src={data.avatarUrl} />
+          <div className="max-md:hidden">
+            <FindMeElement githubUrl={data.githubUrl} email={data.email} />
+          </div>
+        </div>
       </div>
       <Repositories repositories={data.repositories} />
     </>

@@ -17,13 +17,20 @@ export default function Loading() {
               </div>
             ))}
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 md:hidden">
             <div className="bg-base-content/10 h-8 w-24 animate-pulse rounded" />
             <div className="bg-base-content/10 h-8 w-20 animate-pulse rounded" />
             <div className="bg-base-content/10 h-8 w-24 animate-pulse rounded" />
           </div>
         </div>
-        <div className="bg-base-content/10 aspect-square w-[90px] max-md:w-[60px] flex-none animate-pulse rounded-full self-start" />
+        <div className="flex w-32 max-md:w-[60px] flex-none flex-col gap-3 self-start">
+          <div className="bg-base-content/10 aspect-square w-full animate-pulse rounded-full" />
+          <div className="flex flex-col gap-2 max-md:hidden">
+            <div className="bg-base-content/10 h-8 animate-pulse rounded" />
+            <div className="bg-base-content/10 h-8 animate-pulse rounded" />
+            <div className="bg-base-content/10 h-8 animate-pulse rounded" />
+          </div>
+        </div>
       </div>
       <div className="mb-9 grid w-full grid-flow-row grid-cols-2 gap-6 max-md:grid-cols-1">
         {Array.from({ length: 4 }, (_, i) => (

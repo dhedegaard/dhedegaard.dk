@@ -5,7 +5,7 @@ interface AvatarProps {
 }
 export function Avatar({ src }: AvatarProps) {
   return (
-    <div className="relative aspect-square w-[90px] flex-none self-start max-md:w-[60px]">
+    <div className="relative aspect-square w-full">
       <Image
         className="rounded-full object-cover"
         priority
@@ -13,7 +13,7 @@ export function Avatar({ src }: AvatarProps) {
         crossOrigin="anonymous"
         alt="Dennis Hedegaard"
         fill
-        sizes="(max-width: 767px) 60px, 90px"
+        sizes="(max-width: 767px) 60px, 128px"
       />
     </div>
   )
