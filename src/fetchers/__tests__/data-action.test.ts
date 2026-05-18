@@ -27,7 +27,7 @@ const makeRepository = ({
 })
 
 interface MakeUserOptions extends Partial<Omit<GithubUser, 'pinnedItems' | 'repositories'>> {
-  pinnedItems?: readonly PinnedItem[] | null
+  pinnedItems?: PinnedItem[] | null
   repositories?: readonly (RepositoryNode | null)[]
   repositoryEdges?: GithubUser['repositories']['edges']
 }
@@ -40,7 +40,6 @@ const makeUser = ({
 }: MakeUserOptions = {}): GithubUser => ({
   id: 'user-1',
   avatarUrl: 'https://avatars.githubusercontent.com/u/1',
-  bio: 'Bio',
   url: 'https://github.com/dhedegaard',
   email: 'dennis@example.com',
   pinnedItems: {
@@ -141,7 +140,6 @@ describe('transformGithubUserToData', () => {
   it('normalizes empty profile and repository string values', () => {
     const data = transformGithubUserToData(
       makeUser({
-        bio: '   ',
         repositories: [
           makeRepository({
             id: 'normalized',
