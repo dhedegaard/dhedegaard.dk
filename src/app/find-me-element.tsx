@@ -16,7 +16,7 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
       </p>
       <div className="flex flex-wrap gap-2">
         <a
-          className="flex items-center gap-1.5 rounded border-2 border-blue-600 bg-blue-600/10 px-3 py-1.5 text-sm text-blue-600 no-underline shadow-sm transition-colors hover:bg-blue-600/20 active:bg-blue-600/30"
+          className="flex items-center gap-1.5 rounded border border-blue-600 bg-blue-600/10 px-3 py-1.5 text-sm text-blue-600 no-underline shadow-sm transition-colors hover:bg-blue-600/20 active:bg-blue-600/30"
           href={githubUrl}
           target="_blank"
           rel="noopener noreferrer"

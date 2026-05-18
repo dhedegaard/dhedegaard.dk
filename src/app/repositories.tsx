@@ -28,7 +28,7 @@ interface RepoProps {
 }
 function Repo({ repo }: RepoProps) {
   return (
-    <article className="box-border flex flex-col gap-2 rounded-sm border border-slate-300 p-4">
+    <article className="box-border flex flex-col gap-2 rounded-md border border-slate-300 p-4 transition-shadow hover:shadow-sm">
       <div className="flex items-start justify-between">
         <a
           className="flex font-bold text-inherit no-underline"
