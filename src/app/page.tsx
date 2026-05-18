@@ -21,7 +21,7 @@ export default async function Index() {
           <BioElement bio={data.bio} />
           <TechStack />
           <div className="md:hidden">
-            <FindMeElement githubUrl={data.githubUrl} email={data.email} direction="row" />
+            <FindMeElement githubUrl={data.githubUrl} email={data.email} />
           </div>
         </div>
         <div className="flex w-32 max-md:w-[60px] flex-none flex-col gap-3 self-start">
