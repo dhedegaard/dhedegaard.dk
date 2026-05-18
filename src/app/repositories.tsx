@@ -44,7 +44,7 @@ function Repo({ repo }: RepoProps) {
             </div>
           )}
           {repo.pinned && (
-            <div aria-label="Pinned">
+            <div role="img" aria-label="Pinned">
               <Pin size={16} />
             </div>
           )}
