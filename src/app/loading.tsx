@@ -1,9 +1,35 @@
 export default function Loading() {
   return (
-    <div className="mt-8 mb-16 flex gap-4">
-      <div className="flex flex-auto flex-col gap-6">
-        <h1 className="text-5xl">Dennis Hedegaard</h1>
+    <>
+      <div className="mt-10 mb-12 flex gap-6">
+        <div className="flex flex-auto flex-col gap-4">
+          <div className="bg-base-content/10 h-12 w-64 animate-pulse rounded" />
+          <div className="bg-base-content/10 h-5 w-48 animate-pulse rounded" />
+          <div className="flex flex-col gap-2">
+            <div className="bg-base-content/10 h-4 w-full animate-pulse rounded" />
+            <div className="bg-base-content/10 h-4 w-3/4 animate-pulse rounded" />
+          </div>
+          <div className="flex flex-col gap-2">
+            {[80, 96, 72, 64, 112].map((w) => (
+              <div key={w} className="flex gap-2">
+                <div className="bg-base-content/10 h-4 w-20 animate-pulse rounded" />
+                <div className="bg-base-content/10 h-4 animate-pulse rounded" style={{ width: w }} />
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <div className="bg-base-content/10 h-8 w-24 animate-pulse rounded" />
+            <div className="bg-base-content/10 h-8 w-20 animate-pulse rounded" />
+            <div className="bg-base-content/10 h-8 w-24 animate-pulse rounded" />
+          </div>
+        </div>
+        <div className="bg-base-content/10 aspect-square w-[90px] max-md:w-[60px] flex-none animate-pulse rounded-full self-start" />
       </div>
-    </div>
+      <div className="mb-9 grid w-full grid-flow-row grid-cols-2 gap-6 max-md:grid-cols-1">
+        {Array.from({ length: 4 }, (_, i) => (
+          <div key={i} className="bg-base-content/10 h-36 animate-pulse rounded-md" />
+        ))}
+      </div>
+    </>
   )
 }

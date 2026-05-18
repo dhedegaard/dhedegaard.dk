@@ -11,9 +11,7 @@ interface RepositoriesProps {
 export function Repositories({ repositories }: RepositoriesProps) {
   return (
     <div>
-      <div className="flex w-full items-center justify-between">
-        <h2 className="mb-4 text-xl">Open source projects</h2>
-      </div>
+      <h2 className="mb-4 text-xl">Open source projects</h2>
       <div className="mb-9 grid w-full grid-flow-row grid-cols-2 gap-6 max-md:grid-cols-1">
         {repositories.map((repo) => (
           <Repo key={repo.id} repo={repo} />
@@ -41,13 +39,13 @@ function Repo({ repo }: RepoProps) {
         </a>
         <div className="flex items-center gap-2">
           {repo.stargazerCount > 0 && (
-            <div className="flex items-center gap-1" title="Stargazers">
+            <div className="flex items-center gap-1" aria-label="Stargazers">
               <span className="text-sm">{repo.stargazerCount}</span>
               <StarIcon width={16} />
             </div>
           )}
           {repo.pinned && (
-            <div title="Pinned">
+            <div aria-label="Pinned">
               <MapPinIcon width={10} />
             </div>
           )}

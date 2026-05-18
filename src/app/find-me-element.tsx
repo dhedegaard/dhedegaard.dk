@@ -16,7 +16,7 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
       </p>
       <div className="flex flex-wrap gap-2">
         <a
-          className="flex items-center gap-1.5 rounded border border-blue-600 bg-blue-600/10 px-3 py-1.5 text-sm text-blue-600 no-underline shadow-sm transition-colors hover:bg-blue-600/20 active:bg-blue-600/30"
+          className="flex items-center gap-1.5 rounded border border-blue-600 bg-blue-600/10 px-3 py-1.5 text-sm text-blue-600 no-underline shadow-sm transition-colors motion-reduce:transition-none hover:bg-blue-600/20 active:bg-blue-600/30"
           href={githubUrl}
           target="_blank"
           rel="noopener noreferrer"
@@ -26,7 +26,7 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
         </a>
         {email != null && (
           <a
-            className="bg-base-content/5 hover:bg-base-content/10 active:bg-base-content/15 flex items-center gap-1.5 rounded border border-gray-400 px-3 py-1.5 text-sm no-underline shadow-sm transition-colors"
+            className="bg-base-content/5 hover:bg-base-content/10 active:bg-base-content/15 flex items-center gap-1.5 rounded border border-gray-400 px-3 py-1.5 text-sm no-underline shadow-sm transition-colors motion-reduce:transition-none"
             href={`mailto:${email}`}
           >
             <EnvelopeIcon className="fill-current" width={14} height={14} />
@@ -34,7 +34,7 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
           </a>
         )}
         <a
-          className="bg-base-content/5 hover:bg-base-content/10 active:bg-base-content/15 flex items-center gap-1.5 rounded border border-gray-400 px-3 py-1.5 text-sm no-underline shadow-sm transition-colors"
+          className="bg-base-content/5 hover:bg-base-content/10 active:bg-base-content/15 flex items-center gap-1.5 rounded border border-gray-400 px-3 py-1.5 text-sm no-underline shadow-sm transition-colors motion-reduce:transition-none"
           href={LINKEDIN_URL}
           target="_blank"
           rel="noopener noreferrer"
