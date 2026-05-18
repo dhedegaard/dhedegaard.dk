@@ -1,5 +1,5 @@
+import { Mail } from 'lucide-react'
 import type { DataResult } from '../fetchers/data-action'
-import { EnvelopeIcon } from '../icons/envelope'
 import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
 
@@ -26,7 +26,7 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
           className={secondaryLinkClass}
           href={`mailto:${email}`}
         >
-          <EnvelopeIcon className="fill-current" width={16} height={16} />
+          <Mail size={16} />
           <span>Email</span>
         </a>
       )}
@@ -36,7 +36,7 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <LinkedInIcon className="fill-current" width={16} height={16} />
+        <LinkedInIcon width={16} height={16} />
         <span>LinkedIn</span>
       </a>
     </div>

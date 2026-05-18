@@ -1,10 +1,8 @@
 import { Fragment } from 'react'
+import { Link, Pin, Star } from 'lucide-react'
 import { DataRepository } from '../fetchers/data-action'
 import { Badge } from './badge'
 import { GithubIcon } from '../icons/github'
-import { LinkIcon } from '../icons/link'
-import { MapPinIcon } from '../icons/map-pin'
-import { StarIcon } from '../icons/star'
 
 interface RepositoriesProps {
   repositories: readonly DataRepository[]
@@ -42,12 +40,12 @@ function Repo({ repo }: RepoProps) {
           {repo.stargazerCount > 0 && (
             <div className="flex items-center gap-1" aria-label="Stargazers">
               <span className="text-sm">{repo.stargazerCount}</span>
-              <StarIcon width={16} />
+              <Star size={16} />
             </div>
           )}
           {repo.pinned && (
             <div aria-label="Pinned">
-              <MapPinIcon width={10} />
+              <Pin size={16} />
             </div>
           )}
         </div>
@@ -64,7 +62,7 @@ function Repo({ repo }: RepoProps) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <LinkIcon width={11} className="fill-current inline-block" />
+          <Link size={11} className="inline-block" />
           &nbsp;
           {repo.homepageUrl.split('://')[1] ?? repo.homepageUrl}
         </a>
