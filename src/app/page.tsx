@@ -1,7 +1,6 @@
 import { cacheLife } from 'next/cache'
 import { getDataAction } from '../fetchers/data-action'
 import { Avatar } from './avatar'
-import { BioElement } from './bio-element'
 import { FindMeElement } from './find-me-element'
 import { Repositories } from './repositories'
 import { Tagline } from './tagline'
@@ -18,7 +17,6 @@ export default async function Index() {
         <div className="flex flex-auto flex-col gap-4">
           <h1 className="text-5xl">Dennis Hedegaard</h1>
           <Tagline />
-          <BioElement bio={data.bio} />
           <TechStack />
           <div className="md:hidden">
             <FindMeElement githubUrl={data.githubUrl} email={data.email} />

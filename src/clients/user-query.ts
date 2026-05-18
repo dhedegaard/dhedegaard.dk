@@ -9,7 +9,6 @@ export const userQuery = gql`
     user(login: "dhedegaard") {
       id
       avatarUrl(size: 360)
-      bio
       url
       email
       pinnedItems(first: 100) {

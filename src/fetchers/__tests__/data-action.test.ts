@@ -152,7 +152,6 @@ describe('transformGithubUserToData', () => {
       })
     )
 
-    expect(data.bio).toBeNull()
     expect(data.repositories[0]?.description).toBeNull()
     expect(data.repositories[0]?.homepageUrl).toBeNull()
   })

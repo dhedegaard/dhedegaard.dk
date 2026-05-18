@@ -37007,7 +37007,6 @@ export type UserQueryQuery = {
   user: {
     id: string
     avatarUrl: unknown
-    bio: string | null
     url: unknown
     email: string
     pinnedItems: {
@@ -37078,7 +37077,6 @@ export const UserQueryDocument = {
                     },
                   ],
                 },
-                { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'url' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'email' } },
                 {
