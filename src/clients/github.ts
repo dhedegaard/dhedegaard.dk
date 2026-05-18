@@ -8,6 +8,11 @@ const languageSchema = z.object({
   name: z.string(),
 })
 
+const topicNodeSchema = z.object({
+  id: z.string(),
+  topic: z.object({ id: z.string(), name: z.string() }),
+})
+
 const repositoryNodeSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -30,11 +35,6 @@ const repositoryNodeSchema = z.object({
       edges: z.nullable(z.array(z.nullable(z.object({ node: languageSchema })))),
     })
   ),
-})
-
-const topicNodeSchema = z.object({
-  id: z.string(),
-  topic: z.object({ id: z.string(), name: z.string() }),
 })
 
 const pinnedItemSchema = z.union([
