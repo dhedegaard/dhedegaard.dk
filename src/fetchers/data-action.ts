@@ -14,7 +14,7 @@ const DataRepositoryTopic = z.object({
   id: z.string().check(z.minLength(1)),
   name: z.string().check(z.minLength(1)),
 })
-export interface DataRepositoryTopic extends z.infer<typeof DataRepositoryTopic> {}
+interface DataRepositoryTopic extends z.infer<typeof DataRepositoryTopic> {}
 
 const DataRepository = z.object({
   id: z.string().check(z.minLength(1)),
