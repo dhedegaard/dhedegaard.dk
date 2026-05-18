@@ -5,7 +5,7 @@ import { LinkedInIcon } from '../icons/linkedin'
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/dennis-hedegaard-39a02a22/'
 const secondaryLinkClass =
-  'bg-base-content/5 hover:bg-base-content/10 active:bg-base-content/15 flex items-center gap-2.5 rounded border border-gray-400 px-3 py-1.5 text-sm no-underline shadow-sm transition-colors motion-reduce:transition-none'
+  'bg-slate-800/5 hover:bg-slate-800/10 active:bg-slate-800/15 flex items-center gap-2.5 rounded border border-gray-400 px-3 py-1.5 text-sm no-underline shadow-sm transition-colors motion-reduce:transition-none'
 
 interface FindMeElementProps extends Pick<DataResult, 'githubUrl' | 'email'> {}
 

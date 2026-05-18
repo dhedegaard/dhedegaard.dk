@@ -64,7 +64,7 @@ function Repo({ repo }: RepoProps) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <LinkIcon width={11} className="text-base-content inline-block" />
+          <LinkIcon width={11} className="text-slate-800 inline-block" />
           &nbsp;
           {repo.homepageUrl.split('://')[1] ?? repo.homepageUrl}
         </a>
