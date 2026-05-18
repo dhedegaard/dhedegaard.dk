@@ -21,18 +21,7 @@ const repositoryNodeSchema = z.object({
   owner: z.object({ id: z.string() }),
   repositoryTopics: z.object({
     edges: z.nullable(
-      z.array(
-        z.nullable(
-          z.object({
-            node: z.nullable(
-              z.object({
-                id: z.string(),
-                topic: z.object({ id: z.string(), name: z.string() }),
-              })
-            ),
-          })
-        )
-      )
+      z.array(z.nullable(z.object({ node: z.nullable(topicNodeSchema) })))
     ),
   }),
   primaryLanguage: z.nullable(languageSchema),
@@ -41,6 +30,11 @@ const repositoryNodeSchema = z.object({
       edges: z.nullable(z.array(z.nullable(z.object({ node: languageSchema })))),
     })
   ),
+})
+
+const topicNodeSchema = z.object({
+  id: z.string(),
+  topic: z.object({ id: z.string(), name: z.string() }),
 })
 
 const pinnedItemSchema = z.union([
