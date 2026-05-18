@@ -4,6 +4,8 @@ import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/dennis-hedegaard-39a02a22/'
+const secondaryLinkClass =
+  'bg-base-content/5 hover:bg-base-content/10 active:bg-base-content/15 flex items-center gap-2.5 rounded border border-gray-400 px-3 py-1.5 text-sm no-underline shadow-sm transition-colors motion-reduce:transition-none'
 
 interface FindMeElementProps extends Pick<DataResult, 'githubUrl' | 'email'> {}
 
@@ -21,7 +23,7 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
       </a>
       {email != null && (
         <a
-          className="bg-base-content/5 hover:bg-base-content/10 active:bg-base-content/15 flex items-center gap-2.5 rounded border border-gray-400 px-3 py-1.5 text-sm no-underline shadow-sm transition-colors motion-reduce:transition-none"
+          className={secondaryLinkClass}
           href={`mailto:${email}`}
         >
           <EnvelopeIcon className="fill-current" width={16} height={16} />
@@ -29,7 +31,7 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
         </a>
       )}
       <a
-        className="bg-base-content/5 hover:bg-base-content/10 active:bg-base-content/15 flex items-center gap-2.5 rounded border border-gray-400 px-3 py-1.5 text-sm no-underline shadow-sm transition-colors motion-reduce:transition-none"
+        className={secondaryLinkClass}
         href={LINKEDIN_URL}
         target="_blank"
         rel="noopener noreferrer"
