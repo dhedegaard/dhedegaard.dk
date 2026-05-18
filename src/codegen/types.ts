@@ -7228,7 +7228,10 @@ export type EnterpriseBillingInfo = {
   __typename?: 'EnterpriseBillingInfo'
   /** The number of licenseable users/emails across the enterprise. */
   allLicensableUsersCount: Scalars['Int']['output']
-  /** The number of data packs used by all organizations owned by the enterprise. */
+  /**
+   * The number of data packs used by all organizations owned by the enterprise. Data packs are deprecated, always returns 0.
+   * @deprecated LFS data packs have been removed. Always returns 0.
+   */
   assetPacks: Scalars['Int']['output']
   /** The bandwidth quota in GB for all organizations owned by the enterprise. */
   bandwidthQuota: Scalars['Float']['output']
@@ -10198,6 +10201,8 @@ export type IssueFieldCreateOrUpdateInput = {
 export enum IssueFieldDataType {
   /** Date */
   Date = 'DATE',
+  /** Multi Select */
+  MultiSelect = 'MULTI_SELECT',
   /** Number */
   Number = 'NUMBER',
   /** Single Select */
@@ -37003,6 +37008,7 @@ export type UserQueryQuery = {
     id: string
     avatarUrl: unknown
     bio: string | null
+    company: string | null
     url: unknown
     email: string
     pinnedItems: {
@@ -37074,6 +37080,7 @@ export const UserQueryDocument = {
                   ],
                 },
                 { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'company' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'url' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'email' } },
                 {

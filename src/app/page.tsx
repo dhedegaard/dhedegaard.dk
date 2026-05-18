@@ -17,7 +17,7 @@ export default async function Index() {
       <div className="mt-10 mb-12 flex gap-6">
         <div className="flex flex-auto flex-col gap-4">
           <h1 className="text-5xl">Dennis Hedegaard</h1>
-          <Tagline />
+          <Tagline company={data.company} />
           <BioElement bio={data.bio} />
           <TechStack />
           <div className="md:hidden">

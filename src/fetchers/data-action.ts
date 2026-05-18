@@ -35,6 +35,7 @@ export interface DataRepository extends z.infer<typeof DataRepository> {}
 const DataResult = z.object({
   avatarUrl: z.url(),
   bio: z.nullable(z.string().check(z.minLength(1))),
+  company: z.nullable(z.string().check(z.minLength(1))),
   githubUrl: z.url(),
   email: z.nullable(z.email()),
   repositories: z.array(DataRepository as z.ZodMiniType<DataRepository, DataRepository>),
@@ -162,6 +163,7 @@ export const transformGithubUserToData = (user: GithubUserData): DataResult => {
       repositories: orderedRepos.slice(0, 40),
       avatarUrl: ensureString(user.avatarUrl, 'user avatar URL'),
       bio: ensureNonEmptyNullableString(user.bio),
+      company: ensureNonEmptyNullableString(user.company),
       githubUrl: ensureString(user.url, 'user profile URL'),
       email: ensureEmail(user.email),
     } satisfies DataResult,
