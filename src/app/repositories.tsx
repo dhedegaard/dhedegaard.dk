@@ -38,8 +38,8 @@ function Repo({ repo }: RepoProps) {
         </a>
         <div className="flex items-center gap-2">
           {repo.stargazerCount > 0 && (
-            <div className="flex items-center gap-1" aria-label="Stargazers">
-              <span className="text-sm">{repo.stargazerCount}</span>
+            <div className="flex items-center gap-1" role="img" aria-label={`${String(repo.stargazerCount)} stargazers`}>
+              <span className="text-sm tabular-nums" aria-hidden="true">{repo.stargazerCount}</span>
               <Star size={16} />
             </div>
           )}
@@ -57,7 +57,7 @@ function Repo({ repo }: RepoProps) {
 
       {repo.homepageUrl != null && (
         <a
-          className="block truncate p-1 text-xs text-blue-600 no-underline"
+          className="block min-w-0 truncate p-1 text-xs text-blue-600 no-underline"
           href={repo.homepageUrl}
           target="_blank"
           rel="noopener noreferrer"
