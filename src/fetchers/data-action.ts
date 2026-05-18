@@ -8,7 +8,7 @@ const DataRepositorLanguage = z.object({
   name: z.string().check(z.minLength(1)),
   color: z.nullable(z.string().check(z.minLength(1))),
 })
-export interface DataRepositoryLanguage extends z.infer<typeof DataRepositorLanguage> {}
+interface DataRepositoryLanguage extends z.infer<typeof DataRepositorLanguage> {}
 
 const DataRepositoryTopic = z.object({
   id: z.string().check(z.minLength(1)),
