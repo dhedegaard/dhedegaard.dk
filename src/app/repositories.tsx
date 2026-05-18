@@ -54,11 +54,13 @@ function Repo({ repo }: RepoProps) {
         </div>
       </div>
 
-      <span className="flex-auto text-sm">{repo.description}</span>
+      <span className="line-clamp-3 flex-auto text-sm" title={repo.description ?? undefined}>
+        {repo.description}
+      </span>
 
       {repo.homepageUrl != null && (
         <a
-          className="inline-block p-1 text-xs text-ellipsis text-blue-600 no-underline"
+          className="block truncate p-1 text-xs text-blue-600 no-underline"
           href={repo.homepageUrl}
           target="_blank"
           rel="noopener noreferrer"
