@@ -10,7 +10,7 @@ export default function GlobalError({ error }: Readonly<{ error: Error }>) {
   }, [error])
 
   return (
-    <html lang="en">
+    <html lang="en" style={{ colorScheme: 'light' }}>
       <head>
         <meta charSet="utf-8" />
       </head>
