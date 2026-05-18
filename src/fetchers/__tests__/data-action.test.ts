@@ -196,6 +196,53 @@ describe('transformGithubUserToData', () => {
     ])
   })
 
+  it('keeps primary language data when primary and an edge share an id with different color', () => {
+    const data = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({
+            id: 'first-occurrence',
+            primaryLanguage: { id: 'typescript', color: '#3178c6', name: 'TypeScript' },
+            languages: {
+              edges: [
+                { node: { id: 'typescript', color: '#aabbcc', name: 'TypeScript' } },
+              ],
+            },
+          }),
+        ],
+      })
+    )
+
+    expect(data.repositories[0]?.languages).toEqual([
+      { id: 'typescript', color: '#3178c6', name: 'TypeScript' },
+    ])
+  })
+
+  it('keeps first edge data when two edges share an id with different colors', () => {
+    const data = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({
+            id: 'edge-duplicates',
+            primaryLanguage: null,
+            languages: {
+              edges: [
+                { node: { id: 'javascript', color: '#f1e05a', name: 'JavaScript' } },
+                { node: { id: 'javascript', color: '#aabbcc', name: 'JavaScript' } },
+                { node: { id: 'css', color: '#563d7c', name: 'CSS' } },
+              ],
+            },
+          }),
+        ],
+      })
+    )
+
+    expect(data.repositories[0]?.languages).toEqual([
+      { id: 'javascript', color: '#f1e05a', name: 'JavaScript' },
+      { id: 'css', color: '#563d7c', name: 'CSS' },
+    ])
+  })
+
   it('handles null repository edges, nodes, topic nodes, and language connections', () => {
     const repository = makeRepository({
       id: 'defensive',

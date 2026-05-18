@@ -1,5 +1,4 @@
 import { captureException } from '@sentry/nextjs'
-import uniqBy from 'lodash-es/uniqBy'
 import * as z from 'zod/mini'
 import { getGithubUser } from '../clients/github'
 
@@ -63,17 +62,19 @@ const buildPinnedRankMap = (
   return pinnedRankMap
 }
 
-const extractLanguages = (repo: GithubRepoNode): DataRepositoryLanguage[] =>
-  uniqBy(
-    [repo.primaryLanguage, ...(repo.languages?.edges?.map((edge) => edge?.node) ?? [])].filter(
-      (language): language is NonNullable<typeof language> => language != null
-    ),
-    (language) => language.id
-  ).map((language) => ({
-    id: language.id,
-    name: language.name,
-    color: language.color ?? null,
-  }))
+const extractLanguages = (repo: GithubRepoNode): DataRepositoryLanguage[] => {
+  const seen = new Set<string>()
+  return [repo.primaryLanguage, ...(repo.languages?.edges?.map((edge) => edge?.node) ?? [])].reduce<
+    DataRepositoryLanguage[]
+  >((acc, language) => {
+    if (language == null || seen.has(language.id)) {
+      return acc
+    }
+    seen.add(language.id)
+    acc.push({ id: language.id, name: language.name, color: language.color ?? null })
+    return acc
+  }, [])
+}
 
 const extractTopics = (repo: GithubRepoNode): DataRepositoryTopic[] =>
   repo.repositoryTopics.edges
