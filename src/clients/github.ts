@@ -8,13 +8,9 @@ export const getGithubUser = async (): Promise<GithubUser> => {
   if (typeof pat !== 'string' || pat === '') {
     throw new Error('GITHUB_PAT is not set')
   }
-  const query = userQuery.loc?.source.body
-  if (query == null) {
-    throw new Error('Failed to read user query')
-  }
   const response = await fetch('https://api.github.com/graphql', {
     method: 'POST',
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query: userQuery }),
     headers: {
       'Content-Type': 'application/json',
       Authorization: `bearer ${pat}`,
