@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
-import { DataRepository, DataRepositoryTopic } from '../fetchers/data-action'
+import { DataRepository } from '../fetchers/data-action'
+import { Badge } from './badge'
 import { GithubIcon } from '../icons/github'
 import { LinkIcon } from '../icons/link'
 import { MapPinIcon } from '../icons/map-pin'
@@ -72,7 +73,7 @@ function Repo({ repo }: RepoProps) {
       {repo.topics.length > 0 && (
         <div className="inline-flex w-full flex-wrap gap-1">
           {repo.topics.map((topic) => (
-            <Topic key={topic.id} topic={topic} />
+            <Badge key={topic.id} label={topic.name} />
           ))}
         </div>
       )}
@@ -94,11 +95,3 @@ function Repo({ repo }: RepoProps) {
   )
 }
 
-interface TopicProps {
-  topic: DataRepositoryTopic
-}
-function Topic({ topic }: TopicProps) {
-  return (
-    <div className="bg-base-content/10 rounded px-1.5 py-0.5 text-xs select-none">{topic.name}</div>
-  )
-}

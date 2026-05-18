@@ -1,3 +1,5 @@
+import { Badge } from './badge'
+
 const STACK = [
   { category: 'Frontend', items: ['TypeScript', 'React', 'Next.js', 'Tailwind'] },
   { category: 'Backend', items: ['Node.js', 'PostgreSQL', 'Prisma', 'Zod'] },
@@ -14,12 +16,7 @@ export function TechStack() {
           <span className="text-base-content/60 w-20 shrink-0 pt-1 text-xs">{category}</span>
           <div className="flex flex-wrap gap-1">
             {items.map((item) => (
-              <span
-                key={item}
-                className="bg-base-content/10 rounded px-1.5 py-0.5 text-xs select-none"
-              >
-                {item}
-              </span>
+              <Badge key={item} label={item} />
             ))}
           </div>
         </div>
