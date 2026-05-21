@@ -38,7 +38,11 @@ function Repo({ repo }: RepoProps) {
         </a>
         <div className="flex items-center gap-2">
           {repo.stargazerCount > 0 && (
-            <div className="flex items-center gap-1" role="img" aria-label={`${String(repo.stargazerCount)} stargazers`}>
+            <div
+              className="flex items-center gap-1"
+              role="img"
+              aria-label={`${String(repo.stargazerCount)} ${repo.stargazerCount === 1 ? 'stargazer' : 'stargazers'}`}
+            >
               <span className="text-sm tabular-nums" aria-hidden="true">{repo.stargazerCount}</span>
               <Star size={16} />
             </div>
