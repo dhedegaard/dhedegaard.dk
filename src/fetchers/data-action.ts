@@ -2,12 +2,12 @@ import { captureException } from '@sentry/nextjs'
 import * as z from 'zod/mini'
 import { getGithubUser } from '../clients/github'
 
-const DataRepositorLanguage = z.object({
+const DataRepositoryLanguage = z.object({
   id: z.string().check(z.minLength(1)),
   name: z.string().check(z.minLength(1)),
   color: z.nullable(z.string().check(z.minLength(1))),
 })
-interface DataRepositoryLanguage extends z.infer<typeof DataRepositorLanguage> {}
+interface DataRepositoryLanguage extends z.infer<typeof DataRepositoryLanguage> {}
 
 const DataRepositoryTopic = z.object({
   id: z.string().check(z.minLength(1)),
@@ -25,7 +25,7 @@ const DataRepository = z.object({
   pushedAt: z.nullable(z.iso.datetime({ offset: true })),
   stargazerCount: z.int().check(z.nonnegative()),
   languages: z.array(
-    DataRepositorLanguage as z.ZodMiniType<DataRepositoryLanguage, DataRepositoryLanguage>
+    DataRepositoryLanguage as z.ZodMiniType<DataRepositoryLanguage, DataRepositoryLanguage>
   ),
   topics: z.array(DataRepositoryTopic as z.ZodMiniType<DataRepositoryTopic, DataRepositoryTopic>),
 })
