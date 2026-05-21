@@ -10,6 +10,13 @@ const metadataBase = new URL('https://www.dhedegaard.dk/')
 const gravatarAvatar =
   'https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f'
 
+const gravatarImages = [
+  { url: `${gravatarAvatar}?s=512` },
+  { url: `${gravatarAvatar}?s=512`, width: 512, height: 512 },
+  { url: `${gravatarAvatar}?s=256`, width: 256, height: 256 },
+  { url: `${gravatarAvatar}?s=128`, width: 128, height: 128 },
+]
+
 export const metadata: Metadata = {
   title: 'Dennis Hedegaard',
   keywords: 'Dennis Hedegaard, Dennis Elsborg Heick Hedegaard, dhedegaard',
@@ -25,26 +32,7 @@ export const metadata: Metadata = {
     title: 'Dennis Hedegaard',
     description: 'The personal website of Dennis Hedegaard',
     card: 'summary',
-    images: [
-      {
-        url: `${gravatarAvatar}?s=512`,
-      },
-      {
-        url: `${gravatarAvatar}?s=512`,
-        width: 512,
-        height: 512,
-      },
-      {
-        url: `${gravatarAvatar}?s=256`,
-        width: 256,
-        height: 256,
-      },
-      {
-        url: `${gravatarAvatar}?s=128`,
-        width: 128,
-        height: 128,
-      },
-    ],
+    images: gravatarImages,
   },
   openGraph: {
     type: 'website',
@@ -52,26 +40,7 @@ export const metadata: Metadata = {
     siteName: 'Dennis Hedegaard',
     url: 'https://www.dhedegaard.dk/',
     description: 'The personal website of Dennis Hedegaard',
-    images: [
-      {
-        url: `${gravatarAvatar}?s=512`,
-      },
-      {
-        url: `${gravatarAvatar}?s=512`,
-        width: 512,
-        height: 512,
-      },
-      {
-        url: `${gravatarAvatar}?s=256`,
-        width: 256,
-        height: 256,
-      },
-      {
-        url: `${gravatarAvatar}?s=128`,
-        width: 128,
-        height: 128,
-      },
-    ],
+    images: gravatarImages,
   },
 } satisfies Metadata
 
