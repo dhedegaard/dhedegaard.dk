@@ -15,7 +15,7 @@ const config: NextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ['zod', 'zod/mini'],
+    optimizePackageImports: ['zod/mini'],
   },
 }
 
