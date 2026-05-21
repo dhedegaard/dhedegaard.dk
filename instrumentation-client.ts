@@ -1,11 +1,10 @@
 import { init } from '@sentry/nextjs'
+import { sentryCommonOptions } from './sentry.shared-options'
 
 init({
-  dsn: process.env['NEXT_PUBLIC_SENTRY_DSN'] ?? '',
+  ...sentryCommonOptions,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1,
-  debug: false,
-  ignoreErrors: ['Suspense Exception'],
 })
 
 export { captureRouterTransitionStart as onRouterTransitionStart } from '@sentry/nextjs'
