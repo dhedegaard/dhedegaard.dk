@@ -97,18 +97,18 @@ const toDataRepository = (
     return null
   }
 
-  return DataRepository.parse({
+  return {
     id: repo.id,
     name: repo.name,
     url: ensureString(repo.url, 'repository url'),
-    pinned: getPinnedRank(repo.id, pinnedRankMap) !== Infinity,
+    pinned: pinnedRankMap.has(repo.id),
     description: ensureNonEmptyNullableString(repo.description),
     homepageUrl: ensureHomepageUrl(repo.homepageUrl),
-    pushedAt: ensureNullableString(repo.pushedAt),
+    pushedAt: repo.pushedAt,
     stargazerCount: repo.stargazerCount,
     languages: extractLanguages(repo),
     topics: extractTopics(repo),
-  })
+  } satisfies DataRepository
 }
 
 const compareRepositories = (
@@ -202,9 +202,6 @@ const ensureString = (value: unknown, fieldName: string): string => {
   }
   return value
 }
-
-const ensureNullableString = (value: unknown): string | null =>
-  typeof value === 'string' ? value : null
 
 const ensureNonEmptyNullableString = (value: unknown): string | null => {
   if (typeof value !== 'string') {
