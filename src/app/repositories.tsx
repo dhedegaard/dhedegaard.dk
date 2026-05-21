@@ -4,6 +4,12 @@ import { DataRepository } from '../fetchers/data-action'
 import { Badge } from './badge'
 import { GithubIcon } from '../icons/github'
 
+const formatHomepageUrl = (homepageUrl: string): string => {
+  const url = new URL(homepageUrl)
+  const tail = `${url.pathname === '/' ? '' : url.pathname}${url.search}${url.hash}`
+  return `${url.host}${tail}`
+}
+
 interface RepositoriesProps {
   repositories: readonly DataRepository[]
 }
@@ -68,7 +74,7 @@ function Repo({ repo }: RepoProps) {
         >
           <Link size={11} className="inline-block" />
           &nbsp;
-          {repo.homepageUrl.split('://')[1] ?? repo.homepageUrl}
+          {formatHomepageUrl(repo.homepageUrl)}
         </a>
       )}
 
