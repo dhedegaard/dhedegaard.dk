@@ -185,12 +185,13 @@ export async function getDataAction() {
   }
 }
 
+const URL_SCHEME_RE = /^[a-z][a-z\d+.-]*:\/\//i
 const ensureHomepageUrl = (url: unknown): string | null => {
   if (typeof url !== 'string' || url.trim() === '') {
     return null
   }
   let result = url.trim()
-  if (!/^[a-z][a-z\d+.-]*:\/\//i.test(result)) {
+  if (!URL_SCHEME_RE.test(result)) {
     result = `https://${result}`
   }
   return result
