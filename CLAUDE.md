@@ -4,14 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
+- `npm ci` — lockfile-faithful install; use `npm install` only when intentionally updating deps
 - `npm run dev` — dev server with Turbopack
-- `npm run build` — production build (also runs lint via `concurrently`)
+- `npm run build` — production build (runs `next build` and lint concurrently; this is the CI check)
 - `npm run lint` — ESLint only
 - `npm test` — Vitest test suite (`vitest run`)
 - `npm test -- src/path/to/file.test.ts` — run a single test file
 - `npm run codegen` — regenerate GraphQL types from GitHub API (requires `GITHUB_PAT` env var)
 
-`npm run build` is the primary correctness check; `npm test` covers unit logic.
+`npm run build` is the primary correctness check; `npm test` covers unit logic. CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm test`, and `npm run build` on push with `GITHUB_PAT` injected.
 
 ## Environment
 
@@ -34,7 +35,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), Tail
 
 - Components are server-side by default; `'use client'` only when hooks/browser APIs are needed.
 - `getDataAction()` has no `'use server'` directive — it is not a server action, just an async function called directly from server components.
-- `src/codegen/types.ts` is generated — never hand-edit it. After modifying GraphQL documents in `src/**/*.ts`, run `npm run codegen` and commit both files together.
+- `src/codegen/types.ts` is generated — never hand-edit it. GraphQL workflow: (1) edit documents under `src/**/*.ts` (excluding `src/codegen/`), (2) run `npm run codegen` with `GITHUB_PAT` set, (3) commit the document change and regenerated `src/codegen/types.ts` together.
 - Zod schemas use `zod/mini` (not the full `zod` package) — follow existing import patterns.
 - Repository sort order: pinned first, then by star count, then by `pushedAt`. This logic lives in `data-action.ts`.
 - Caching has two layers: React `cache()` for per-request deduping, and `'use cache'` + `cacheLife()` (Next.js 16 Cache Components, enabled via `cacheComponents: true` in `next.config.ts`) for ISR. Don't collapse these layers.
@@ -53,4 +54,14 @@ Personal site built with Next.js App Router, TypeScript (strictest config), Tail
 
 ESLint uses `typescript-eslint` strict + `prettier` flat config. `src/codegen/` is excluded from both lint and format. `prettier-plugin-tailwindcss` is active — Tailwind class order is enforced automatically, don't reorder manually.
 
-Sentry is wired across three runtimes via `src/instrumentation.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`, and `instrumentation-client.ts`.
+Sentry is wired across three runtimes via `src/instrumentation.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`, and `instrumentation-client.ts`. When changing Sentry config, consider all three.
+
+## Verification
+
+Match the check to the change:
+
+- Unit logic — `npm test`
+- Normal code edits — `npm run lint`
+- GraphQL document changes — `npm run codegen` (then commit generated types)
+- Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `npm run build`
+- If `GITHUB_PAT` is unavailable locally, state which checks were blocked.
