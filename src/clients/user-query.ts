@@ -18,7 +18,7 @@ export const userQuery = /* GraphQL */`
           }
         }
       }
-      repositories(orderBy: { field: PUSHED_AT, direction: DESC }, privacy: PUBLIC, first: 100) {
+      repositories(orderBy: { field: PUSHED_AT, direction: DESC }, privacy: PUBLIC, first: 50) {
         edges {
           node {
             id
