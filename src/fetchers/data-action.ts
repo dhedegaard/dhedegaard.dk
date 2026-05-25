@@ -39,6 +39,21 @@ const DataResult = z.object({
 })
 export interface DataResult extends z.infer<typeof DataResult> {}
 
+type DataRepositoryParseError = Extract<
+  ReturnType<typeof DataRepository.safeParse>,
+  { success: false }
+>['error']
+
+export interface DroppedRepository {
+  id: string
+  error: DataRepositoryParseError
+}
+
+export interface TransformResult {
+  data: DataResult
+  dropped: DroppedRepository[]
+}
+
 type GithubUserData = Awaited<ReturnType<typeof getGithubUser>>
 type GithubRepoEdge = GithubUserData['repositories']['edges'] extends
   | readonly (infer Edge)[]
@@ -139,25 +154,35 @@ const compareRepositories = (
   return 0
 }
 
-export const transformGithubUserToData = (user: GithubUserData): DataResult => {
+export const transformGithubUserToData = (user: GithubUserData): TransformResult => {
   const orderedPinnedNodeIds = getOrderedPinnedNodeIds(user)
   const pinnedRankMap = buildPinnedRankMap(orderedPinnedNodeIds)
   const repos: DataRepository[] = []
+  const dropped: DroppedRepository[] = []
 
   for (const edge of user.repositories.edges ?? []) {
     const repo = edge?.node
     if (repo == null) {
       continue
     }
-    const dataRepository = toDataRepository(repo, user.id, pinnedRankMap)
-    if (dataRepository != null) {
-      repos.push(dataRepository)
+    const candidate = toDataRepository(repo, user.id, pinnedRankMap)
+    if (candidate == null) {
+      // Intentionally filtered out (private, archived, or not owned).
+      continue
+    }
+    // Validate each repository in isolation so one malformed repo degrades to a
+    // dropped repo rather than throwing and taking down the whole page.
+    const parsed = DataRepository.safeParse(candidate)
+    if (parsed.success) {
+      repos.push(parsed.data)
+    } else {
+      dropped.push({ id: candidate.id, error: parsed.error })
     }
   }
 
   const orderedRepos = repos.sort((left, right) => compareRepositories(left, right, pinnedRankMap))
 
-  return DataResult.parse(
+  const data = DataResult.parse(
     {
       repositories: orderedRepos.slice(0, 40),
       avatarUrl: ensureString(user.avatarUrl, 'user avatar URL'),
@@ -166,6 +191,8 @@ export const transformGithubUserToData = (user: GithubUserData): DataResult => {
     } satisfies DataResult,
     { reportInput: true }
   )
+
+  return { data, dropped }
 }
 
 const getData = async (): Promise<DataResult> => {
@@ -173,7 +200,13 @@ const getData = async (): Promise<DataResult> => {
     throw new Error(`Error fetching github user: ${String(error)}`, { cause: error })
   })
 
-  return transformGithubUserToData(user)
+  const { data, dropped } = transformGithubUserToData(user)
+  for (const { id, error } of dropped) {
+    captureException(
+      new Error(`Dropped repository ${id} that failed DataRepository validation`, { cause: error })
+    )
+  }
+  return data
 }
 
 export async function getDataAction() {
@@ -185,16 +218,35 @@ export async function getDataAction() {
   }
 }
 
-const URL_SCHEME_RE = /^[a-z][a-z\d+.-]*:\/\//i
+const HTTP_SCHEME_RE = /^https?:\/\//i
+// A non-http(s) URI scheme (mailto:, tel:, ftp:, javascript:, ...). The negative
+// lookahead for a digit keeps a scheme-less "host:port" (e.g. example.com:8080)
+// from being mistaken for a scheme, since a port number follows the colon there.
+const NON_HTTP_SCHEME_RE = /^[a-z][a-z\d+.-]*:(?!\d)/i
+const HomepageUrl = z.url()
+// A repository homepage is a website: normalize to an http(s) URL, or return
+// null so the caller renders no link rather than a broken or invalid one.
 const ensureHomepageUrl = (url: unknown): string | null => {
-  if (typeof url !== 'string' || url.trim() === '') {
+  if (typeof url !== 'string') {
     return null
   }
-  let result = url.trim()
-  if (!URL_SCHEME_RE.test(result)) {
-    result = `https://${result}`
+  const trimmed = url.trim()
+  if (trimmed === '') {
+    return null
   }
-  return result
+
+  let candidate: string
+  if (HTTP_SCHEME_RE.test(trimmed)) {
+    candidate = trimmed
+  } else if (trimmed.startsWith('//')) {
+    candidate = `https:${trimmed}`
+  } else if (NON_HTTP_SCHEME_RE.test(trimmed)) {
+    return null
+  } else {
+    candidate = `https://${trimmed}`
+  }
+
+  return HomepageUrl.safeParse(candidate).success ? candidate : null
 }
 
 const ensureString = (value: unknown, fieldName: string): string => {

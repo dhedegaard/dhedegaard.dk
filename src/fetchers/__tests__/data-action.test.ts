@@ -59,7 +59,7 @@ const makeUser = ({
 describe('transformGithubUserToData', () => {
   it('filters private, archived, and non-owned repositories defensively', () => {
     const publicOwnedRepository = makeRepository({ id: 'public-owned' })
-    const data = transformGithubUserToData(
+    const { data } = transformGithubUserToData(
       makeUser({
         repositories: [
           publicOwnedRepository,
@@ -78,7 +78,7 @@ describe('transformGithubUserToData', () => {
     const secondPinned = makeRepository({ id: 'second-pinned', stargazerCount: 100 })
     const unpinned = makeRepository({ id: 'unpinned', stargazerCount: 200 })
 
-    const data = transformGithubUserToData(
+    const { data } = transformGithubUserToData(
       makeUser({
         pinnedItems: [
           { __typename: 'Repository', id: firstPinned.id, name: firstPinned.name },
@@ -112,7 +112,7 @@ describe('transformGithubUserToData', () => {
       pushedAt: '2024-01-01T00:00:00Z',
     })
 
-    const data = transformGithubUserToData(
+    const { data } = transformGithubUserToData(
       makeUser({ repositories: [olderFiveStar, newerFiveStar, tenStar] })
     )
 
@@ -131,14 +131,14 @@ describe('transformGithubUserToData', () => {
       })
     )
 
-    const data = transformGithubUserToData(makeUser({ repositories }))
+    const { data } = transformGithubUserToData(makeUser({ repositories }))
 
     expect(data.repositories).toHaveLength(40)
     expect(data.repositories.at(-1)?.id).toBe('repo-39')
   })
 
   it('normalizes empty profile and repository string values', () => {
-    const data = transformGithubUserToData(
+    const { data } = transformGithubUserToData(
       makeUser({
         repositories: [
           makeRepository({
@@ -155,7 +155,7 @@ describe('transformGithubUserToData', () => {
   })
 
   it('prefixes homepage URLs that are missing a scheme', () => {
-    const data = transformGithubUserToData(
+    const { data } = transformGithubUserToData(
       makeUser({
         repositories: [
           makeRepository({
@@ -170,7 +170,7 @@ describe('transformGithubUserToData', () => {
   })
 
   it('deduplicates primary language and language edges', () => {
-    const data = transformGithubUserToData(
+    const { data } = transformGithubUserToData(
       makeUser({
         repositories: [
           makeRepository({
@@ -195,16 +195,14 @@ describe('transformGithubUserToData', () => {
   })
 
   it('keeps primary language data when primary and an edge share an id with different color', () => {
-    const data = transformGithubUserToData(
+    const { data } = transformGithubUserToData(
       makeUser({
         repositories: [
           makeRepository({
             id: 'first-occurrence',
             primaryLanguage: { id: 'typescript', color: '#3178c6', name: 'TypeScript' },
             languages: {
-              edges: [
-                { node: { id: 'typescript', color: '#aabbcc', name: 'TypeScript' } },
-              ],
+              edges: [{ node: { id: 'typescript', color: '#aabbcc', name: 'TypeScript' } }],
             },
           }),
         ],
@@ -217,7 +215,7 @@ describe('transformGithubUserToData', () => {
   })
 
   it('keeps first edge data when two edges share an id with different colors', () => {
-    const data = transformGithubUserToData(
+    const { data } = transformGithubUserToData(
       makeUser({
         repositories: [
           makeRepository({
@@ -254,7 +252,7 @@ describe('transformGithubUserToData', () => {
       },
     })
 
-    const data = transformGithubUserToData(
+    const { data } = transformGithubUserToData(
       makeUser({
         repositoryEdges: [null, { node: null }, { node: repository }],
       })
@@ -266,8 +264,104 @@ describe('transformGithubUserToData', () => {
   })
 
   it('converts missing, empty, or invalid GitHub public email values to null', () => {
-    expect(transformGithubUserToData(makeUser({ email: '' })).email).toBeNull()
-    expect(transformGithubUserToData(makeUser({ email: '   ' })).email).toBeNull()
-    expect(transformGithubUserToData(makeUser({ email: 'not-an-email' })).email).toBeNull()
+    expect(transformGithubUserToData(makeUser({ email: '' })).data.email).toBeNull()
+    expect(transformGithubUserToData(makeUser({ email: '   ' })).data.email).toBeNull()
+    expect(transformGithubUserToData(makeUser({ email: 'not-an-email' })).data.email).toBeNull()
+  })
+
+  it('keeps a repository but nulls a homepage that cannot become a valid URL', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({ id: 'spaces', homepageUrl: 'my site.com' }),
+          makeRepository({ id: 'scheme-only', homepageUrl: 'http://' }),
+        ],
+      })
+    )
+
+    const byId = Object.fromEntries(
+      data.repositories.map((repository) => [repository.id, repository])
+    )
+    expect(data.repositories.map((repository) => repository.id).sort()).toEqual([
+      'scheme-only',
+      'spaces',
+    ])
+    expect(byId['spaces']?.homepageUrl).toBeNull()
+    expect(byId['scheme-only']?.homepageUrl).toBeNull()
+  })
+
+  it('nulls non-http(s) homepage schemes instead of rendering a broken link', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({ id: 'mailto', homepageUrl: 'mailto:me@example.com' }),
+          makeRepository({ id: 'ftp', homepageUrl: 'ftp://files.example.com' }),
+          makeRepository({ id: 'javascript', homepageUrl: 'javascript:alert(1)' }),
+        ],
+      })
+    )
+
+    const byId = Object.fromEntries(
+      data.repositories.map((repository) => [repository.id, repository])
+    )
+    expect(byId['mailto']?.homepageUrl).toBeNull()
+    expect(byId['ftp']?.homepageUrl).toBeNull()
+    expect(byId['javascript']?.homepageUrl).toBeNull()
+  })
+
+  it('normalizes a protocol-relative homepage URL to https', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({ id: 'protocol-relative', homepageUrl: '//example.com/path' }),
+        ],
+      })
+    )
+
+    expect(data.repositories[0]?.homepageUrl).toBe('https://example.com/path')
+  })
+
+  it('prefixes scheme-less host:port homepage URLs instead of dropping them', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({ id: 'host-port', homepageUrl: 'example.com:8080' }),
+          makeRepository({ id: 'localhost-port', homepageUrl: 'localhost:3000/path' }),
+        ],
+      })
+    )
+
+    const byId = Object.fromEntries(
+      data.repositories.map((repository) => [repository.id, repository])
+    )
+    expect(byId['host-port']?.homepageUrl).toBe('https://example.com:8080')
+    expect(byId['localhost-port']?.homepageUrl).toBe('https://localhost:3000/path')
+  })
+
+  it('drops a repository that fails schema validation and reports it in dropped', () => {
+    const { data, dropped } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({ id: 'good' }),
+          makeRepository({
+            id: 'empty-topic',
+            repositoryTopics: {
+              edges: [{ node: { id: 'topic-node', topic: { id: 'topic', name: '' } } }],
+            },
+          }),
+        ],
+      })
+    )
+
+    expect(data.repositories.map((repository) => repository.id)).toEqual(['good'])
+    expect(dropped.map((entry) => entry.id)).toEqual(['empty-topic'])
+  })
+
+  it('reports no dropped repositories when every repository is valid', () => {
+    const { dropped } = transformGithubUserToData(
+      makeUser({ repositories: [makeRepository({ id: 'a' }), makeRepository({ id: 'b' })] })
+    )
+
+    expect(dropped).toEqual([])
   })
 })
