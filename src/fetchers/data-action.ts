@@ -210,12 +210,7 @@ const getData = async (): Promise<DataResult> => {
 }
 
 export async function getDataAction() {
-  try {
-    return await getData()
-  } catch (error: unknown) {
-    captureException(error)
-    throw error
-  }
+  return await getData()
 }
 
 const HTTP_SCHEME_RE = /^https?:\/\//i
