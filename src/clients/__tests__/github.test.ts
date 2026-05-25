@@ -57,4 +57,14 @@ describe('getGithubUser', () => {
 
     await expect(getGithubUser()).rejects.toThrow('Github user was not found')
   })
+
+  it('throws a clear error on a 200 response that has no data field', async () => {
+    process.env['GITHUB_PAT'] = 'token'
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(Response.json({ message: 'API rate limit exceeded' }))
+    )
+
+    await expect(getGithubUser()).rejects.toThrow('Malformed Github response')
+  })
 })

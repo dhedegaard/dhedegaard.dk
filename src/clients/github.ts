@@ -25,9 +25,7 @@ const repositoryNodeSchema = z.object({
   homepageUrl: z.nullable(z.string()),
   owner: z.object({ id: z.string() }),
   repositoryTopics: z.object({
-    edges: z.nullable(
-      z.array(z.nullable(z.object({ node: z.nullable(topicNodeSchema) })))
-    ),
+    edges: z.nullable(z.array(z.nullable(z.object({ node: z.nullable(topicNodeSchema) })))),
   }),
   primaryLanguage: z.nullable(languageSchema),
   languages: z.nullable(
@@ -83,13 +81,16 @@ export const getGithubUser = async (): Promise<GithubUser> => {
   }
   const responseJson = await (response.json() as Promise<{
     errors?: unknown
-    data: { user: unknown }
+    data?: { user?: unknown } | null
   }>)
 
   if (responseJson.errors != null) {
     throw new Error(`Error in Github response: ${JSON.stringify(responseJson.errors)}`, {
       cause: responseJson.errors,
     })
+  }
+  if (responseJson.data == null) {
+    throw new Error('Malformed Github response: missing "data"')
   }
   const user = responseJson.data.user
   if (user == null) {
