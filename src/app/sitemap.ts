@@ -18,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ),
       Number.NEGATIVE_INFINITY
     )
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(error)
     captureException(error)
   }
