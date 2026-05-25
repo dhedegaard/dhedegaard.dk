@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/nextjs'
 import { MetadataRoute } from 'next'
 import { cacheLife } from 'next/cache'
 import { getDataAction } from '../fetchers/data-action'
@@ -6,15 +7,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   'use cache'
   cacheLife('days')
 
-  const { repositories } = await getDataAction()
-  const latestPushedAt = repositories.reduce(
-    (latest, repo) =>
-      Math.max(
-        latest,
-        repo.pushedAt != null ? Date.parse(repo.pushedAt) : Number.NEGATIVE_INFINITY
-      ),
-    Number.NEGATIVE_INFINITY
-  )
+  let latestPushedAt = Number.NEGATIVE_INFINITY
+  try {
+    const { repositories } = await getDataAction()
+    latestPushedAt = repositories.reduce(
+      (latest, repo) =>
+        Math.max(
+          latest,
+          repo.pushedAt != null ? Date.parse(repo.pushedAt) : Number.NEGATIVE_INFINITY
+        ),
+      Number.NEGATIVE_INFINITY
+    )
+  } catch (error) {
+    console.error(error)
+    captureException(error)
+  }
 
   return [
     {
