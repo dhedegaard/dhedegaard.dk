@@ -7,5 +7,4 @@ import { sentryCommonOptions } from './sentry.shared-options'
 
 Sentry.init({
   ...sentryCommonOptions,
-  tracesSampleRate: 1,
 })
