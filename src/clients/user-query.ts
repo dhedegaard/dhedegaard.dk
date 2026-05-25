@@ -18,7 +18,10 @@ export const userQuery = /* GraphQL */`
           }
         }
       }
-      repositories(orderBy: { field: PUSHED_AT, direction: DESC }, privacy: PUBLIC, first: 50) {
+      # Page sorts by stars and surfaces pinned repos, but fetches by pushedAt, so
+      # fetch all public repos (not just the most recently pushed) to avoid dropping
+      # a popular-but-stale or pinned repo. 100 is GitHub's max page size.
+      repositories(orderBy: { field: PUSHED_AT, direction: DESC }, privacy: PUBLIC, first: 100) {
         edges {
           node {
             id
