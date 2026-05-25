@@ -1,13 +1,20 @@
-import { Fragment } from 'react'
+import { captureException } from '@sentry/nextjs'
 import { Link, Pin, Star } from 'lucide-react'
+import { Fragment } from 'react'
 import { DataRepository } from '../fetchers/data-action'
-import { Badge } from './badge'
 import { GithubIcon } from '../icons/github'
+import { Badge } from './badge'
 
 const formatHomepageUrl = (homepageUrl: string): string => {
-  const url = new URL(homepageUrl)
-  const tail = `${url.pathname === '/' ? '' : url.pathname}${url.search}${url.hash}`
-  return `${url.host}${tail}`
+  try {
+    const url = new URL(homepageUrl)
+    const tail = `${url.pathname === '/' ? '' : url.pathname}${url.search}${url.hash}`
+    return `${url.host}${tail}`
+  } catch (error: unknown) {
+    console.error(error)
+    captureException(error)
+    return homepageUrl
+  }
 }
 
 interface RepositoriesProps {
@@ -49,7 +56,9 @@ function Repo({ repo }: RepoProps) {
               role="img"
               aria-label={`${String(repo.stargazerCount)} ${repo.stargazerCount === 1 ? 'stargazer' : 'stargazers'}`}
             >
-              <span className="text-sm tabular-nums" aria-hidden="true">{repo.stargazerCount}</span>
+              <span className="text-sm tabular-nums" aria-hidden="true">
+                {repo.stargazerCount}
+              </span>
               <Star size={16} />
             </div>
           )}
@@ -102,4 +111,3 @@ function Repo({ repo }: RepoProps) {
     </article>
   )
 }
-
