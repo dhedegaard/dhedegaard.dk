@@ -142,13 +142,10 @@ const compareRepositories = (
     return stargazerCountDiff
   }
 
-  const leftPushedAt = left.pushedAt ?? ''
-  const rightPushedAt = right.pushedAt ?? ''
-  if (leftPushedAt > rightPushedAt) {
-    return -1
-  }
-  if (leftPushedAt < rightPushedAt) {
-    return 1
+  const leftPushedAt = left.pushedAt != null ? Date.parse(left.pushedAt) : -Infinity
+  const rightPushedAt = right.pushedAt != null ? Date.parse(right.pushedAt) : -Infinity
+  if (leftPushedAt !== rightPushedAt) {
+    return rightPushedAt - leftPushedAt
   }
 
   return 0

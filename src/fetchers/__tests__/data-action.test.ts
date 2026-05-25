@@ -123,6 +123,25 @@ describe('transformGithubUserToData', () => {
     ])
   })
 
+  it('orders the pushedAt tiebreak chronologically across timezone offsets', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          // 10:00 UTC, but lexically the larger string
+          makeRepository({
+            id: 'plus-two',
+            stargazerCount: 5,
+            pushedAt: '2026-01-01T12:00:00+02:00',
+          }),
+          // 11:00 UTC — chronologically newer, lexically the smaller string
+          makeRepository({ id: 'utc', stargazerCount: 5, pushedAt: '2026-01-01T11:00:00Z' }),
+        ],
+      })
+    )
+
+    expect(data.repositories.map((repository) => repository.id)).toEqual(['utc', 'plus-two'])
+  })
+
   it('caps rendered repositories at 40', () => {
     const repositories = Array.from({ length: 45 }, (_, index) =>
       makeRepository({
