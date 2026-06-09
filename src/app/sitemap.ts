@@ -2,6 +2,7 @@ import { captureException } from '@sentry/nextjs'
 import { MetadataRoute } from 'next'
 import { cacheLife } from 'next/cache'
 import { getDataAction } from '../fetchers/data-action'
+import { SITE_URL } from '../site'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   'use cache'
@@ -25,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      url: 'https://www.dhedegaard.dk/',
+      url: `${SITE_URL}/`,
       lastModified: Number.isFinite(latestPushedAt) ? new Date(latestPushedAt) : undefined,
       changeFrequency: 'daily',
       priority: 1,

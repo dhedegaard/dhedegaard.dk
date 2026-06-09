@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { SITE_URL } from '../site'
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -6,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://www.dhedegaard.dk/sitemap.xml',
+    sitemap: `${SITE_URL}/sitemap.xml`,
   } satisfies MetadataRoute.Robots
 }
