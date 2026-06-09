@@ -1,21 +1,9 @@
-import { captureException } from '@sentry/nextjs'
 import { Link, Pin, Star } from 'lucide-react'
 import { Fragment } from 'react'
 import { DataRepository } from '../fetchers/data-action'
 import { GithubIcon } from '../icons/github'
 import { Badge } from './badge'
-
-const formatHomepageUrl = (homepageUrl: string): string => {
-  try {
-    const url = new URL(homepageUrl)
-    const tail = `${url.pathname === '/' ? '' : url.pathname}${url.search}${url.hash}`
-    return `${url.host}${tail}`
-  } catch (error: unknown) {
-    console.error(error)
-    captureException(error)
-    return homepageUrl
-  }
-}
+import { formatHomepageUrl } from './format-homepage-url'
 
 interface RepositoriesProps {
   repositories: readonly DataRepository[]
