@@ -11,7 +11,7 @@
   "scripts": {
     "start": "next start",
     "dev": "next dev",
-    "build": "concurrently -c auto -n 'build,list' 'next build' 'pnpm -s lint'",
+    "build": "concurrently -c auto -n 'build,lint' 'next build' 'pnpm -s lint'",
     "test": "vitest run",
     "lint": "eslint src",
     "codegen": "graphql-codegen --config codegen.yml && prettier --write src/codegen/types.ts"
