@@ -3,6 +3,23 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 
+minimumReleaseAgeExclude:
+  - '@sentry-internal/browser-utils@10.57.0'
+  - '@sentry-internal/feedback@10.57.0'
+  - '@sentry-internal/replay-canvas@10.57.0'
+  - '@sentry-internal/replay@10.57.0'
+  - '@sentry-internal/server-utils@10.57.0'
+  - '@sentry/browser@10.57.0'
+  - '@sentry/core@10.57.0'
+  - '@sentry/nextjs@10.57.0'
+  - '@sentry/node-core@10.57.0'
+  - '@sentry/node@10.57.0'
+  - '@sentry/opentelemetry@10.57.0'
+  - '@sentry/react@10.57.0'
+  - '@sentry/vercel-edge@10.57.0'
+  - graphql@16.14.2
+  - prettier@3.8.4
+
 overrides:
   '@types/react': 19.2.14
   '@types/react-dom': 19.2.3
