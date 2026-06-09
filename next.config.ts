@@ -1,7 +1,27 @@
 import { withSentryConfig } from '@sentry/nextjs'
 import type { NextConfig } from 'next'
 
+// Shipped as report-only first: it blocks nothing, only reports violations, so we
+// can watch a deployed build before enforcing. `'unsafe-inline'` for scripts is
+// required because Next's App Router emits inline RSC-payload scripts and we keep
+// the site fully static (a nonce would force dynamic rendering). Origins: gravatar
+// serves the favicon/PWA icons; Sentry ingests errors directly from the browser.
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'none'",
+  "form-action 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: https://gravatar.com",
+  "font-src 'self'",
+  "connect-src 'self' https://*.sentry.io https://*.ingest.sentry.io",
+  'upgrade-insecure-requests',
+].join('; ')
+
 const securityHeaders = [
+  { key: 'Content-Security-Policy-Report-Only', value: contentSecurityPolicy },
   // Force HTTPS for two years, including subdomains. Vercel does not set this by
   // default. `preload` opts into the browser preload list (requires submission
   // at hstspreload.org); drop it if any subdomain must stay HTTP.
