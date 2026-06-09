@@ -4,13 +4,14 @@
   "description": "dhedegaard.dk",
   "homepage": "https://www.dhedegaard.dk/",
   "type": "module",
+  "packageManager": "pnpm@11.5.2",
   "engines": {
     "node": "24"
   },
   "scripts": {
     "start": "next start",
     "dev": "next dev",
-    "build": "concurrently -c auto -n 'build,list' 'next build' 'npm run -q lint'",
+    "build": "concurrently -c auto -n 'build,list' 'next build' 'pnpm -s lint'",
     "test": "vitest run",
     "lint": "eslint src",
     "codegen": "graphql-codegen --config codegen.yml && prettier --write src/codegen/types.ts"
@@ -31,6 +32,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^7.0.0",
     "@graphql-codegen/typescript": "^6.0.1",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@tailwindcss/postcss": "^4.3.0",
     "@tsconfig/next": "^2.0.6",
     "@tsconfig/strictest": "^2.0.8",
@@ -52,9 +54,5 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.2",
     "vitest": "^4.1.6"
-  },
-  "overrides": {
-    "@types/react": "19.2.14",
-    "@types/react-dom": "19.2.3"
   }
 }

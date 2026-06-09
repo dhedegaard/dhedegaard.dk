@@ -4,20 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-- `npm ci` — lockfile-faithful install; use `npm install` only when intentionally updating deps
-- `npm run dev` — dev server with Turbopack
-- `npm run build` — production build (runs `next build` and lint concurrently; this is the CI check)
-- `npm run lint` — ESLint only
-- `npm test` — Vitest test suite (`vitest run`)
-- `npm test -- src/path/to/file.test.ts` — run a single test file
-- `npm run codegen` — regenerate GraphQL types from GitHub API (requires `GITHUB_PAT` env var)
+- `pnpm install --frozen-lockfile` — lockfile-faithful install; use `pnpm install` only when intentionally updating deps
+- `pnpm dev` — dev server with Turbopack
+- `pnpm build` — production build (runs `next build` and lint concurrently; this is the CI check)
+- `pnpm lint` — ESLint only
+- `pnpm test` — Vitest test suite (`vitest run`)
+- `pnpm test src/path/to/file.test.ts` — run a single test file
+- `pnpm codegen` — regenerate GraphQL types from GitHub API (requires `GITHUB_PAT` env var)
 
-`npm run build` is the primary correctness check; `npm test` covers unit logic. CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm test`, and `npm run build` on push with `GITHUB_PAT` injected.
+`pnpm build` is the primary correctness check; `pnpm test` covers unit logic. CI (`.github/workflows/ci.yml`) runs `pnpm install --frozen-lockfile`, `pnpm test`, and `pnpm build` on push with `GITHUB_PAT` injected.
 
 ## Environment
 
 - Node 24 required
-- `GITHUB_PAT` — required for runtime data fetching and for `npm run codegen`
+- `GITHUB_PAT` — required for runtime data fetching and for `pnpm codegen`
 - `NEXT_PUBLIC_SENTRY_DSN` — Sentry (optional locally)
 
 ## Architecture
@@ -35,7 +35,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), Tail
 
 - Components are server-side by default; `'use client'` only when hooks/browser APIs are needed.
 - `getDataAction()` has no `'use server'` directive — it is not a server action, just an async function called directly from server components.
-- `src/codegen/types.ts` is generated — never hand-edit it. GraphQL workflow: (1) edit documents under `src/**/*.ts` (excluding `src/codegen/`), (2) run `npm run codegen` with `GITHUB_PAT` set, (3) commit the document change and regenerated `src/codegen/types.ts` together.
+- `src/codegen/types.ts` is generated — never hand-edit it. GraphQL workflow: (1) edit documents under `src/**/*.ts` (excluding `src/codegen/`), (2) run `pnpm codegen` with `GITHUB_PAT` set, (3) commit the document change and regenerated `src/codegen/types.ts` together.
 - Zod schemas use `zod/mini` (not the full `zod` package) — follow existing import patterns.
 - Repository sort order: pinned first, then by star count, then by `pushedAt`. This logic lives in `data-action.ts`.
 - Caching lives at the route level: `page.tsx` and `sitemap.ts` open a `'use cache'` scope with `cacheLife('days')` (Next.js 16 Cache Components, enabled via `cacheComponents: true` in `next.config.ts`). `getDataAction()` itself has no `cache()` wrapper or fetch-level `revalidate` — it inherits caching from the calling scope.
@@ -60,8 +60,8 @@ Sentry is wired across three runtimes via `src/instrumentation.ts`, `sentry.serv
 
 Match the check to the change:
 
-- Unit logic — `npm test`
-- Normal code edits — `npm run lint`
-- GraphQL document changes — `npm run codegen` (then commit generated types)
-- Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `npm run build`
+- Unit logic — `pnpm test`
+- Normal code edits — `pnpm lint`
+- GraphQL document changes — `pnpm codegen` (then commit generated types)
+- Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `pnpm build`
 - If `GITHUB_PAT` is unavailable locally, state which checks were blocked.
