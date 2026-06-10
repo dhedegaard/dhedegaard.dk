@@ -11,29 +11,29 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=128",
-      "type": "image/png",
-      "sizes": "128x128"
+      "src": "/icons/icon-128.jpg",
+      "sizes": "128x128",
+      "type": "image/jpeg"
     },
     {
-      "src": "https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=192",
+      "src": "/icons/icon-192.jpg",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/jpeg"
     },
     {
-      "src": "https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=256",
+      "src": "/icons/icon-256.jpg",
       "sizes": "256x256",
-      "type": "image/png"
+      "type": "image/jpeg"
     },
     {
-      "src": "https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=384",
+      "src": "/icons/icon-384.jpg",
       "sizes": "384x384",
-      "type": "image/png"
+      "type": "image/jpeg"
     },
     {
-      "src": "https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f?s=512",
+      "src": "/icons/icon-512.jpg",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/jpeg"
     }
   ]
 }
