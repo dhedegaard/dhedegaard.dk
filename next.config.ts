@@ -55,9 +55,6 @@ export default withSentryConfig(config, {
 
   bundleSizeOptimizations: {
     excludeDebugStatements: true,
-    excludeReplayIframe: true,
-    excludeReplayShadowDom: true,
-    excludeReplayWorker: true,
     excludeTracing: true,
   },
 })
