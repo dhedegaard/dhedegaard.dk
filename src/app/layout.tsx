@@ -4,7 +4,6 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
-import { preconnect } from 'react-dom'
 import { SITE_URL } from '../site'
 
 const metadataBase = new URL(SITE_URL)
@@ -84,8 +83,6 @@ interface Props {
   children: ReactNode
 }
 export default function RootLayout({ children }: Readonly<Props>) {
-  preconnect('https://avatars.githubusercontent.com')
-
   return (
     <html lang="en">
       <head>
