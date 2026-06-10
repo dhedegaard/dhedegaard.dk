@@ -18,6 +18,35 @@ const gravatarImages = [
   { url: `${gravatarAvatar}?s=128`, width: 128, height: 128 },
 ]
 
+// Structured data for search engines: identifies the site's subject (Person)
+// and the site itself (WebSite), linked via @id so the person is the author.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': `${SITE_URL}/#person`,
+      name: 'Dennis Hedegaard',
+      alternateName: 'Dennis Elsborg Heick Hedegaard',
+      url: SITE_URL,
+      image: gravatarAvatar,
+      sameAs: [
+        'https://github.com/dhedegaard',
+        'https://www.linkedin.com/in/dennis-hedegaard-39a02a22/',
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: 'Dennis Hedegaard',
+      description: 'The personal website of Dennis Hedegaard',
+      inLanguage: 'en',
+      author: { '@id': `${SITE_URL}/#person` },
+    },
+  ],
+}
+
 export const metadata: Metadata = {
   title: 'Dennis Hedegaard',
   keywords: 'Dennis Hedegaard, Dennis Elsborg Heick Hedegaard, dhedegaard',
@@ -61,6 +90,11 @@ export default function RootLayout({ children }: Readonly<Props>) {
     <html lang="en">
       <head>
         <link rel="canonical" href={metadataBase.toString()} />
+        <script
+          type="application/ld+json"
+          // Static, trusted data; escape "<" so a value can never break out of the script tag.
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+        />
       </head>
       <body>
         <div className="mx-auto max-w-4xl px-6 max-md:px-4">{children}</div>
