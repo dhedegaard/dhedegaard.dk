@@ -29,7 +29,7 @@ function Repo({ repo }: RepoProps) {
     <article className="flex flex-col gap-2 rounded-md border border-slate-300 p-4 transition-shadow hover:shadow-sm">
       <div className="flex items-start justify-between">
         <a
-          className="flex font-bold text-inherit no-underline"
+          className="flex font-bold text-inherit no-underline hover:underline"
           href={repo.url}
           target="_blank"
           rel="noopener noreferrer"
@@ -64,7 +64,7 @@ function Repo({ repo }: RepoProps) {
 
       {repo.homepageUrl != null && (
         <a
-          className="block min-w-0 truncate p-1 text-xs text-blue-600 no-underline"
+          className="block min-w-0 truncate p-1 text-xs text-blue-600 no-underline hover:underline"
           href={repo.homepageUrl}
           target="_blank"
           rel="noopener noreferrer"

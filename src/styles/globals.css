@@ -3,3 +3,16 @@
 :root {
   color-scheme: light;
 }
+
+/* Honor the user's reduced-motion preference globally: near-instant animations
+   and transitions (covers the skeleton animate-pulse and card hover). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

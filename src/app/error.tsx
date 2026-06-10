@@ -33,7 +33,7 @@ export default function ErrorPage({
           })
         }}
         disabled={isPending}
-        className="text-blue-600 underline disabled:opacity-50"
+        className="text-blue-600 underline hover:text-blue-700 disabled:opacity-50"
       >
         {isPending ? 'Retrying…' : 'Try again'}
       </button>

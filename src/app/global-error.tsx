@@ -4,9 +4,7 @@ import '../styles/globals.css'
 import * as Sentry from '@sentry/nextjs'
 import { useEffect } from 'react'
 
-export default function GlobalError({
-  error,
-}: Readonly<{ error: Error & { digest?: string } }>) {
+export default function GlobalError({ error }: Readonly<{ error: Error & { digest?: string } }>) {
   useEffect(() => {
     Sentry.captureException(error)
   }, [error])
@@ -30,7 +28,7 @@ export default function GlobalError({
             onClick={() => {
               window.location.reload()
             }}
-            className="text-blue-600 underline"
+            className="text-blue-600 underline hover:text-blue-700"
           >
             Try again
           </button>
