@@ -41,6 +41,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), Tail
 - Caching lives at the route level: `page.tsx` and `sitemap.ts` open a `'use cache'` scope with `cacheLife('days')` (Next.js 16 Cache Components, enabled via `cacheComponents: true` in `next.config.ts`). `getDataAction()` itself has no `cache()` wrapper or fetch-level `revalidate` — it inherits caching from the calling scope.
 - The React Compiler is enabled (`reactCompiler: true`). Write components in standard React style — the compiler handles memoization. Avoid patterns it can't optimize (conditional hook calls, etc.).
 - `tagline.tsx` and `tech-stack.tsx` are fully hardcoded static content — no GitHub API involvement. Everything else on the page comes from `getDataAction()`.
+- Security headers live in `next.config.ts` `headers()` (HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`). We deliberately do **not** ship a Content-Security-Policy: the App Router emits inline RSC-payload scripts, so a CSP would need either `script-src 'unsafe-inline'` (weak, little real protection) or a per-request nonce (which forces dynamic rendering and breaks the `'use cache'` static model), and the third-party origin list is easy to get subtly wrong. For a static site with no user-generated content the maintenance risk outweighs the benefit — don't add a CSP without a deliberate decision to take that on.
 
 **Testing conventions:**
 
