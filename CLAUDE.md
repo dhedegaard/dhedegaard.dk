@@ -19,10 +19,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Node 24 required
 - `GITHUB_PAT` — required for runtime data fetching and for `pnpm codegen`
 - `NEXT_PUBLIC_SENTRY_DSN` — Sentry (optional locally)
+- `SITE_URL` — overrides the canonical origin used for absolute URLs/metadata (optional; defaults to the production domain — see `src/site.ts`)
 
 ## Architecture
 
-Personal site built with Next.js App Router, TypeScript (strictest config), Tailwind CSS v4, and daisyUI.
+Personal site built with Next.js App Router, TypeScript (strictest config), and Tailwind CSS v4. Styling is plain Tailwind utility classes (no component library); `lucide-react` provides icons.
 
 **Data flow:**
 
@@ -36,7 +37,8 @@ Personal site built with Next.js App Router, TypeScript (strictest config), Tail
 - Components are server-side by default; `'use client'` only when hooks/browser APIs are needed.
 - `getDataAction()` has no `'use server'` directive — it is not a server action, just an async function called directly from server components.
 - `src/codegen/types.ts` is generated — never hand-edit it. GraphQL workflow: (1) edit documents under `src/**/*.ts` (excluding `src/codegen/`), (2) run `pnpm codegen` with `GITHUB_PAT` set, (3) commit the document change and regenerated `src/codegen/types.ts` together.
-- Zod schemas use `zod/mini` (not the full `zod` package) — follow existing import patterns.
+- Zod schemas import from `zod/mini` (the tree-shakeable subset of the `zod` v4 package, also listed in `optimizePackageImports`) — never import from `zod` directly; follow existing patterns.
+- `src/site.ts` exports `SITE_URL`, the canonical origin (no trailing slash, overridable via the `SITE_URL` env var for preview deploys). It is the single source for absolute URLs — `layout.tsx` metadata, `robots.ts`, and `sitemap.ts` all read it rather than hardcoding the domain.
 - Repository sort order: pinned first, then by star count, then by `pushedAt`. This logic lives in `data-action.ts`.
 - Caching lives at the route level: `page.tsx` and `sitemap.ts` open a `'use cache'` scope with `cacheLife('days')` (Next.js 16 Cache Components, enabled via `cacheComponents: true` in `next.config.ts`). `getDataAction()` itself has no `cache()` wrapper or fetch-level `revalidate` — it inherits caching from the calling scope.
 - The React Compiler is enabled (`reactCompiler: true`). Write components in standard React style — the compiler handles memoization. Avoid patterns it can't optimize (conditional hook calls, etc.).
