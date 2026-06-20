@@ -1,5 +1,4 @@
 import { Link, Pin, Star } from 'lucide-react'
-import { Fragment } from 'react'
 import { DataRepository } from '../fetchers/data-action'
 import { GithubIcon } from '../icons/github'
 import { Badge } from './badge'
@@ -87,12 +86,7 @@ function Repo({ repo }: RepoProps) {
         <span className="text-xs">
           Language(s):&nbsp;
           <span className="inline text-xs font-bold">
-            {repo.languages.map((language, index) => (
-              <Fragment key={language.id}>
-                {language.name}
-                {index < repo.languages.length - 1 ? ', ' : null}
-              </Fragment>
-            ))}
+            {repo.languages.map((language) => language.name).join(', ')}
           </span>
         </span>
       )}

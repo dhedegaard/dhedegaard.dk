@@ -7,11 +7,12 @@ import type { ReactNode } from 'react'
 import { SITE_URL } from '../site'
 
 const metadataBase = new URL(SITE_URL)
+const SITE_NAME = 'Dennis Hedegaard'
+const SITE_DESCRIPTION = 'The personal website of Dennis Hedegaard'
 const gravatarAvatar =
   'https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f'
 
 const gravatarImages = [
-  { url: `${gravatarAvatar}?s=512` },
   { url: `${gravatarAvatar}?s=512`, width: 512, height: 512 },
   { url: `${gravatarAvatar}?s=256`, width: 256, height: 256 },
   { url: `${gravatarAvatar}?s=128`, width: 128, height: 128 },
@@ -25,7 +26,7 @@ const jsonLd = {
     {
       '@type': 'Person',
       '@id': `${SITE_URL}/#person`,
-      name: 'Dennis Hedegaard',
+      name: SITE_NAME,
       alternateName: 'Dennis Elsborg Heick Hedegaard',
       url: SITE_URL,
       image: gravatarAvatar,
@@ -38,8 +39,8 @@ const jsonLd = {
       '@type': 'WebSite',
       '@id': `${SITE_URL}/#website`,
       url: SITE_URL,
-      name: 'Dennis Hedegaard',
-      description: 'The personal website of Dennis Hedegaard',
+      name: SITE_NAME,
+      description: SITE_DESCRIPTION,
       inLanguage: 'en',
       author: { '@id': `${SITE_URL}/#person` },
     },
@@ -47,28 +48,28 @@ const jsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: 'Dennis Hedegaard',
+  title: SITE_NAME,
   keywords: 'Dennis Hedegaard, Dennis Elsborg Heick Hedegaard, dhedegaard',
-  description: 'The personal website of Dennis Hedegaard',
+  description: SITE_DESCRIPTION,
   manifest: '/manifest.json',
   icons: gravatarAvatar,
   metadataBase,
   appleWebApp: {
     capable: true,
-    title: 'Dennis Hedegaard',
+    title: SITE_NAME,
   },
   twitter: {
-    title: 'Dennis Hedegaard',
-    description: 'The personal website of Dennis Hedegaard',
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
     card: 'summary',
     images: gravatarImages,
   },
   openGraph: {
     type: 'website',
-    title: 'Dennis Hedegaard',
-    siteName: 'Dennis Hedegaard',
+    title: SITE_NAME,
+    siteName: SITE_NAME,
     url: metadataBase.toString(),
-    description: 'The personal website of Dennis Hedegaard',
+    description: SITE_DESCRIPTION,
     images: gravatarImages,
   },
 } satisfies Metadata

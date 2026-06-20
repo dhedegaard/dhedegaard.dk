@@ -1,7 +1,7 @@
 import { captureException } from '@sentry/nextjs'
 import { MetadataRoute } from 'next'
 import { cacheLife } from 'next/cache'
-import { getDataAction } from '../fetchers/data-action'
+import { getDataAction, pushedAtTimestamp } from '../fetchers/data-action'
 import { SITE_URL } from '../site'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -12,11 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const { repositories } = await getDataAction()
     latestPushedAt = repositories.reduce(
-      (latest, repo) =>
-        Math.max(
-          latest,
-          repo.pushedAt != null ? Date.parse(repo.pushedAt) : Number.NEGATIVE_INFINITY
-        ),
+      (latest, repo) => Math.max(latest, pushedAtTimestamp(repo.pushedAt)),
       Number.NEGATIVE_INFINITY
     )
   } catch (error: unknown) {

@@ -103,6 +103,10 @@ const extractTopics = (repo: GithubRepoNode): DataRepositoryTopic[] =>
 const getPinnedRank = (repositoryId: string, pinnedRankMap: ReadonlyMap<string, number>): number =>
   pinnedRankMap.get(repositoryId) ?? Infinity
 
+/** Parse a nullable ISO timestamp to epoch millis, treating null as the oldest possible. */
+export const pushedAtTimestamp = (pushedAt: string | null): number =>
+  pushedAt != null ? Date.parse(pushedAt) : Number.NEGATIVE_INFINITY
+
 const toDataRepository = (
   repo: GithubRepoNode,
   userId: string,
@@ -142,8 +146,8 @@ const compareRepositories = (
     return stargazerCountDiff
   }
 
-  const leftPushedAt = left.pushedAt != null ? Date.parse(left.pushedAt) : -Infinity
-  const rightPushedAt = right.pushedAt != null ? Date.parse(right.pushedAt) : -Infinity
+  const leftPushedAt = pushedAtTimestamp(left.pushedAt)
+  const rightPushedAt = pushedAtTimestamp(right.pushedAt)
   if (leftPushedAt !== rightPushedAt) {
     return rightPushedAt - leftPushedAt
   }
