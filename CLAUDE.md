@@ -47,7 +47,8 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
 
 **Testing conventions:**
 
-- Tests live in `__tests__/` subdirectories alongside source files. Vitest runs with `environment: 'node'` and no globals.
+- Tests live in `__tests__/` subdirectories alongside source files. Vitest runs with `environment: 'node'` and no globals (config in `vitest.config.ts`).
+- The test toolchain has a non-obvious dependency: `vitest.config.ts` uses `@vitejs/plugin-react` to transform JSX in `.tsx` test files, and `vite` is a required (non-optional) peer of vitest 4 — so both `vite` and `@vitejs/plugin-react` must stay explicit `devDependencies`. If `vite` drops out of the tree (e.g. a lockfile regen), a clean `pnpm install --frozen-lockfile` leaves vitest unable to import it and `pnpm test` fails at startup with `ERR_MODULE_NOT_FOUND` — even though it may still pass locally on a stale `node_modules`.
 - `transformGithubUserToData` (in `data-action.ts`) is the pure, sync extraction of all data-shaping logic. Test data transformations through it directly rather than mocking `fetch`.
 - Use `renderToStaticMarkup` + `createElement` (from `react-dom/server`) to test server component output without a DOM environment.
 - Use `vi.stubGlobal('fetch', vi.fn(...))` to mock network calls in `github.ts` tests; restore with `vi.unstubAllGlobals()` in `afterEach`.
