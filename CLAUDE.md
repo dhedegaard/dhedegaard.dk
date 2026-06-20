@@ -60,6 +60,12 @@ ESLint uses `typescript-eslint` strict + `prettier` flat config. `src/codegen/` 
 
 Sentry is wired across three runtimes via `src/instrumentation.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`, and `instrumentation-client.ts`. The shared subset (DSN, `debug`, `ignoreErrors`) lives in `sentry.shared-options.ts` and is spread into each `init()` call — change it there to affect all three runtimes; only override per-runtime keys (e.g. `tracesSampleRate`, replay sampling) in the runtime file.
 
+**Sentry client bundle — do not re-litigate.** The Sentry browser SDK is the largest client chunk (~127 KB gzip) and loads eagerly via `instrumentation-client.ts`. This is already at Sentry's recommended minimum and should be left as-is:
+
+- The only lever Sentry recommends is tree-shaking (don't import unused integrations). We already do this — `init()` adds no integrations, so Session Replay, Browser Tracing, and Profiling are all excluded (verified: no replay/rrweb code ships).
+- `bundleSizeOptimizations` (`excludeTracing`, `excludeDebugStatements`) are set in `next.config.ts` but are **no-ops under Turbopack** (our build) — Sentry's tree-shaking transforms only run on webpack. Keep them anyway so they activate automatically if Turbopack tree-shaking lands later; revisit this chunk after Next/Sentry upgrades.
+- Do **not** suggest lazy-loading or deferring the core SDK `init()` to cut the bundle. Sentry recommends lazy-loading only for Session Replay (unused here), and deferring core init sacrifices early-error capture for a page that already paints instantly as static HTML. Not worth it.
+
 ## Verification
 
 Match the check to the change:
