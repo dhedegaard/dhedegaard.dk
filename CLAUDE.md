@@ -27,7 +27,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
 
 **Data flow:**
 
-1. `src/clients/user-query.ts` — GraphQL document queried against the GitHub API
+1. `src/clients/user-query.ts` — typed GraphQL document (built with `gql.tada`'s `graphql()` from `src/clients/graphql.ts`) queried against the GitHub API
 2. `src/clients/github.ts` — authenticated fetch + `zod/mini` parse of the raw GitHub response
 3. `src/fetchers/data-action.ts` — shapes/filters the parsed response into `DataResult`, validates the final shape with `zod/mini`. This is the single source of truth for all page data.
 4. `src/app/*` — server components consume `getDataAction()` directly from inside a `'use cache'` scope
@@ -36,7 +36,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
 
 - Components are server-side by default; `'use client'` only when hooks/browser APIs are needed.
 - `getDataAction()` has no `'use server'` directive — it is not a server action, just an async function called directly from server components.
-- `src/codegen/types.ts` is generated — never hand-edit it. GraphQL workflow: (1) edit documents under `src/**/*.ts` (excluding `src/codegen/`), (2) run `pnpm codegen` with `GITHUB_PAT` set, (3) commit the document change and regenerated `src/codegen/types.ts` together.
+- GraphQL types come from `gql.tada` (no codegen step that emits per-query types). Documents are written with `graphql()` from `src/clients/graphql.ts`; their result types are inferred at compile time via `src/graphql-env.d.ts`. To get the query string for a raw `fetch` body, use `print()` from `graphql` (see `github.ts`). The GitHub `URI`/`DateTime` scalars are mapped to `string` in `graphql.ts` so document types line up with the zod schema. `src/graphql-env.d.ts` and `github-schema.graphql` are generated and **git-ignored** — never hand-edit or commit them. They're regenerated automatically: `postinstall` runs `pnpm codegen` when `GITHUB_PAT` is set and the file is missing, and `pnpm build` regenerates them first if absent (so CI, whose build step has the token, is self-sufficient). Run `pnpm codegen` manually (with `GITHUB_PAT` set) after a fresh clone to populate editor/lint types, or whenever the GitHub schema changes. Editing an existing query needs no regeneration — types re-infer from the local `github-schema.graphql`. Trade-off: typecheck/lint/build now require `GITHUB_PAT` + network to (re)generate types rather than reading a committed file.
 - Zod schemas import from `zod/mini` (the tree-shakeable subset of the `zod` v4 package, also listed in `optimizePackageImports`) — never import from `zod` directly; follow existing patterns.
 - `src/site.ts` exports `SITE_URL`, the canonical origin (no trailing slash, overridable via the `SITE_URL` env var for preview deploys). It is the single source for absolute URLs — `layout.tsx` metadata, `robots.ts`, and `sitemap.ts` all read it rather than hardcoding the domain.
 - Repository sort order: pinned first, then by star count, then by `pushedAt`. This logic lives in `data-action.ts`.
@@ -56,7 +56,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
 
 ## Code Style
 
-ESLint uses `typescript-eslint` strict + `prettier` flat config. `src/codegen/` is excluded from both lint and format. `prettier-plugin-tailwindcss` is active — Tailwind class order is enforced automatically, don't reorder manually.
+ESLint uses `typescript-eslint` strict + `prettier` flat config. The generated `src/graphql-env.d.ts` is excluded from lint (it carries its own `eslint-disable`/`prettier-ignore` headers too). `prettier-plugin-tailwindcss` is active — Tailwind class order is enforced automatically, don't reorder manually.
 
 Sentry is wired across three runtimes via `src/instrumentation.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`, and `instrumentation-client.ts`. The shared subset (DSN, `debug`, `ignoreErrors`) lives in `sentry.shared-options.ts` and is spread into each `init()` call — change it there to affect all three runtimes; only override per-runtime keys (e.g. `tracesSampleRate`, replay sampling) in the runtime file.
 
@@ -72,6 +72,6 @@ Match the check to the change:
 
 - Unit logic — `pnpm test`
 - Normal code edits — `pnpm lint`
-- GraphQL document changes — `pnpm codegen` (then commit generated types)
+- GitHub schema changes — `pnpm codegen` (regenerates the git-ignored `github-schema.graphql` + `src/graphql-env.d.ts`; editing an existing query needs no regeneration)
 - Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `pnpm build`
 - If `GITHUB_PAT` is unavailable locally, state which checks were blocked.

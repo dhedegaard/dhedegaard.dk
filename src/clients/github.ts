@@ -1,5 +1,6 @@
+import { print } from 'graphql'
 import * as z from 'zod/mini'
-import type { UserQueryQuery } from '../codegen/types'
+import type { ResultOf } from './graphql'
 import { userQuery } from './user-query'
 
 const languageSchema = z.object({
@@ -59,9 +60,12 @@ export const githubUserSchema = z.object({
       )
     ),
   }),
-}) satisfies z.ZodMiniType<NonNullable<UserQueryQuery['user']>>
+}) satisfies z.ZodMiniType<NonNullable<ResultOf<typeof userQuery>['user']>>
 
 export type GithubUser = z.infer<typeof githubUserSchema>
+
+// The query document is static, so serialize it once at module load.
+const userQueryString = print(userQuery)
 
 export const getGithubUser = async (): Promise<GithubUser> => {
   const pat: unknown = process.env['GITHUB_PAT']
@@ -70,7 +74,7 @@ export const getGithubUser = async (): Promise<GithubUser> => {
   }
   const response = await fetch('https://api.github.com/graphql', {
     method: 'POST',
-    body: JSON.stringify({ query: userQuery }),
+    body: JSON.stringify({ query: userQueryString }),
     headers: {
       'Content-Type': 'application/json',
       Authorization: `bearer ${pat}`,

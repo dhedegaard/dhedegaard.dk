@@ -1,8 +1,10 @@
+import { graphql } from './graphql'
+
 /**
  * You can build your query from here:
  * <https://docs.github.com/en/graphql/overview/explorer>
  */
-export const userQuery = /* GraphQL */ `
+export const userQuery = graphql(`
   query UserQuery {
     user(login: "dhedegaard") {
       id
@@ -66,4 +68,4 @@ export const userQuery = /* GraphQL */ `
       }
     }
   }
-`
+`)

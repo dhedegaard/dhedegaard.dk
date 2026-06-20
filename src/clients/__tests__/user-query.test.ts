@@ -1,3 +1,4 @@
+import { print } from 'graphql'
 import { describe, expect, it } from 'vitest'
 import { userQuery } from '../user-query'
 
@@ -8,6 +9,6 @@ describe('userQuery', () => {
     // been pushed recently must still be fetched, so the page size has to cover
     // all public repos — not just the most recently pushed. 100 is GitHub's max
     // page size; beyond that this query would need pagination.
-    expect(userQuery).toMatch(/repositories\([^)]*first:\s*100/)
+    expect(print(userQuery)).toMatch(/repositories\([^)]*first:\s*100/)
   })
 })
