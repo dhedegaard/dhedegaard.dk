@@ -26,3 +26,6 @@ jobs:
         env:
           CI: true
           GITHUB_PAT: ${{ secrets._GITHUB_PAT }}
+      # Runs after build so the generated src/graphql-env.d.ts exists and
+      # graphql.ts's import resolves; knip itself needs no GITHUB_PAT.
+      - run: pnpm knip

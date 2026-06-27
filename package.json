@@ -14,6 +14,7 @@
     "build": "{ test -f src/graphql-env.d.ts || pnpm codegen; } && concurrently -c auto -n 'build,lint' 'next build' 'pnpm -s lint'",
     "test": "vitest run",
     "lint": "eslint src",
+    "knip": "knip",
     "postinstall": "if [ -n \"$GITHUB_PAT\" ] && [ ! -f src/graphql-env.d.ts ]; then pnpm codegen; fi",
     "codegen": "gql.tada generate-schema 'https://api.github.com/graphql' --header \"Authorization: Bearer ${GITHUB_PAT}\" --header \"User-Agent: codegen\" --output ./github-schema.graphql && gql.tada generate-output"
   },
@@ -45,6 +46,7 @@
     "eslint-config-next": "16.2.9",
     "eslint-config-prettier": "^10.1.8",
     "gql.tada": "^1.11.2",
+    "knip": "^6.21.0",
     "postcss": "^8.5.15",
     "prettier": "^3.8.4",
     "prettier-plugin-tailwindcss": "^0.8.0",
