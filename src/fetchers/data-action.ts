@@ -44,7 +44,7 @@ type DataRepositoryParseError = Extract<
   { success: false }
 >['error']
 
-export interface DroppedRepository {
+interface DroppedRepository {
   id: string
   error: DataRepositoryParseError
 }

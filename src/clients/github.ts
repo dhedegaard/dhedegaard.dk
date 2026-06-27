@@ -41,7 +41,7 @@ const pinnedItemSchema = z.union([
   z.object({ __typename: z.literal('Repository'), id: z.string(), name: z.string() }),
 ])
 
-export const githubUserSchema = z.object({
+const githubUserSchema = z.object({
   id: z.string(),
   avatarUrl: z.string(),
   url: z.string(),
