@@ -6,6 +6,7 @@ const STACK = [
   { category: 'Testing', items: ['Vitest', 'Playwright'] },
   { category: 'Observability', items: ['Sentry'] },
   { category: 'Infra', items: ['Docker', 'GitHub Actions', 'AWS', 'Azure', 'Vercel'] },
+  { category: 'AI', items: ['Claude Code'] },
 ] as const
 
 export function TechStack() {
