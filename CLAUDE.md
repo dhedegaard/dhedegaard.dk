@@ -10,9 +10,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm lint` — ESLint only
 - `pnpm test` — Vitest test suite (`vitest run`)
 - `pnpm test src/path/to/file.test.ts` — run a single test file
+- `pnpm knip` — detect unused exports, deps, and files (zero-config; hard CI gate)
 - `pnpm codegen` — regenerate GraphQL types from GitHub API (requires `GITHUB_PAT` env var)
 
-`pnpm build` is the primary correctness check; `pnpm test` covers unit logic. CI (`.github/workflows/ci.yml`) runs `pnpm install --frozen-lockfile`, `pnpm test`, and `pnpm build` on push with `GITHUB_PAT` injected.
+`pnpm build` is the primary correctness check; `pnpm test` covers unit logic. CI (`.github/workflows/ci.yml`) runs `pnpm install --frozen-lockfile`, `pnpm test`, `pnpm build` (with `GITHUB_PAT` injected), then `pnpm knip` on push — all four are hard gates, so a green local build alone does not mean green CI. knip runs _after_ the build on purpose: it needs the generated `src/graphql-env.d.ts` that `graphql.ts` imports, so running it on a fresh clone before `pnpm codegen` fails on an unresolvable import. knip itself needs no `GITHUB_PAT`.
 
 ## Environment
 
@@ -72,6 +73,7 @@ Match the check to the change:
 
 - Unit logic — `pnpm test`
 - Normal code edits — `pnpm lint`
+- Removing an export, dep, or file — `pnpm knip` (CI fails on anything left unused)
 - GitHub schema changes — `pnpm codegen` (regenerates the git-ignored `github-schema.graphql` + `src/graphql-env.d.ts`; editing an existing query needs no regeneration)
 - Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `pnpm build`
 - If `GITHUB_PAT` is unavailable locally, state which checks were blocked.
