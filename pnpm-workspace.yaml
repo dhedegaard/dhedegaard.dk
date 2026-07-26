@@ -2,7 +2,6 @@ allowBuilds:
   '@sentry/cli': true
   sharp: true
   unrs-resolver: true
-
 minimumReleaseAgeExclude:
   - '@sentry-internal/browser-utils@10.57.0'
   - '@sentry-internal/feedback@10.57.0'
@@ -19,7 +18,18 @@ minimumReleaseAgeExclude:
   - '@sentry/vercel-edge@10.57.0'
   - graphql@16.14.2
   - prettier@3.8.4
-
+  - '@next/env@16.2.12'
+  - '@next/eslint-plugin-next@16.2.12'
+  - '@next/swc-darwin-arm64@16.2.12'
+  - '@next/swc-darwin-x64@16.2.12'
+  - '@next/swc-linux-arm64-gnu@16.2.12'
+  - '@next/swc-linux-arm64-musl@16.2.12'
+  - '@next/swc-linux-x64-gnu@16.2.12'
+  - '@next/swc-linux-x64-musl@16.2.12'
+  - '@next/swc-win32-arm64-msvc@16.2.12'
+  - '@next/swc-win32-x64-msvc@16.2.12'
+  - eslint-config-next@16.2.12
+  - next@16.2.12
 overrides:
-  '@types/react': 19.2.14
+  '@types/react': 19.2.17
   '@types/react-dom': 19.2.3
