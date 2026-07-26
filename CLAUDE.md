@@ -76,6 +76,8 @@ Match the check to the change:
 - Unit logic — `pnpm test`
 - Normal code edits — `pnpm lint`
 - Removing an export, dep, or file — `pnpm knip` (CI fails on anything left unused)
+- Dependency major bumps — `pnpm peers check` (`pnpm install` only warns that peer issues exist; this lists them)
 - GitHub schema changes — `pnpm codegen` (regenerates the git-ignored `github-schema.graphql` + `src/graphql-env.d.ts`; editing an existing query needs no regeneration)
 - Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `pnpm build`
 - If `GITHUB_PAT` is unavailable locally, state which checks were blocked.
+- A failing `pnpm build` may be the lint leg, not your change — check the `[build]`/`[lint]` output prefix, and reproduce on a clean tree before attributing it to your edit.
