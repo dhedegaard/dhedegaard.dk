@@ -57,6 +57,8 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
 
 ## Code Style
 
+Keep code comments short — one brief line; point to CLAUDE.md or commit messages for rationale instead of explaining inline.
+
 ESLint uses `typescript-eslint` strict + `prettier` flat config. The generated `src/graphql-env.d.ts` is excluded from lint (it carries its own `eslint-disable`/`prettier-ignore` headers too). `prettier-plugin-tailwindcss` is active — Tailwind class order is enforced automatically, don't reorder manually.
 
 **ESLint is deliberately held at 9 (exact pin) — don't bump to 10.** The plugin ecosystem behind `eslint-config-next` hasn't caught up: `eslint-plugin-react`, `eslint-plugin-import`, and `eslint-plugin-jsx-a11y` all declare `eslint` peers capped at `^9`. On ESLint 10 that isn't just a warning — `eslint-plugin-react`'s React-version detection calls `context.getFilename()`, an API ESLint 10 removed, which throws while loading `react/display-name` and takes down every `react/*` rule (and with it `pnpm build`, since lint runs concurrently). Setting `settings.react.version` explicitly works around that one crash, but leaves the other two plugins unsupported, so we stay on 9 instead. Revisit once those plugins ship ESLint 10 support — `eslint-plugin-react` > 7.37.5 is the one to watch.
@@ -79,6 +81,8 @@ Match the check to the change:
 - Normal code edits — `pnpm lint`
 - Removing an export, dep, or file — `pnpm knip` (CI fails on anything left unused)
 - Dependency major bumps — `pnpm peers check` (`pnpm install` only warns that peer issues exist; this lists them)
+  - Known-accepted failure: `@0no-co/graphql.web` wants `graphql` ^16, we ship 17 (accepted with the graphql v17 upgrade). Only new mismatches beyond this one indicate a problem.
+- Dep bumps to freshly-released versions may be blocked by pnpm's minimum-release-age policy — add the exact `pkg@version` to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml` (see existing entries).
 - GitHub schema changes — `pnpm codegen` (regenerates the git-ignored `github-schema.graphql` + `src/graphql-env.d.ts`; editing an existing query needs no regeneration)
 - Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `pnpm build`
 - If `GITHUB_PAT` is unavailable locally, state which checks were blocked.
