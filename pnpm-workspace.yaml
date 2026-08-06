@@ -33,7 +33,12 @@ minimumReleaseAgeExclude:
   - '@gql.tada/cli-utils@1.9.3'
   - '@gql.tada/internal@1.2.2'
   - gql.tada@1.11.3
-  - lucide-react@1.27.0
+  - lucide-react@1.27.0 || 1.29.0
+  - knip@6.32.0
+  - postcss@8.5.26
+  - vite@8.2.1
 overrides:
+  # held at 9 on purpose — see CLAUDE.md
+  eslint: ^9
   '@types/react': 19.2.18
   '@types/react-dom': 19.2.4
