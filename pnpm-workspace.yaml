@@ -40,5 +40,7 @@ minimumReleaseAgeExclude:
 overrides:
   # held at 9 on purpose — see CLAUDE.md
   eslint: ^9
+  # audit fix (GHSA-7p8r-x3mc-p8w7); drop once ajv resolves >=3.1.5 on its own
+  fast-uri: ^3.1.5
   '@types/react': 19.2.18
   '@types/react-dom': 19.2.4
