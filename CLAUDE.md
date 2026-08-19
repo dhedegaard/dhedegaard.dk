@@ -15,11 +15,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `npm run build` is the primary correctness check; `npm test` covers unit logic. CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm test`, `npm run build` (with `GITHUB_PAT` injected), then `npm run knip` on push — all four are hard gates, so a green local build alone does not mean green CI. knip runs _after_ the build on purpose: it needs the generated `src/graphql-env.d.ts` that `graphql.ts` imports, so running it on a fresh clone before `npm run codegen` fails on an unresolvable import. knip itself needs no `GITHUB_PAT`.
 
-Packages with install scripts must be allowlisted in `package.json` `allowScripts` (npm's script gate) — when an install warns about uncovered install scripts, run `npm approve-scripts <pkg>` after confirming the package is trusted. Note: the migration from pnpm dropped pnpm's minimum-release-age policy; npm has no equivalent, so freshly-published versions install immediately.
+Packages with install scripts must be allowlisted in `package.json` `allowScripts` (npm's script gate) — entries are pinned as `pkg@version`, so bumping an allowlisted package (e.g. `@sentry/cli`) silently skips its install script (warn-only, install still succeeds) until re-approved with `npm approve-scripts <pkg>` after confirming the package is trusted. Note: the migration from pnpm dropped pnpm's minimum-release-age policy; npm has no equivalent, so freshly-published versions install immediately.
 
 ## Environment
 
-- Node 24 required
+- Node 24 required — enforced at install via `.npmrc` `engine-strict=true` (deliberate, replaces pnpm's built-in engines check); wrong Node fails `npm ci`
 - `GITHUB_PAT` — required for runtime data fetching and for `npm run codegen`
 - `NEXT_PUBLIC_SENTRY_DSN` — Sentry (optional locally)
 - `SITE_URL` — overrides the canonical origin used for absolute URLs/metadata (optional; defaults to the production domain — see `src/site.ts`)
