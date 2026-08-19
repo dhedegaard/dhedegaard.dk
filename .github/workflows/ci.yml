@@ -12,20 +12,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
       - name: Use Node.js
         uses: actions/setup-node@v6
         with:
           node-version-file: package.json
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm test
-      - run: pnpm run build
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
         env:
           CI: true
           GITHUB_PAT: ${{ secrets._GITHUB_PAT }}
       # Runs after build so the generated src/graphql-env.d.ts exists and
       # graphql.ts's import resolves; knip itself needs no GITHUB_PAT.
-      - run: pnpm knip
+      - run: npm run knip

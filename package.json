@@ -4,18 +4,18 @@
   "description": "dhedegaard.dk",
   "homepage": "https://www.dhedegaard.dk/",
   "type": "module",
-  "packageManager": "pnpm@11.20.0",
+  "packageManager": "npm@11.17.0",
   "engines": {
     "node": "24"
   },
   "scripts": {
     "start": "next start",
     "dev": "next dev",
-    "build": "{ test -f src/graphql-env.d.ts || pnpm codegen; } && concurrently -c auto -n 'build,lint' 'next build' 'pnpm -s lint'",
+    "build": "{ test -f src/graphql-env.d.ts || npm run -s codegen; } && concurrently -c auto -n 'build,lint' 'next build' 'npm run -s lint'",
     "test": "vitest run",
     "lint": "eslint src",
     "knip": "knip",
-    "postinstall": "if [ -n \"$GITHUB_PAT\" ] && [ ! -f src/graphql-env.d.ts ]; then pnpm codegen; fi",
+    "postinstall": "if [ -n \"$GITHUB_PAT\" ] && [ ! -f src/graphql-env.d.ts ]; then npm run codegen; fi",
     "codegen": "gql.tada generate-schema 'https://api.github.com/graphql' --header \"Authorization: Bearer ${GITHUB_PAT}\" --header \"User-Agent: codegen\" --output ./github-schema.graphql && gql.tada generate-output"
   },
   "author": "Dennis Hedegaard <dennis@dhedegaard.dk>",
@@ -25,7 +25,7 @@
     "@sentry/nextjs": "^10.70.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "graphql": "^17.0.2",
+    "graphql": "^16.14.2",
     "lucide-react": "^1.32.0",
     "next": "16.3.0",
     "react": "19.2.8",
@@ -42,7 +42,7 @@
     "@vitejs/plugin-react": "^6.0.5",
     "babel-plugin-react-compiler": "^1.0.0",
     "concurrently": "^10.0.5",
-    "eslint": "^9.39.5",
+    "eslint": "9.39.5",
     "eslint-config-next": "16.3.0",
     "eslint-config-prettier": "^10.1.8",
     "gql.tada": "^1.11.3",
@@ -56,8 +56,9 @@
     "vite": "^8.2.1",
     "vitest": "^4.1.11"
   },
-  "overrides": {
-    "@types/react": "19.2.17",
-    "@types/react-dom": "19.2.3"
+  "allowScripts": {
+    "@sentry/cli@2.58.6": true,
+    "unrs-resolver@1.12.2": true,
+    "fsevents@2.3.3": true
   }
 }
