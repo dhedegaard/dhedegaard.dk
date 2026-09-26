@@ -1,19 +1,11 @@
-/** Route that receives CSP violation reports (see `src/app/api/csp-report`). */
-export const CSP_REPORT_PATH = '/api/csp-report'
-
-/** Reporting API group name, declared via the `Reporting-Endpoints` header. */
-export const CSP_REPORT_GROUP = 'csp-endpoint'
-
 interface CspOptions {
   isDev: boolean
-  isPreview: boolean
+  vercelEnv: string | undefined
   sentryDsn: string | undefined
 }
 
-type Directives = Record<string, readonly string[]>
-
-// Directives for the Vercel preview toolbar, per Vercel's toolbar CSP docs.
-const vercelToolbar: Directives = {
+// Per Vercel's toolbar CSP docs.
+const vercelToolbar: Record<string, string[]> = {
   'script-src': ['https://vercel.live'],
   'connect-src': ['https://vercel.live', 'wss://ws-us3.pusher.com'],
   'img-src': ['https://vercel.live', 'https://vercel.com'],
@@ -22,28 +14,24 @@ const vercelToolbar: Directives = {
   'frame-src': ["'self'", 'https://vercel.live'],
 }
 
-/** Origin the Sentry browser SDK posts envelopes to, derived from the DSN. */
-export function sentryIngestOrigin(dsn: string | undefined): string | undefined {
-  if (!dsn || !URL.canParse(dsn)) return undefined
-  return new URL(dsn).origin
-}
-
-function merge(base: Directives, extra: Directives): Directives {
-  const merged: Record<string, readonly string[]> = { ...base }
-  for (const [name, values] of Object.entries(extra)) {
-    merged[name] = [...new Set([...(merged[name] ?? []), ...values])]
-  }
-  return merged
+// Sentry's security endpoint, see "Security Policy Reporting" in the Sentry docs.
+function sentryReportUrl(dsn: URL, vercelEnv: string | undefined): string {
+  const url = new URL(`/api/${dsn.pathname.split('/').pop() ?? ''}/security/`, dsn.origin)
+  url.searchParams.set('sentry_key', dsn.username)
+  // Matches the environment name the Sentry SDK derives from VERCEL_ENV.
+  if (vercelEnv) url.searchParams.set('sentry_environment', `vercel-${vercelEnv}`)
+  return url.toString()
 }
 
 /**
- * Static CSP — `'unsafe-inline'` scripts rather than nonces so pages stay
- * statically prerendered (no proxy/middleware). See CLAUDE.md.
+ * Report-only CSP headers. Static (no nonces) so pages stay prerendered, which
+ * means `'unsafe-inline'` scripts — see CLAUDE.md.
  */
-export function buildCsp({ isDev, isPreview, sentryDsn }: CspOptions): string {
-  const sentryOrigin = sentryIngestOrigin(sentryDsn)
+export function cspHeaders({ isDev, vercelEnv, sentryDsn }: CspOptions) {
+  const dsn = URL.parse(sentryDsn ?? '')
+  const reportUrl = dsn ? sentryReportUrl(dsn, vercelEnv) : undefined
 
-  let directives: Directives = {
+  const directives: Record<string, string[]> = {
     'default-src': ["'self'"],
     // React dev tooling relies on eval.
     'script-src': ["'self'", "'unsafe-inline'", ...(isDev ? ["'unsafe-eval'"] : [])],
@@ -51,19 +39,28 @@ export function buildCsp({ isDev, isPreview, sentryDsn }: CspOptions): string {
     'style-src': ["'self'", "'unsafe-inline'"],
     'img-src': ["'self'", 'data:', 'blob:', 'https://gravatar.com'],
     'font-src': ["'self'"],
-    'connect-src': ["'self'", ...(sentryOrigin ? [sentryOrigin] : [])],
+    'connect-src': ["'self'", ...(dsn ? [dsn.origin] : [])],
     'object-src': ["'none'"],
     'base-uri': ["'self'"],
     'form-action': ["'self'"],
     'frame-ancestors': ["'none'"],
   }
-  if (isPreview) directives = merge(directives, vercelToolbar)
-  directives = merge(directives, {
-    'report-uri': [CSP_REPORT_PATH],
-    'report-to': [CSP_REPORT_GROUP],
-  })
+  if (vercelEnv === 'preview') {
+    for (const [name, values] of Object.entries(vercelToolbar)) {
+      directives[name] = [...(directives[name] ?? []), ...values]
+    }
+  }
+  if (reportUrl) {
+    directives['report-uri'] = [reportUrl]
+    directives['report-to'] = ['csp-endpoint']
+  }
 
-  return Object.entries(directives)
+  const policy = Object.entries(directives)
     .map(([name, values]) => [name, ...values].join(' '))
     .join('; ')
+
+  return [
+    { key: 'Content-Security-Policy-Report-Only', value: policy },
+    ...(reportUrl ? [{ key: 'Reporting-Endpoints', value: `csp-endpoint="${reportUrl}"` }] : []),
+  ]
 }

@@ -1,74 +1,53 @@
 import { describe, expect, it } from 'vitest'
-import { buildCsp, CSP_REPORT_GROUP, CSP_REPORT_PATH, sentryIngestOrigin } from '../csp'
+import { cspHeaders } from '../csp'
 
 const DSN = 'https://abc123@o42.ingest.de.sentry.io/1337'
+const REPORT_URL =
+  'https://o42.ingest.de.sentry.io/api/1337/security/?sentry_key=abc123&sentry_environment=vercel-production'
 
-const directives = (csp: string): Map<string, string[]> =>
-  new Map(
-    csp.split('; ').map((directive) => {
-      const [name = '', ...values] = directive.split(' ')
-      return [name, values]
-    }),
-  )
+const policy = (headers: ReturnType<typeof cspHeaders>) =>
+  headers.find((h) => h.key === 'Content-Security-Policy-Report-Only')?.value ?? ''
 
-describe('sentryIngestOrigin', () => {
-  it('returns the ingest origin without the public key', () => {
-    expect(sentryIngestOrigin(DSN)).toBe('https://o42.ingest.de.sentry.io')
+describe('cspHeaders', () => {
+  it('builds the production policy reporting to Sentry', () => {
+    expect(cspHeaders({ isDev: false, vercelEnv: 'production', sentryDsn: DSN })).toEqual([
+      {
+        key: 'Content-Security-Policy-Report-Only',
+        value: [
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-inline'",
+          "style-src 'self' 'unsafe-inline'",
+          "img-src 'self' data: blob: https://gravatar.com",
+          "font-src 'self'",
+          "connect-src 'self' https://o42.ingest.de.sentry.io",
+          "object-src 'none'",
+          "base-uri 'self'",
+          "form-action 'self'",
+          "frame-ancestors 'none'",
+          `report-uri ${REPORT_URL}`,
+          'report-to csp-endpoint',
+        ].join('; '),
+      },
+      { key: 'Reporting-Endpoints', value: `csp-endpoint="${REPORT_URL}"` },
+    ])
   })
 
-  it('returns undefined for a missing or malformed DSN', () => {
-    expect(sentryIngestOrigin(undefined)).toBeUndefined()
-    expect(sentryIngestOrigin('')).toBeUndefined()
-    expect(sentryIngestOrigin('not a url')).toBeUndefined()
-  })
-})
-
-describe('buildCsp', () => {
-  it('builds the production policy', () => {
-    const csp = directives(buildCsp({ isDev: false, isPreview: false, sentryDsn: DSN }))
-
-    expect(csp.get('default-src')).toEqual(["'self'"])
-    expect(csp.get('script-src')).toEqual(["'self'", "'unsafe-inline'"])
-    expect(csp.get('style-src')).toEqual(["'self'", "'unsafe-inline'"])
-    expect(csp.get('img-src')).toEqual(["'self'", 'data:', 'blob:', 'https://gravatar.com'])
-    expect(csp.get('font-src')).toEqual(["'self'"])
-    expect(csp.get('connect-src')).toEqual(["'self'", 'https://o42.ingest.de.sentry.io'])
-    expect(csp.get('object-src')).toEqual(["'none'"])
-    expect(csp.get('base-uri')).toEqual(["'self'"])
-    expect(csp.get('form-action')).toEqual(["'self'"])
-    expect(csp.get('frame-ancestors')).toEqual(["'none'"])
-    expect(csp.get('report-uri')).toEqual([CSP_REPORT_PATH])
-    expect(csp.get('report-to')).toEqual([CSP_REPORT_GROUP])
-    expect(csp.has('frame-src')).toBe(false)
+  it('omits reporting when no DSN is configured', () => {
+    const headers = cspHeaders({ isDev: false, vercelEnv: undefined, sentryDsn: undefined })
+    expect(headers).toHaveLength(1)
+    expect(policy(headers)).toContain("connect-src 'self';")
+    expect(policy(headers)).not.toContain('report-')
   })
 
-  it('omits the Sentry origin when no DSN is configured', () => {
-    const csp = directives(buildCsp({ isDev: false, isPreview: false, sentryDsn: undefined }))
-    expect(csp.get('connect-src')).toEqual(["'self'"])
-  })
-
-  it("adds 'unsafe-eval' in development only", () => {
-    const dev = directives(buildCsp({ isDev: true, isPreview: false, sentryDsn: DSN }))
-    expect(dev.get('script-src')).toContain("'unsafe-eval'")
-
-    const prod = directives(buildCsp({ isDev: false, isPreview: false, sentryDsn: DSN }))
-    expect(prod.get('script-src')).not.toContain("'unsafe-eval'")
+  it("adds 'unsafe-eval' in development", () => {
+    const headers = cspHeaders({ isDev: true, vercelEnv: undefined, sentryDsn: DSN })
+    expect(policy(headers)).toContain("script-src 'self' 'unsafe-inline' 'unsafe-eval';")
   })
 
   it('allows the Vercel toolbar on preview deployments', () => {
-    const csp = directives(buildCsp({ isDev: false, isPreview: true, sentryDsn: DSN }))
-
-    expect(csp.get('script-src')).toContain('https://vercel.live')
-    expect(csp.get('connect-src')).toEqual(
-      expect.arrayContaining(['https://vercel.live', 'wss://ws-us3.pusher.com']),
-    )
-    expect(csp.get('img-src')).toEqual(
-      expect.arrayContaining(['https://vercel.live', 'https://vercel.com']),
-    )
-    expect(csp.get('style-src')).toContain('https://vercel.live')
-    expect(csp.get('font-src')).toEqual(
-      expect.arrayContaining(['https://vercel.live', 'https://assets.vercel.com']),
-    )
-    expect(csp.get('frame-src')).toEqual(["'self'", 'https://vercel.live'])
+    const csp = policy(cspHeaders({ isDev: false, vercelEnv: 'preview', sentryDsn: DSN }))
+    expect(csp).toContain("script-src 'self' 'unsafe-inline' https://vercel.live;")
+    expect(csp).toContain("frame-src 'self' https://vercel.live;")
+    expect(csp).toContain('sentry_environment=vercel-preview')
   })
 })

@@ -1,17 +1,13 @@
 import { withSentryConfig } from '@sentry/nextjs/config'
 import type { NextConfig } from 'next'
-import { buildCsp, CSP_REPORT_GROUP, CSP_REPORT_PATH } from './src/csp'
-
-const csp = buildCsp({
-  isDev: process.env.NODE_ENV === 'development',
-  isPreview: process.env['VERCEL_ENV'] === 'preview',
-  sentryDsn: process.env['NEXT_PUBLIC_SENTRY_DSN'],
-})
+import { cspHeaders } from './src/csp'
 
 const securityHeaders = [
-  // Report-only until production reports are clean — see CLAUDE.md "Security headers".
-  { key: 'Content-Security-Policy-Report-Only', value: csp },
-  { key: 'Reporting-Endpoints', value: `${CSP_REPORT_GROUP}="${CSP_REPORT_PATH}"` },
+  ...cspHeaders({
+    isDev: process.env.NODE_ENV === 'development',
+    vercelEnv: process.env['VERCEL_ENV'],
+    sentryDsn: process.env['NEXT_PUBLIC_SENTRY_DSN'],
+  }),
   // Force HTTPS for two years, including subdomains. Vercel does not set this by
   // default. `preload` opts into the browser preload list (requires submission
   // at hstspreload.org); drop it if any subdomain must stay HTTP.
