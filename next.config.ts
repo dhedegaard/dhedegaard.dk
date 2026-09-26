@@ -1,10 +1,13 @@
 import { withSentryConfig } from '@sentry/nextjs/config'
 import type { NextConfig } from 'next'
+import { cspHeaders } from './src/csp'
 
-// No Content-Security-Policy by design — see the "Key conventions" note in
-// CLAUDE.md. It is hard to maintain correctly on this stack and the risk
-// outweighs the benefit for a static site with no user-generated content.
 const securityHeaders = [
+  ...cspHeaders({
+    isDev: process.env.NODE_ENV === 'development',
+    vercelEnv: process.env['VERCEL_ENV'],
+    sentryDsn: process.env['NEXT_PUBLIC_SENTRY_DSN'],
+  }),
   // Force HTTPS for two years, including subdomains. Vercel does not set this by
   // default. `preload` opts into the browser preload list (requires submission
   // at hstspreload.org); drop it if any subdomain must stay HTTP.
