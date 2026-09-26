@@ -19,7 +19,7 @@ const securityHeaders = [
   // Anti-clickjacking backstop for browsers without CSP frame-ancestors.
   { key: 'X-Frame-Options', value: 'DENY' },
   // Disable browser features the site never uses.
-  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()' },
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
 ]
 
 const config: NextConfig = {
