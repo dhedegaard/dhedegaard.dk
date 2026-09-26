@@ -16,7 +16,7 @@ const vercelToolbar: Record<string, string[]> = {
 
 // Sentry's security endpoint, see "Security Policy Reporting" in the Sentry docs.
 function sentryReportUrl(dsn: URL, vercelEnv: string | undefined): string {
-  const url = new URL(`/api/${dsn.pathname.split('/').pop() ?? ''}/security/`, dsn.origin)
+  const url = new URL(dsn.pathname.replace(/\/(\d+)$/, '/api/$1/security/'), dsn.origin)
   url.searchParams.set('sentry_key', dsn.username)
   // Matches the environment name the Sentry SDK derives from VERCEL_ENV.
   if (vercelEnv) url.searchParams.set('sentry_environment', `vercel-${vercelEnv}`)
@@ -27,7 +27,11 @@ function sentryReportUrl(dsn: URL, vercelEnv: string | undefined): string {
  * Report-only CSP headers. Static (no nonces) so pages stay prerendered, which
  * means `'unsafe-inline'` scripts — see CLAUDE.md.
  */
-export function cspHeaders({ isDev, vercelEnv, sentryDsn }: CspOptions) {
+export function cspHeaders({
+  isDev,
+  vercelEnv,
+  sentryDsn,
+}: CspOptions): { key: string; value: string }[] {
   const dsn = URL.parse(sentryDsn ?? '')
   const reportUrl = dsn ? sentryReportUrl(dsn, vercelEnv) : undefined
 
