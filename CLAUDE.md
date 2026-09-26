@@ -86,5 +86,7 @@ Match the check to the change:
 - GitHub schema changes — `npm run codegen` (regenerates the git-ignored `github-schema.graphql` + `src/graphql-env.d.ts`; editing an existing query needs no regeneration)
 - Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `npm run build`
 - Anything that loads a new external resource or integration — check `cspHeaders()` in `src/csp.ts` still allows it (and nothing stale remains), then `npm test`
+- CSP headers locally — `NEXT_PUBLIC_SENTRY_DSN=<dummy> VERCEL_ENV=production npm run build`, then `next start -p <port>` and `curl -sI`; a dummy DSN gets baked into `.next`, so rebuild afterwards. Locally, `/_vercel/*` scripts 404 (Vercel serves them), which is not a CSP issue, and headless Chrome won't deliver Reporting API reports over http localhost.
+- Preview deployments (`dhedegaard-dk-git-<branch>-d-hedegaard.vercel.app`) are behind Vercel Deployment Protection (`curl` gets a 302), so check their headers in a logged-in browser or on production.
 - If `GITHUB_PAT` is unavailable locally, state which checks were blocked.
 - A failing `npm run build` may be the lint leg, not your change — check the `[build]`/`[lint]` output prefix, and reproduce on a clean tree before attributing it to your edit.
