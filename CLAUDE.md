@@ -20,6 +20,7 @@ Packages with install scripts must be allowlisted in `package.json` `allowScript
 ## Environment
 
 - Node 24 required — enforced at install via `.npmrc` `engine-strict=true` (deliberate, replaces pnpm's built-in engines check); wrong Node fails `npm ci`
+- npm >=11 required — enforced by `package.json` `devEngines.packageManager` (`onFail: "error"`), which npm checks on install; it also makes pnpm refuse to run. Don't reintroduce `packageManager`: npm ignores it and Corepack is off by default, so an exact pin there is never enforced
 - `GITHUB_PAT` — required for runtime data fetching and for `npm run codegen`
 - `NEXT_PUBLIC_SENTRY_DSN` — Sentry (optional locally)
 - `SITE_URL` — overrides the canonical origin used for absolute URLs/metadata (optional; defaults to the production domain — see `src/site.ts`)
