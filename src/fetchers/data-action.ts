@@ -49,7 +49,7 @@ interface DroppedRepository {
   error: DataRepositoryParseError
 }
 
-export interface TransformResult {
+interface TransformResult {
   data: DataResult
   dropped: DroppedRepository[]
 }
