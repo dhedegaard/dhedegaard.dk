@@ -88,10 +88,11 @@ Match the check to the change:
 - `knip --production` flags `src/csp.ts` (it only treats `next.config.ts` as an entry outside production mode) and test-only exports like `transformGithubUserToData` — expected, not dead code
 - Dependency major bumps — watch `npm install` output for `ERESOLVE` peer warnings and inspect with `npm ls <pkg>`; the tree currently has no accepted mismatches, so any `ERESOLVE` warning indicates a problem. `typescript` is held at 6 until `typescript-eslint` widens its `typescript <6.1.0` peer.
 - GitHub schema changes — `npm run codegen` (regenerates the git-ignored `github-schema.graphql` + `src/graphql-env.d.ts`; editing an existing query needs no regeneration)
+- graphql / gql.tada bumps — `npx gql.tada generate-output` rebuilds `src/graphql-env.d.ts` from the local schema (no token/network); identical output means the bump is type-neutral. A full `npm run codegen` also pulls GitHub's upstream schema changes, so a schema diff there isn't caused by the bump.
 - Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `npm run build`
 - Anything that loads a new external resource or integration — check `cspHeaders()` in `src/csp.ts` still allows it (and nothing stale remains), then `npm test`
 - CSP headers locally — `NEXT_PUBLIC_SENTRY_DSN=<dummy> VERCEL_ENV=production npm run build`, then `next start -p <port>` and `curl -sI`; a dummy DSN gets baked into `.next`, so rebuild afterwards. Locally, `/_vercel/*` scripts 404 (Vercel serves them), which is not a CSP issue, and headless Chrome won't deliver Reporting API reports over http localhost.
 - Production headers — `curl -sI https://www.dhedegaard.dk/` (the apex 308-redirects to `www`, so curl it with `-L` or you'll see no CSP header)
 - Preview deployments (`dhedegaard-dk-git-<branch>-d-hedegaard.vercel.app`) are behind Vercel Deployment Protection (`curl` gets a 302), so check their headers in a logged-in browser or on production.
-- If `GITHUB_PAT` is unavailable locally, state which checks were blocked.
+- `GITHUB_PAT` is in `.env` (Next loads it, so `npm run build` works) and `.envrc`, but the tool shell doesn't load direnv — run codegen as `(source ./.envrc && npm run codegen)` and never echo the value. Only if neither file has it, state which checks were blocked.
 - A failing `npm run build` may be the lint leg, not your change — check the `[build]`/`[lint]` output prefix, and reproduce on a clean tree before attributing it to your edit.
