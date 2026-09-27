@@ -24,7 +24,7 @@ function sentryReportUrl(dsn: URL, vercelEnv: string | undefined): string {
 }
 
 /**
- * Report-only CSP headers. Static (no nonces) so pages stay prerendered, which
+ * Enforced CSP headers. Static (no nonces) so pages stay prerendered, which
  * means `'unsafe-inline'` scripts — see CLAUDE.md.
  */
 export function cspHeaders({
@@ -48,6 +48,8 @@ export function cspHeaders({
     'base-uri': ["'self'"],
     'form-action': ["'self'"],
     'frame-ancestors': ["'none'"],
+    // Skipped in dev: Safari would upgrade http://localhost too.
+    ...(isDev ? {} : { 'upgrade-insecure-requests': [] }),
   }
   if (vercelEnv === 'preview') {
     for (const [name, values] of Object.entries(vercelToolbar)) {
@@ -64,7 +66,7 @@ export function cspHeaders({
     .join('; ')
 
   return [
-    { key: 'Content-Security-Policy-Report-Only', value: policy },
+    { key: 'Content-Security-Policy', value: policy },
     ...(reportUrl ? [{ key: 'Reporting-Endpoints', value: `csp-endpoint="${reportUrl}"` }] : []),
   ]
 }

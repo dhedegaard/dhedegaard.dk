@@ -6,13 +6,13 @@ const REPORT_URL =
   'https://o42.ingest.de.sentry.io/api/1337/security/?sentry_key=abc123&sentry_environment=vercel-production'
 
 const policy = (headers: ReturnType<typeof cspHeaders>) =>
-  headers.find((h) => h.key === 'Content-Security-Policy-Report-Only')?.value ?? ''
+  headers.find((h) => h.key === 'Content-Security-Policy')?.value ?? ''
 
 describe('cspHeaders', () => {
   it('builds the production policy reporting to Sentry', () => {
     expect(cspHeaders({ isDev: false, vercelEnv: 'production', sentryDsn: DSN })).toEqual([
       {
-        key: 'Content-Security-Policy-Report-Only',
+        key: 'Content-Security-Policy',
         value: [
           "default-src 'self'",
           "script-src 'self' 'unsafe-inline'",
@@ -24,6 +24,7 @@ describe('cspHeaders', () => {
           "base-uri 'self'",
           "form-action 'self'",
           "frame-ancestors 'none'",
+          'upgrade-insecure-requests',
           `report-uri ${REPORT_URL}`,
           'report-to csp-endpoint',
         ].join('; '),
@@ -42,6 +43,7 @@ describe('cspHeaders', () => {
   it("adds 'unsafe-eval' in development", () => {
     const headers = cspHeaders({ isDev: true, vercelEnv: undefined, sentryDsn: DSN })
     expect(policy(headers)).toContain("script-src 'self' 'unsafe-inline' 'unsafe-eval';")
+    expect(policy(headers)).not.toContain('upgrade-insecure-requests')
   })
 
   it('allows the Vercel toolbar on preview deployments', () => {
