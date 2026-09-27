@@ -4,9 +4,15 @@
   "description": "dhedegaard.dk",
   "homepage": "https://www.dhedegaard.dk/",
   "type": "module",
-  "packageManager": "npm@11.17.0",
   "engines": {
     "node": "24"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": ">=11",
+      "onFail": "error"
+    }
   },
   "scripts": {
     "start": "next start",
