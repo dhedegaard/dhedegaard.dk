@@ -57,6 +57,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
 - `transformGithubUserToData` (in `data-action.ts`) is the pure, sync extraction of all data-shaping logic. Test data transformations through it directly rather than mocking `fetch`.
 - Use `renderToStaticMarkup` + `createElement` (from `react-dom/server`) to test server component output without a DOM environment.
 - Use `vi.stubGlobal('fetch', vi.fn(...))` to mock network calls in `github.ts` tests; restore with `vi.unstubAllGlobals()` in `afterEach`.
+- Vitest 5 defaults to `clearMocks: true` — don't add `vi.clearAllMocks()` in `afterEach`; spies still need `mockRestore()`.
 - Test factory functions (`makeRepository`, `makeUser`) require explicit `id` fields — no auto-generated fallbacks.
 
 ## Code Style
@@ -84,7 +85,8 @@ Match the check to the change:
 - Unit logic — `npm test`
 - Normal code edits — `npm run lint`
 - Removing an export, dep, or file — `npm run knip` (CI fails on anything left unused)
-- Dependency major bumps — watch `npm install` output for `ERESOLVE` peer warnings and inspect with `npm ls <pkg>`; the tree currently has no accepted mismatches (`graphql` is held at ^16 because `@0no-co/graphql.web`, under `gql.tada`, caps its peer at ^16 — don't bump to 17 until it does), so any `ERESOLVE` warning indicates a problem.
+- `knip --production` flags `src/csp.ts` (it only treats `next.config.ts` as an entry outside production mode) and test-only exports like `transformGithubUserToData` — expected, not dead code
+- Dependency major bumps — watch `npm install` output for `ERESOLVE` peer warnings and inspect with `npm ls <pkg>`; the tree currently has no accepted mismatches, so any `ERESOLVE` warning indicates a problem. `typescript` is held at 6 until `typescript-eslint` widens its `typescript <6.1.0` peer.
 - GitHub schema changes — `npm run codegen` (regenerates the git-ignored `github-schema.graphql` + `src/graphql-env.d.ts`; editing an existing query needs no regeneration)
 - Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `npm run build`
 - Anything that loads a new external resource or integration — check `cspHeaders()` in `src/csp.ts` still allows it (and nothing stale remains), then `npm test`
