@@ -1,14 +1,10 @@
 import { captureException } from '@sentry/nextjs'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { formatHomepageUrl } from '../format-homepage-url'
 
 vi.mock('@sentry/nextjs', () => ({ captureException: vi.fn() }))
 
 describe('formatHomepageUrl', () => {
-  afterEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('strips the scheme from a bare origin', () => {
     expect(formatHomepageUrl('https://example.com')).toBe('example.com')
     expect(formatHomepageUrl('http://example.com')).toBe('example.com')
