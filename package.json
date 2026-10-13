@@ -20,6 +20,7 @@
     "build": "{ test -f src/graphql-env.d.ts || npm run -s codegen; } && concurrently -c auto -n 'build,lint' 'next build' 'npm run -s lint'",
     "test": "vitest run",
     "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
     "knip": "knip",
     "postinstall": "if [ -n \"$GITHUB_PAT\" ] && [ ! -f src/graphql-env.d.ts ]; then npm run codegen; fi",
     "codegen": "gql.tada generate-schema 'https://api.github.com/graphql' --header \"Authorization: Bearer ${GITHUB_PAT}\" --header \"User-Agent: codegen\" --output ./github-schema.graphql && gql.tada generate-output"
