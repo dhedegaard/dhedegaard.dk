@@ -6,6 +6,9 @@ import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import { SITE_URL } from '../site'
 
+// Fail the build if any route stops being fully static — see CLAUDE.md.
+export const ensureStatic = 'navigation'
+
 const metadataBase = new URL(SITE_URL)
 const SITE_NAME = 'Dennis Hedegaard'
 const SITE_DESCRIPTION = 'The personal website of Dennis Hedegaard'
