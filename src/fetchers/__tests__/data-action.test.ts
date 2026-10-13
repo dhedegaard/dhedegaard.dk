@@ -57,20 +57,65 @@ const makeUser = ({
 })
 
 describe('transformGithubUserToData', () => {
-  it('filters private, archived, and non-owned repositories defensively', () => {
+  it('filters private and non-owned repositories defensively', () => {
     const publicOwnedRepository = makeRepository({ id: 'public-owned' })
     const { data } = transformGithubUserToData(
       makeUser({
         repositories: [
           publicOwnedRepository,
           makeRepository({ id: 'private', isPrivate: true }),
-          makeRepository({ id: 'archived', isArchived: true }),
           makeRepository({ id: 'not-owned', owner: { id: 'other-user' } }),
         ],
       })
     )
 
     expect(data.repositories.map((repository) => repository.id)).toEqual(['public-owned'])
+  })
+
+  it('keeps archived repositories and flags them', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({ id: 'active' }),
+          makeRepository({ id: 'archived', isArchived: true }),
+        ],
+      })
+    )
+
+    expect(
+      data.repositories.map((repository) => [repository.id, repository.archived] as const)
+    ).toEqual([
+      ['active', false],
+      ['archived', true],
+    ])
+  })
+
+  it('sorts archived repositories last, even when pinned or starred', () => {
+    const archivedPinned = makeRepository({ id: 'archived-pinned', isArchived: true })
+    const archivedStarred = makeRepository({
+      id: 'archived-starred',
+      isArchived: true,
+      stargazerCount: 100,
+    })
+    const pinned = makeRepository({ id: 'pinned' })
+    const active = makeRepository({ id: 'active', stargazerCount: 1 })
+
+    const { data } = transformGithubUserToData(
+      makeUser({
+        pinnedItems: [
+          { __typename: 'Repository', id: archivedPinned.id, name: archivedPinned.name },
+          { __typename: 'Repository', id: pinned.id, name: pinned.name },
+        ],
+        repositories: [archivedStarred, archivedPinned, active, pinned],
+      })
+    )
+
+    expect(data.repositories.map((repository) => repository.id)).toEqual([
+      'pinned',
+      'active',
+      'archived-pinned',
+      'archived-starred',
+    ])
   })
 
   it('keeps pinned repositories first in pinned order', () => {
@@ -142,7 +187,7 @@ describe('transformGithubUserToData', () => {
     expect(data.repositories.map((repository) => repository.id)).toEqual(['utc', 'plus-two'])
   })
 
-  it('caps rendered repositories at 40', () => {
+  it('renders every repository without a cap', () => {
     const repositories = Array.from({ length: 45 }, (_, index) =>
       makeRepository({
         id: `repo-${index.toString().padStart(2, '0')}`,
@@ -152,8 +197,8 @@ describe('transformGithubUserToData', () => {
 
     const { data } = transformGithubUserToData(makeUser({ repositories }))
 
-    expect(data.repositories).toHaveLength(40)
-    expect(data.repositories.at(-1)?.id).toBe('repo-39')
+    expect(data.repositories).toHaveLength(45)
+    expect(data.repositories.at(-1)?.id).toBe('repo-44')
   })
 
   it('normalizes empty profile and repository string values', () => {

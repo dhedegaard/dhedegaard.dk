@@ -27,15 +27,18 @@ function Repo({ repo }: RepoProps) {
   return (
     <article className="flex flex-col gap-2 rounded-md border border-slate-300 p-4 transition-shadow hover:shadow-sm">
       <div className="flex items-start justify-between">
-        <a
-          className="flex font-bold text-inherit no-underline hover:underline"
-          href={repo.url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {repo.name}&nbsp;
-          <GithubIcon className="w-4" />
-        </a>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <a
+            className="flex font-bold text-inherit no-underline hover:underline"
+            href={repo.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {repo.name}&nbsp;
+            <GithubIcon className="w-4" />
+          </a>
+          {repo.archived && <Badge label="Archived" />}
+        </div>
         <div className="flex items-center gap-2">
           {repo.stargazerCount > 0 && (
             <div

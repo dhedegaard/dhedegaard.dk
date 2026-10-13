@@ -9,6 +9,7 @@ const makeRepository = (overrides: Partial<DataRepository> = {}): DataRepository
   name: 'my-project',
   url: 'https://github.com/dhedegaard/my-project',
   pinned: false,
+  archived: false,
   description: 'A cool project',
   homepageUrl: null,
   pushedAt: '2024-01-01T00:00:00Z',
@@ -58,6 +59,11 @@ describe('Repositories', () => {
   it('renders the pinned indicator only when pinned', () => {
     expect(render([makeRepository({ pinned: true })])).toContain('aria-label="Pinned"')
     expect(render([makeRepository({ pinned: false })])).not.toContain('aria-label="Pinned"')
+  })
+
+  it('renders the archived badge only when archived', () => {
+    expect(render([makeRepository({ archived: true })])).toContain('Archived')
+    expect(render([makeRepository({ archived: false })])).not.toContain('Archived')
   })
 
   it('renders a formatted homepage link when present and omits it when null', () => {

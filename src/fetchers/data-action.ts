@@ -20,6 +20,7 @@ const DataRepository = z.object({
   name: z.string().check(z.minLength(1)),
   url: z.url(),
   pinned: z.boolean(),
+  archived: z.boolean(),
   description: z.nullable(z.string().check(z.minLength(1))),
   homepageUrl: z.nullable(z.url()),
   pushedAt: z.nullable(z.iso.datetime({ offset: true })),
@@ -112,7 +113,7 @@ const toDataRepository = (
   userId: string,
   pinnedRankMap: ReadonlyMap<string, number>
 ): DataRepository | null => {
-  if (repo.isPrivate || repo.isArchived || repo.owner.id !== userId) {
+  if (repo.isPrivate || repo.owner.id !== userId) {
     return null
   }
 
@@ -121,6 +122,7 @@ const toDataRepository = (
     name: repo.name,
     url: ensureString(repo.url, 'repository url'),
     pinned: pinnedRankMap.has(repo.id),
+    archived: repo.isArchived,
     description: ensureNonEmptyNullableString(repo.description),
     homepageUrl: ensureHomepageUrl(repo.homepageUrl),
     pushedAt: repo.pushedAt,
@@ -135,6 +137,10 @@ const compareRepositories = (
   right: DataRepository,
   pinnedRankMap: ReadonlyMap<string, number>
 ): number => {
+  if (left.archived !== right.archived) {
+    return left.archived ? 1 : -1
+  }
+
   const leftPinnedRank = getPinnedRank(left.id, pinnedRankMap)
   const rightPinnedRank = getPinnedRank(right.id, pinnedRankMap)
   if (leftPinnedRank !== rightPinnedRank) {
@@ -168,7 +174,7 @@ export const transformGithubUserToData = (user: GithubUserData): TransformResult
     }
     const candidate = toDataRepository(repo, user.id, pinnedRankMap)
     if (candidate == null) {
-      // Intentionally filtered out (private, archived, or not owned).
+      // Intentionally filtered out (private or not owned).
       continue
     }
     // Validate each repository in isolation so one malformed repo degrades to a
@@ -185,7 +191,7 @@ export const transformGithubUserToData = (user: GithubUserData): TransformResult
 
   const data = DataResult.parse(
     {
-      repositories: orderedRepos.slice(0, 40),
+      repositories: orderedRepos,
       avatarUrl: ensureString(user.avatarUrl, 'user avatar URL'),
       githubUrl: ensureString(user.url, 'user profile URL'),
       email: ensureEmail(user.email),
