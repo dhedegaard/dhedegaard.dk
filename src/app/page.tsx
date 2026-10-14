@@ -9,7 +9,8 @@ import { TechStack } from './tech-stack'
 
 export default async function Index() {
   'use cache'
-  cacheLife('days')
+  // Refresh hourly; a long expiry keeps serving the last page if GitHub refreshes keep failing.
+  cacheLife({ stale: 300, revalidate: 3600, expire: 2_592_000 })
   const data = await getDataAction()
 
   return (
