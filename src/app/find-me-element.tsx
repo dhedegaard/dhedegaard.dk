@@ -14,20 +14,12 @@ interface FindMeElementProps extends Pick<DataResult, 'githubUrl' | 'email'> {}
 export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
   return (
     <div className="flex flex-wrap gap-2 md:flex-col">
-      <a
-        className={primaryLinkClass}
-        href={githubUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a className={primaryLinkClass} href={githubUrl} target="_blank" rel="me noopener noreferrer">
         <GithubIcon className="fill-blue-600" width={16} height={16} />
         <span>GitHub</span>
       </a>
       {email != null && (
-        <a
-          className={secondaryLinkClass}
-          href={`mailto:${email}`}
-        >
+        <a className={secondaryLinkClass} href={`mailto:${email}`}>
           <Mail size={16} />
           <span>Email</span>
         </a>
@@ -36,7 +28,7 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
         className={secondaryLinkClass}
         href={LINKEDIN_URL}
         target="_blank"
-        rel="noopener noreferrer"
+        rel="me noopener noreferrer"
       >
         <LinkedInIcon width={16} height={16} />
         <span>LinkedIn</span>

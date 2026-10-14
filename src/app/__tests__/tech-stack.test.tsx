@@ -7,4 +7,8 @@ describe('TechStack', () => {
   it('labels the section with a heading', () => {
     expect(renderToStaticMarkup(createElement(TechStack))).toMatch(/<h2[^>]*>Tech stack<\/h2>/)
   })
+
+  it('keeps the badge text selectable', () => {
+    expect(renderToStaticMarkup(createElement(TechStack))).not.toContain('select-none')
+  })
 })

@@ -20,6 +20,14 @@ describe('FindMeElement', () => {
     expect(markup).toContain('Email')
   })
 
+  it('marks the GitHub and LinkedIn profiles as rel="me"', () => {
+    const markup = renderToStaticMarkup(
+      createElement(FindMeElement, { githubUrl: 'https://github.com/dhedegaard', email: null })
+    )
+
+    expect(markup.match(/rel="me noopener noreferrer"/g)).toHaveLength(2)
+  })
+
   it('renders GitHub and LinkedIn links without Email when email is null', () => {
     const markup = renderToStaticMarkup(
       createElement(FindMeElement, {
