@@ -5,13 +5,16 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import { SITE_URL } from '../site'
+import { STACK } from './tech-stack'
 
 // Fail the build if any route stops being fully static — see CLAUDE.md.
 export const ensureStatic = 'navigation'
 
 const metadataBase = new URL(SITE_URL)
 const SITE_NAME = 'Dennis Hedegaard'
-const SITE_DESCRIPTION = 'The personal website of Dennis Hedegaard'
+const JOB_TITLE = 'Full-stack software engineer'
+const SITE_DESCRIPTION =
+  'Dennis Hedegaard, full-stack software engineer working primarily in TypeScript, Zod and Next.js. Open source projects, tech stack and the languages behind them.'
 const gravatarAvatar =
   'https://gravatar.com/avatar/d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f'
 
@@ -33,6 +36,8 @@ const jsonLd = {
       alternateName: 'Dennis Elsborg Heick Hedegaard',
       url: SITE_URL,
       image: gravatarAvatar,
+      jobTitle: JOB_TITLE,
+      knowsAbout: STACK.flatMap(({ items }) => items),
       sameAs: [
         'https://github.com/dhedegaard',
         'https://www.linkedin.com/in/dennis-hedegaard-39a02a22/',
