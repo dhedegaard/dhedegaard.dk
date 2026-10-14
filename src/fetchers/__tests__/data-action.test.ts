@@ -350,7 +350,7 @@ describe('transformGithubUserToData', () => {
     })
   })
 
-  it('excludes forked, filtered, and language-less repositories from languageStats only, keeping archived', () => {
+  it('excludes archived, forked, filtered, and language-less repositories from languageStats only', () => {
     const { data } = transformGithubUserToData(
       makeUser({
         repositories: [
@@ -369,11 +369,8 @@ describe('transformGithubUserToData', () => {
     )
 
     expect(data.languageStats).toEqual({
-      repoCount: 2,
-      top: [
-        { name: 'Go', color: null, share: 0.5, repoCount: 1 },
-        { name: 'TypeScript', color: null, share: 0.5, repoCount: 1 },
-      ],
+      repoCount: 1,
+      top: [{ name: 'TypeScript', color: null, share: 1, repoCount: 1 }],
       other: null,
     })
     expect(data.repositories.map((repository) => repository.id).sort()).toEqual([

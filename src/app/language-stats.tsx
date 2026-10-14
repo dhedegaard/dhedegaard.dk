@@ -67,7 +67,7 @@ export function LanguageStats({ stats }: LanguageStatsProps) {
       </ul>
       <p className="mt-2 text-xs text-slate-800/60">
         Share of code across {stats.repoCount} {stats.repoCount === 1 ? 'repo' : 'repos'} (excluding
-        forks), each repo weighted equally.
+        archived repos and forks), each repo weighted equally.
       </p>
     </section>
   )

@@ -192,7 +192,7 @@ const computeLanguageStats = (repos: readonly GithubRepoNode[]): LanguageStats =
   const totals = new Map<string, LanguageStat>()
   let repoCount = 0
   for (const repo of repos) {
-    if (repo.isFork) {
+    if (repo.isArchived || repo.isFork) {
       continue
     }
     const edges = uniqueLanguageEdges(repo).filter((edge) => edge.size > 0)
