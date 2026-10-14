@@ -3,9 +3,7 @@ import { Badge } from './badge'
 const STACK = [
   { category: 'Frontend', items: ['React', 'Next.js', 'Tailwind'] },
   { category: 'Backend', items: ['Node.js', 'PostgreSQL', 'Prisma'] },
-  { category: 'Correctness', items: ['TypeScript', 'Zod'] },
-  { category: 'Testing', items: ['Vitest', 'Playwright'] },
-  { category: 'Observability', items: ['Sentry'] },
+  { category: 'Quality', items: ['TypeScript', 'Zod', 'Vitest', 'Playwright', 'Sentry'] },
   { category: 'Infra', items: ['Docker', 'GitHub Actions', 'AWS', 'Azure', 'Vercel'] },
   { category: 'AI', items: ['Claude Code', 'Codex'] },
 ] as const
