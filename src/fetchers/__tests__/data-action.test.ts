@@ -457,6 +457,27 @@ describe('transformGithubUserToData', () => {
     expect(data.repositories[0]?.topics).toEqual([{ id: 'topic', name: 'web' }])
   })
 
+  it('drops a topic that repeats the repository name', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({
+            id: 'repo-1',
+            name: 'Tetris',
+            repositoryTopics: {
+              edges: [
+                { node: { id: 'n1', topic: { id: 't1', name: 'tetris' } } },
+                { node: { id: 'n2', topic: { id: 't2', name: 'react' } } },
+              ],
+            },
+          }),
+        ],
+      })
+    )
+
+    expect(data.repositories[0]?.topics).toEqual([{ id: 't2', name: 'react' }])
+  })
+
   it('converts missing, empty, or invalid GitHub public email values to null', () => {
     expect(transformGithubUserToData(makeUser({ email: '' })).data.email).toBeNull()
     expect(transformGithubUserToData(makeUser({ email: '   ' })).data.email).toBeNull()

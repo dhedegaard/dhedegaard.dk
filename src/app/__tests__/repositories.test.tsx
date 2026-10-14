@@ -88,7 +88,7 @@ describe('Repositories', () => {
     expect(markup).toContain('nextjs')
   })
 
-  it('joins language names with commas', () => {
+  it('lists language names after a Languages label', () => {
     const markup = render([
       makeRepository({
         languages: [
@@ -98,7 +98,8 @@ describe('Repositories', () => {
       }),
     ])
 
-    expect(markup).toContain('Language(s):')
+    expect(markup).toContain('Languages:')
+    expect(markup).not.toContain('Language(s)')
     expect(markup).toContain('TypeScript, CSS')
   })
 

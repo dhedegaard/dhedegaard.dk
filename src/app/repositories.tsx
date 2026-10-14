@@ -87,7 +87,7 @@ function Repo({ repo }: RepoProps) {
 
       {repo.languages.length > 0 && (
         <span className="text-xs">
-          Language(s):&nbsp;
+          Languages:&nbsp;
           <span className="inline text-xs font-bold">
             {repo.languages.map((language) => language.name).join(', ')}
           </span>

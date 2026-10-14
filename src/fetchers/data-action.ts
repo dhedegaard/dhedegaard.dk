@@ -120,6 +120,8 @@ const extractTopics = (repo: GithubRepoNode): DataRepositoryTopic[] =>
   repo.repositoryTopics.edges
     ?.map((topic) => topic?.node ?? undefined)
     .filter((topic): topic is NonNullable<typeof topic> => topic != null)
+    // A topic that only repeats the repo name adds nothing to the card.
+    .filter((topic) => topic.topic.name.toLowerCase() !== repo.name.toLowerCase())
     .map((topic) => ({
       id: topic.topic.id,
       name: topic.topic.name,
