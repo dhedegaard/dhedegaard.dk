@@ -11,10 +11,10 @@ const STACK = [
 export function TechStack() {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-slate-800/40 text-sm">Tech stack</span>
+      <span className="text-sm text-slate-800/40">Tech stack</span>
       {STACK.map(({ category, items }) => (
         <div key={category} className="flex items-start gap-3">
-          <span className="text-slate-800/60 w-20 shrink-0 pt-1 text-xs">{category}</span>
+          <span className="w-20 shrink-0 pt-1 text-xs text-slate-800/60">{category}</span>
           <div className="flex flex-wrap gap-1">
             {items.map((item) => (
               <Badge key={item} label={item} />

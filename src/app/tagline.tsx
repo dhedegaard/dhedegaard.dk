@@ -1,7 +1,7 @@
 export function Tagline() {
   return (
-    <p className="text-slate-800/60 text-lg">
-      Full-stack software engineer — TypeScript · React · Next.js
+    <p className="text-lg text-slate-800/60">
+      Full-stack software engineer — TypeScript · Zod · Next.js
     </p>
   )
 }
