@@ -32,11 +32,29 @@ const DataRepository = z.object({
 })
 export interface DataRepository extends z.infer<typeof DataRepository> {}
 
+const Share = z.number().check(z.gte(0), z.lte(1))
+
+const LanguageStat = z.object({
+  name: z.string().check(z.minLength(1)),
+  color: z.nullable(z.string().check(z.minLength(1))),
+  share: Share,
+  repoCount: z.int().check(z.positive()),
+})
+interface LanguageStat extends z.infer<typeof LanguageStat> {}
+
+const LanguageStats = z.object({
+  repoCount: z.int().check(z.nonnegative()),
+  top: z.array(LanguageStat as z.ZodMiniType<LanguageStat, LanguageStat>),
+  other: z.nullable(z.object({ share: Share, names: z.array(z.string().check(z.minLength(1))) })),
+})
+export interface LanguageStats extends z.infer<typeof LanguageStats> {}
+
 const DataResult = z.object({
   avatarUrl: z.url(),
   githubUrl: z.url(),
   email: z.nullable(z.email()),
   repositories: z.array(DataRepository as z.ZodMiniType<DataRepository, DataRepository>),
+  languageStats: LanguageStats,
 })
 export interface DataResult extends z.infer<typeof DataResult> {}
 
@@ -57,9 +75,7 @@ interface TransformResult {
 
 type GithubUserData = Awaited<ReturnType<typeof getGithubUser>>
 type GithubRepoEdge = GithubUserData['repositories']['edges'] extends
-  | readonly (infer Edge)[]
-  | null
-  | undefined
+  readonly (infer Edge)[] | null | undefined
   ? Edge
   : never
 type GithubRepoNode = NonNullable<NonNullable<GithubRepoEdge>['node']>
@@ -78,18 +94,26 @@ const buildPinnedRankMap = (
   return pinnedRankMap
 }
 
-const extractLanguages = (repo: GithubRepoNode): DataRepositoryLanguage[] => {
+// First occurrence wins when GitHub lists a language id twice.
+const uniqueLanguageEdges = (repo: GithubRepoNode) => {
   const seen = new Set<string>()
-  return [repo.primaryLanguage, ...(repo.languages?.edges?.map((edge) => edge?.node) ?? [])].reduce<
-    DataRepositoryLanguage[]
-  >((acc, language) => {
-    if (language == null || seen.has(language.id)) {
-      return acc
+  return (repo.languages?.edges ?? []).flatMap((edge) => {
+    if (edge == null || seen.has(edge.node.id)) {
+      return []
     }
-    seen.add(language.id)
-    acc.push({ id: language.id, name: language.name, color: language.color ?? null })
-    return acc
-  }, [])
+    seen.add(edge.node.id)
+    return [edge]
+  })
+}
+
+const extractLanguages = (repo: GithubRepoNode): DataRepositoryLanguage[] => {
+  const primary = repo.primaryLanguage
+  const languages = uniqueLanguageEdges(repo).map((edge) => edge.node)
+  return (
+    primary == null
+      ? languages
+      : [primary, ...languages.filter((language) => language.id !== primary.id)]
+  ).map((language) => ({ id: language.id, name: language.name, color: language.color ?? null }))
 }
 
 const extractTopics = (repo: GithubRepoNode): DataRepositoryTopic[] =>
@@ -161,10 +185,63 @@ const compareRepositories = (
   return 0
 }
 
+const TOP_LANGUAGE_COUNT = 8
+
+// Each contributing repo counts once, split by byte share, so one huge repo can't dominate.
+const computeLanguageStats = (repos: readonly GithubRepoNode[]): LanguageStats => {
+  const totals = new Map<string, LanguageStat>()
+  let repoCount = 0
+  for (const repo of repos) {
+    if (repo.isFork) {
+      continue
+    }
+    const edges = uniqueLanguageEdges(repo).filter((edge) => edge.size > 0)
+    if (edges.length === 0) {
+      continue
+    }
+    // Shares are taken of the kept edges' sum, so each repo's shares add up to 1.
+    const repoSize = edges.reduce((sum, edge) => sum + edge.size, 0)
+    repoCount += 1
+    for (const { size, node } of edges) {
+      const total = totals.get(node.id) ?? {
+        name: node.name,
+        color: node.color,
+        share: 0,
+        repoCount: 0,
+      }
+      total.share += size / repoSize
+      total.repoCount += 1
+      totals.set(node.id, total)
+    }
+  }
+
+  const ranked = [...totals.values()]
+    .map((total) => ({ ...total, share: total.share / repoCount }))
+    .sort(
+      (left, right) =>
+        right.share - left.share ||
+        right.repoCount - left.repoCount ||
+        left.name.localeCompare(right.name)
+    )
+  const rest = ranked.slice(TOP_LANGUAGE_COUNT)
+  return {
+    repoCount,
+    top: ranked.slice(0, TOP_LANGUAGE_COUNT),
+    other:
+      rest.length === 0
+        ? null
+        : {
+            share: rest.reduce((sum, language) => sum + language.share, 0),
+            names: rest.map((language) => language.name),
+          },
+  }
+}
+
 export const transformGithubUserToData = (user: GithubUserData): TransformResult => {
   const orderedPinnedNodeIds = getOrderedPinnedNodeIds(user)
   const pinnedRankMap = buildPinnedRankMap(orderedPinnedNodeIds)
   const repos: DataRepository[] = []
+  const statsRepos: GithubRepoNode[] = []
   const dropped: DroppedRepository[] = []
 
   for (const edge of user.repositories.edges ?? []) {
@@ -182,6 +259,7 @@ export const transformGithubUserToData = (user: GithubUserData): TransformResult
     const parsed = DataRepository.safeParse(candidate)
     if (parsed.success) {
       repos.push(parsed.data)
+      statsRepos.push(repo)
     } else {
       dropped.push({ id: candidate.id, error: parsed.error })
     }
@@ -192,6 +270,7 @@ export const transformGithubUserToData = (user: GithubUserData): TransformResult
   const data = DataResult.parse(
     {
       repositories: orderedRepos,
+      languageStats: computeLanguageStats(statsRepos),
       avatarUrl: ensureString(user.avatarUrl, 'user avatar URL'),
       githubUrl: ensureString(user.url, 'user profile URL'),
       email: ensureEmail(user.email),

@@ -17,6 +17,7 @@ const makeRepository = ({
   pushedAt: '2026-01-01T00:00:00Z',
   description: `${id} description`,
   isArchived: false,
+  isFork: false,
   stargazerCount: 0,
   isPrivate: false,
   homepageUrl: null,
@@ -25,6 +26,22 @@ const makeRepository = ({
   languages: { edges: [] },
   ...overrides,
 })
+
+// Raw GitHub language fields from a name → byte-size map; the first entry is the primary language.
+const withLanguages = (
+  sizes: Record<string, number>,
+  colors: Record<string, string> = {}
+): Pick<RepositoryNode, 'primaryLanguage' | 'languages'> => {
+  const entries = Object.entries(sizes)
+  const node = (name: string) => ({ id: name, name, color: colors[name] ?? null })
+  const first = entries[0]
+  return {
+    primaryLanguage: first == null ? null : node(first[0]),
+    languages: {
+      edges: entries.map(([name, size]) => ({ size, node: node(name) })),
+    },
+  }
+}
 
 interface MakeUserOptions extends Partial<Omit<GithubUser, 'pinnedItems' | 'repositories'>> {
   pinnedItems?: PinnedItem[] | null
@@ -243,8 +260,8 @@ describe('transformGithubUserToData', () => {
             languages: {
               edges: [
                 null,
-                { node: { id: 'typescript', color: '#3178c6', name: 'TypeScript' } },
-                { node: { id: 'javascript', color: '#f1e05a', name: 'JavaScript' } },
+                { size: 80, node: { id: 'typescript', color: '#3178c6', name: 'TypeScript' } },
+                { size: 20, node: { id: 'javascript', color: '#f1e05a', name: 'JavaScript' } },
               ],
             },
           }),
@@ -266,7 +283,9 @@ describe('transformGithubUserToData', () => {
             id: 'first-occurrence',
             primaryLanguage: { id: 'typescript', color: '#3178c6', name: 'TypeScript' },
             languages: {
-              edges: [{ node: { id: 'typescript', color: '#aabbcc', name: 'TypeScript' } }],
+              edges: [
+                { size: 10, node: { id: 'typescript', color: '#aabbcc', name: 'TypeScript' } },
+              ],
             },
           }),
         ],
@@ -287,9 +306,9 @@ describe('transformGithubUserToData', () => {
             primaryLanguage: null,
             languages: {
               edges: [
-                { node: { id: 'javascript', color: '#f1e05a', name: 'JavaScript' } },
-                { node: { id: 'javascript', color: '#aabbcc', name: 'JavaScript' } },
-                { node: { id: 'css', color: '#563d7c', name: 'CSS' } },
+                { size: 60, node: { id: 'javascript', color: '#f1e05a', name: 'JavaScript' } },
+                { size: 5, node: { id: 'javascript', color: '#aabbcc', name: 'JavaScript' } },
+                { size: 35, node: { id: 'css', color: '#563d7c', name: 'CSS' } },
               ],
             },
           }),
@@ -300,6 +319,120 @@ describe('transformGithubUserToData', () => {
     expect(data.repositories[0]?.languages).toEqual([
       { id: 'javascript', color: '#f1e05a', name: 'JavaScript' },
       { id: 'css', color: '#563d7c', name: 'CSS' },
+    ])
+    expect(data.languageStats.top).toEqual([
+      { name: 'JavaScript', color: '#f1e05a', share: 60 / 95, repoCount: 1 },
+      { name: 'CSS', color: '#563d7c', share: 35 / 95, repoCount: 1 },
+    ])
+  })
+
+  it('weights each repository equally in languageStats', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({
+            id: 'big',
+            ...withLanguages({ TypeScript: 900_000, CSS: 100_000 }, { TypeScript: '#3178c6' }),
+          }),
+          makeRepository({ id: 'small', ...withLanguages({ Rust: 10 }) }),
+        ],
+      })
+    )
+
+    expect(data.languageStats).toEqual({
+      repoCount: 2,
+      top: [
+        { name: 'Rust', color: null, share: 0.5, repoCount: 1 },
+        { name: 'TypeScript', color: '#3178c6', share: 0.45, repoCount: 1 },
+        { name: 'CSS', color: null, share: 0.05, repoCount: 1 },
+      ],
+      other: null,
+    })
+  })
+
+  it('excludes forked, filtered, and language-less repositories from languageStats only, keeping archived', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({ id: 'active', ...withLanguages({ TypeScript: 10 }) }),
+          makeRepository({ id: 'archived', isArchived: true, ...withLanguages({ Go: 10 }) }),
+          makeRepository({ id: 'fork', isFork: true, ...withLanguages({ Lua: 10_000_000 }) }),
+          makeRepository({ id: 'private', isPrivate: true, ...withLanguages({ Java: 10 }) }),
+          makeRepository({ id: 'no-languages' }),
+          makeRepository({
+            id: 'zero-size',
+            primaryLanguage: { id: 'c', color: null, name: 'C' },
+            languages: { edges: [{ size: 0, node: { id: 'c', color: null, name: 'C' } }] },
+          }),
+        ],
+      })
+    )
+
+    expect(data.languageStats).toEqual({
+      repoCount: 2,
+      top: [
+        { name: 'Go', color: null, share: 0.5, repoCount: 1 },
+        { name: 'TypeScript', color: null, share: 0.5, repoCount: 1 },
+      ],
+      other: null,
+    })
+    expect(data.repositories.map((repository) => repository.id).sort()).toEqual([
+      'active',
+      'archived',
+      'fork',
+      'no-languages',
+      'zero-size',
+    ])
+  })
+
+  it('returns empty languageStats when no repository contributes', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({ repositories: [makeRepository({ id: 'no-languages' })] })
+    )
+
+    expect(data.languageStats).toEqual({ repoCount: 0, top: [], other: null })
+  })
+
+  it('keeps the top 8 languages and folds the rest into other', () => {
+    const repositories = Array.from({ length: 10 }, (_, index) =>
+      makeRepository({
+        id: `repo-${String(index)}`,
+        ...withLanguages({ [`L${String(index)}`]: 1 }),
+      })
+    )
+
+    const { data } = transformGithubUserToData(makeUser({ repositories }))
+
+    expect(data.languageStats.top.map((language) => language.name)).toEqual([
+      'L0',
+      'L1',
+      'L2',
+      'L3',
+      'L4',
+      'L5',
+      'L6',
+      'L7',
+    ])
+    expect(data.languageStats.other?.names).toEqual(['L8', 'L9'])
+    expect(data.languageStats.other?.share).toBeCloseTo(0.2)
+  })
+
+  it('breaks share ties by repo count, then by name', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({ id: 'a', ...withLanguages({ A: 10 }) }),
+          makeRepository({ id: 'bc', ...withLanguages({ B: 5, C: 5 }) }),
+          makeRepository({ id: 'bd', ...withLanguages({ B: 5, D: 5 }) }),
+        ],
+      })
+    )
+
+    expect(data.languageStats.top.map((language) => [language.name, language.repoCount])).toEqual([
+      ['B', 2],
+      ['A', 1],
+      ['C', 1],
+      ['D', 1],
     ])
   })
 

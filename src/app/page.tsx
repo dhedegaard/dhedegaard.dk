@@ -2,6 +2,7 @@ import { cacheLife } from 'next/cache'
 import { getDataAction } from '../fetchers/data-action'
 import { Avatar } from './avatar'
 import { FindMeElement } from './find-me-element'
+import { LanguageStats } from './language-stats'
 import { Repositories } from './repositories'
 import { Tagline } from './tagline'
 import { TechStack } from './tech-stack'
@@ -22,13 +23,14 @@ export default async function Index() {
             <FindMeElement githubUrl={data.githubUrl} email={data.email} />
           </div>
         </div>
-        <div className="flex w-32 max-md:w-[60px] flex-none flex-col gap-3 self-start">
+        <div className="flex w-32 flex-none flex-col gap-3 self-start max-md:w-[60px]">
           <Avatar src={data.avatarUrl} />
           <div className="max-md:hidden">
             <FindMeElement githubUrl={data.githubUrl} email={data.email} />
           </div>
         </div>
       </div>
+      <LanguageStats stats={data.languageStats} />
       <Repositories repositories={data.repositories} />
     </>
   )

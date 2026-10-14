@@ -35,6 +35,7 @@ export const userQuery = graphql(`
             pushedAt
             description
             isArchived
+            isFork
             stargazerCount
             isPrivate
             homepageUrl
@@ -54,8 +55,9 @@ export const userQuery = graphql(`
               color
               name
             }
-            languages(first: 100) {
+            languages(first: 100, orderBy: { field: SIZE, direction: DESC }) {
               edges {
+                size
                 node {
                   id
                   color

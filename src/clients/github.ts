@@ -21,6 +21,7 @@ const repositoryNodeSchema = z.object({
   pushedAt: z.nullable(z.string()),
   description: z.nullable(z.string()),
   isArchived: z.boolean(),
+  isFork: z.boolean(),
   stargazerCount: z.number(),
   isPrivate: z.boolean(),
   homepageUrl: z.nullable(z.string()),
@@ -31,7 +32,7 @@ const repositoryNodeSchema = z.object({
   primaryLanguage: z.nullable(languageSchema),
   languages: z.nullable(
     z.object({
-      edges: z.nullable(z.array(z.nullable(z.object({ node: languageSchema })))),
+      edges: z.nullable(z.array(z.nullable(z.object({ size: z.number(), node: languageSchema })))),
     })
   ),
 })
