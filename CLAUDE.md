@@ -93,7 +93,7 @@ Match the check to the change:
 - Removing an export, dep, or file — `npm run knip` (CI fails on anything left unused)
 - `knip --production` flags `src/csp.ts` (it only treats `next.config.ts` as an entry outside production mode) and test-only exports like `transformGithubUserToData` — expected, not dead code
 - Dependency major bumps — watch `npm install` output for `ERESOLVE` peer warnings and inspect with `npm ls <pkg>`; the tree currently has no accepted mismatches, so any `ERESOLVE` warning indicates a problem. `typescript` is held at 6 until `typescript-eslint` widens its `typescript <6.1.0` peer.
-- Next.js upgrades — `npx @next/codemod upgrade` fails under npm 12: it runs `npm view … --field version`, npm 12 rejects the unknown flag, and the codemod surfaces it as a misleading `Invalid revision provided`. Ask before working around it.
+- Next.js upgrades — `npx @next/codemod upgrade` fails under npm 12: it runs `npm view … --field version`, npm 12 rejects the unknown flag, and the codemod surfaces it as a misleading `Invalid revision provided`. Run it with npm 11 on PATH: `npx -y -p npm@11 -p @next/codemod@<ver> -c 'codemod upgrade <ver>'`, then restore `^9.39.5` on `eslint`.
 - GitHub schema changes — `npm run codegen` (regenerates the git-ignored `github-schema.graphql` + `src/graphql-env.d.ts`; editing an existing query needs no regeneration)
 - graphql / gql.tada bumps — `npx gql.tada generate-output` rebuilds `src/graphql-env.d.ts` from the local schema (no token/network); identical output means the bump is type-neutral. A full `npm run codegen` also pulls GitHub's upstream schema changes, so a schema diff there isn't caused by the bump.
 - Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `npm run build`
