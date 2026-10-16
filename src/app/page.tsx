@@ -1,6 +1,7 @@
 import { cacheLife } from 'next/cache'
 import { getDataAction } from '../fetchers/data-action'
 import { Avatar } from './avatar'
+import { ContributionHeatmap } from './contribution-heatmap'
 import { FindMeElement } from './find-me-element'
 import { LanguageStats } from './language-stats'
 import { Repositories } from './repositories'
@@ -32,6 +33,7 @@ export default async function Index() {
         </div>
       </div>
       <LanguageStats stats={data.languageStats} />
+      <ContributionHeatmap calendar={data.contributions} />
       <Repositories repositories={data.repositories} />
     </>
   )

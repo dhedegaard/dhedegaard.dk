@@ -46,6 +46,11 @@ export default function Loading() {
         </div>
         <div className="mt-2 h-4 w-96 max-w-full animate-pulse rounded bg-slate-800/10" />
       </div>
+      <div className="mb-12">
+        <div className="mb-4 h-7 w-24 animate-pulse rounded bg-slate-800/10" />
+        <div className="h-30 w-full animate-pulse rounded-md bg-slate-800/10 md:h-32" />
+        <div className="mt-2 h-4 w-96 max-w-full animate-pulse rounded bg-slate-800/10" />
+      </div>
       <div className="mb-9 grid w-full grid-flow-row grid-cols-2 gap-6 max-md:grid-cols-1">
         {Array.from({ length: 4 }, (_, i) => (
           <div key={i} className="h-36 animate-pulse rounded-md bg-slate-800/10" />

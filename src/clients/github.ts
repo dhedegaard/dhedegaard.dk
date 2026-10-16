@@ -1,5 +1,6 @@
 import { print } from 'graphql'
 import * as z from 'zod/mini'
+import { contributionsQuery } from './contributions-query'
 import type { ResultOf } from './graphql'
 import { userQuery } from './user-query'
 
@@ -65,17 +66,35 @@ const githubUserSchema = z.object({
 
 export type GithubUser = z.infer<typeof githubUserSchema>
 
-// The query document is static, so serialize it once at module load.
-const userQueryString = print(userQuery)
+const githubContributionsSchema = z.object({
+  contributionsCollection: z.object({
+    contributionCalendar: z.object({
+      weeks: z.array(
+        z.object({
+          contributionDays: z.array(z.object({ date: z.string(), contributionCount: z.number() })),
+        })
+      ),
+    }),
+  }),
+}) satisfies z.ZodMiniType<NonNullable<ResultOf<typeof contributionsQuery>['user']>>
 
-export const getGithubUser = async (): Promise<GithubUser> => {
+export type GithubContributions = z.infer<typeof githubContributionsSchema>
+
+// The query documents are static, so serialize them once at module load.
+const userQueryString = print(userQuery)
+const contributionsQueryString = print(contributionsQuery)
+
+const postGithubQuery = async (
+  query: string,
+  variables?: Record<string, string>
+): Promise<Record<string, unknown>> => {
   const pat: unknown = process.env['GITHUB_PAT']
   if (typeof pat !== 'string' || pat === '') {
     throw new Error('GITHUB_PAT is not set')
   }
   const response = await fetch('https://api.github.com/graphql', {
     method: 'POST',
-    body: JSON.stringify({ query: userQueryString }),
+    body: JSON.stringify({ query, variables }),
     headers: {
       'Content-Type': 'application/json',
       Authorization: `bearer ${pat}`,
@@ -86,7 +105,7 @@ export const getGithubUser = async (): Promise<GithubUser> => {
   }
   const responseJson = await (response.json() as Promise<{
     errors?: unknown
-    data?: { user?: unknown } | null
+    data?: Record<string, unknown> | null
   }>)
 
   if (responseJson.errors != null) {
@@ -97,10 +116,23 @@ export const getGithubUser = async (): Promise<GithubUser> => {
   if (responseJson.data == null) {
     throw new Error('Malformed Github response: missing "data"')
   }
-  const user = responseJson.data.user
+  return responseJson.data
+}
+
+export const getGithubUser = async (): Promise<GithubUser> => {
+  const user = (await postGithubQuery(userQueryString))['user']
   if (user == null) {
     throw new Error('Github user was not found')
   }
 
   return githubUserSchema.parse(user, { reportInput: true })
+}
+
+export const getGithubContributions = async (login: string): Promise<GithubContributions> => {
+  const user = (await postGithubQuery(contributionsQueryString, { login }))['user']
+  if (user == null) {
+    throw new Error(`Github user ${login} was not found`)
+  }
+
+  return githubContributionsSchema.parse(user, { reportInput: true })
 }

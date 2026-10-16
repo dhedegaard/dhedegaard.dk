@@ -1,6 +1,11 @@
 import { captureException } from '@sentry/nextjs'
 import * as z from 'zod/mini'
-import { getGithubUser } from '../clients/github'
+import { getGithubContributions, getGithubUser } from '../clients/github'
+import {
+  ContributionCalendar,
+  computeContributionCalendar,
+  parseContributionAccounts,
+} from './contribution-calendar'
 
 const DataRepositoryLanguage = z.object({
   id: z.string().check(z.minLength(1)),
@@ -55,6 +60,9 @@ const DataResult = z.object({
   email: z.nullable(z.email()),
   repositories: z.array(DataRepository as z.ZodMiniType<DataRepository, DataRepository>),
   languageStats: LanguageStats,
+  contributions: z.nullable(
+    ContributionCalendar as z.ZodMiniType<ContributionCalendar, ContributionCalendar>
+  ),
 })
 export interface DataResult extends z.infer<typeof DataResult> {}
 
@@ -239,7 +247,10 @@ const computeLanguageStats = (repos: readonly GithubRepoNode[]): LanguageStats =
   }
 }
 
-export const transformGithubUserToData = (user: GithubUserData): TransformResult => {
+export const transformGithubUserToData = (
+  user: GithubUserData,
+  contributions: ContributionCalendar | null = null
+): TransformResult => {
   const orderedPinnedNodeIds = getOrderedPinnedNodeIds(user)
   const pinnedRankMap = buildPinnedRankMap(orderedPinnedNodeIds)
   const repos: DataRepository[] = []
@@ -276,6 +287,7 @@ export const transformGithubUserToData = (user: GithubUserData): TransformResult
       avatarUrl: ensureString(user.avatarUrl, 'user avatar URL'),
       githubUrl: ensureString(user.url, 'user profile URL'),
       email: ensureEmail(user.email),
+      contributions,
     } satisfies DataResult,
     { reportInput: true }
   )
@@ -283,12 +295,35 @@ export const transformGithubUserToData = (user: GithubUserData): TransformResult
   return { data, dropped }
 }
 
-const getData = async (): Promise<DataResult> => {
-  const user = await getGithubUser().catch((error: unknown) => {
-    throw new Error(`Error fetching github user: ${String(error)}`, { cause: error })
-  })
+// The heatmap is optional: any failure hides it instead of failing the page.
+const getContributionCalendar = async (): Promise<ContributionCalendar | null> => {
+  const accounts = parseContributionAccounts(process.env['GITHUB_CONTRIBUTION_ACCOUNTS'])
+  if (!accounts.success) {
+    captureException(new Error('Invalid GITHUB_CONTRIBUTION_ACCOUNTS', { cause: accounts.error }))
+    return null
+  }
+  if (accounts.data.length === 0) {
+    return null
+  }
+  try {
+    return computeContributionCalendar(
+      await Promise.all(accounts.data.map((login) => getGithubContributions(login)))
+    )
+  } catch (error) {
+    captureException(new Error('Error fetching contribution calendars', { cause: error }))
+    return null
+  }
+}
 
-  const { data, dropped } = transformGithubUserToData(user)
+const getData = async (): Promise<DataResult> => {
+  const [user, contributions] = await Promise.all([
+    getGithubUser().catch((error: unknown) => {
+      throw new Error(`Error fetching github user: ${String(error)}`, { cause: error })
+    }),
+    getContributionCalendar(),
+  ])
+
+  const { data, dropped } = transformGithubUserToData(user, contributions)
   for (const { id, error } of dropped) {
     captureException(
       new Error(`Dropped repository ${id} that failed DataRepository validation`, { cause: error })
