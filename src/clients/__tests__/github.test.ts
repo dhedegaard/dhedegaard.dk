@@ -133,6 +133,24 @@ describe('postGithubQuery retries (via getGithubUser)', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 
+  it('retries once when the body times out after the headers arrived', async () => {
+    vi.useFakeTimers()
+    process.env['GITHUB_PAT'] = 'token'
+    const slowBody = new Response('{}')
+    vi.spyOn(slowBody, 'json').mockRejectedValue(new DOMException('timed out', 'TimeoutError'))
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(slowBody)
+      .mockResolvedValueOnce(userResponse())
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = getGithubUser()
+    await vi.advanceTimersByTimeAsync(1000)
+
+    await expect(result).resolves.toMatchObject({ id: 'U_1' })
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
   it('gives up after the second failure', async () => {
     vi.useFakeTimers()
     process.env['GITHUB_PAT'] = 'token'

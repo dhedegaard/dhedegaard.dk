@@ -111,33 +111,44 @@ const postGithubQuery = async (
       },
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     })
-  // A network error or timeout counts as retryable, like a transient status.
-  const first = await send().catch(() => null)
-  if (first != null && !isRetryableStatus(first.status)) {
+  // Reading the body inside the attempt lets a timeout or network error mid-body be retried too.
+  const attempt = async (): Promise<GithubAttempt> => {
+    const response = await send()
+    return {
+      response,
+      json: response.ok ? await (response.json() as Promise<GithubResponseJson>) : null,
+    }
+  }
+  const first = await attempt().catch(() => null)
+  if (first != null && !isRetryableStatus(first.response.status)) {
     return readGithubData(first)
   }
   await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS))
-  return readGithubData(await send())
+  return readGithubData(await attempt())
 }
 
-const readGithubData = async (response: Response): Promise<Record<string, unknown>> => {
-  if (!response.ok) {
+interface GithubResponseJson {
+  errors?: unknown
+  data?: Record<string, unknown> | null
+}
+interface GithubAttempt {
+  response: Response
+  json: GithubResponseJson | null
+}
+
+const readGithubData = ({ response, json }: GithubAttempt): Record<string, unknown> => {
+  if (!response.ok || json == null) {
     throw new Error(`${response.status.toString()}: ${response.statusText}`)
   }
-  const responseJson = await (response.json() as Promise<{
-    errors?: unknown
-    data?: Record<string, unknown> | null
-  }>)
-
-  if (responseJson.errors != null) {
-    throw new Error(`Error in Github response: ${JSON.stringify(responseJson.errors)}`, {
-      cause: responseJson.errors,
+  if (json.errors != null) {
+    throw new Error(`Error in Github response: ${JSON.stringify(json.errors)}`, {
+      cause: json.errors,
     })
   }
-  if (responseJson.data == null) {
+  if (json.data == null) {
     throw new Error('Malformed Github response: missing "data"')
   }
-  return responseJson.data
+  return json.data
 }
 
 export const getGithubUser = async (): Promise<GithubUser> => {
