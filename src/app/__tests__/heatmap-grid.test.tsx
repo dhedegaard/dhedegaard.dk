@@ -12,7 +12,6 @@ const period: HeatmapWindow = {
   start: '2026-10-12',
   counts: [1234, 1, 0, 0, 90, 0, 0, 0],
   thresholds: [1, 50, 100],
-  accountCount: 2,
   total: 1325,
   activeDays: 3,
 }
@@ -87,10 +86,8 @@ describe('HeatmapGrid', () => {
     expect(render(period)).toMatch(/<div class="sticky left-0 [^"]*">.*?>Mon</)
   })
 
-  it('says the calendar combines personal and work accounts', () => {
-    expect(render(period)).toContain(
-      'Contributions over the past year across my personal and work GitHub accounts, private repos included.'
-    )
+  it('captions the window without naming accounts or repos', () => {
+    expect(render(period)).toContain('<p>Contributions over the past year.</p>')
   })
 
   it('describes an earlier window by its dates', () => {
@@ -99,9 +96,7 @@ describe('HeatmapGrid', () => {
     expect(markup).toContain(
       'aria-label="1,325 contributions from 12 Oct 2026 to 19 Oct 2026, on 3 days"'
     )
-    expect(markup).toContain(
-      'Contributions from 12 Oct 2026 to 19 Oct 2026 across my personal and work GitHub accounts'
-    )
+    expect(markup).toContain('<p>Contributions from 12 Oct 2026 to 19 Oct 2026.</p>')
   })
 
   it('shows a legend from less to more', () => {

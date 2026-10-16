@@ -80,7 +80,7 @@ describe('getHeatmapWindows', () => {
       ['octocat', expect.objectContaining({ from: latest.from, to: latest.to })],
       ['hubot', expect.objectContaining({ from: latest.from, to: latest.to })],
     ])
-    expect(windows?.[0]).toMatchObject({ start: latest.start, total: 2, accountCount: 2 })
+    expect(windows?.[0]).toMatchObject({ start: latest.start, total: 2 })
   })
 
   it('fetches older windows only where an account was active', async () => {
@@ -94,7 +94,7 @@ describe('getHeatmapWindows', () => {
     expect(windows?.map((period) => period.start)).toEqual(
       [0, 1, 2].map((years) => windowBounds(ANCHOR, years).start)
     )
-    expect(windows?.[1]?.accountCount).toBe(1)
+    expect(windows?.[1]?.total).toBe(1)
   })
 
   it('keeps a middle window without activity as zeros', async () => {
@@ -105,7 +105,7 @@ describe('getHeatmapWindows', () => {
 
     expect(calledWindows('octocat')).toEqual([0, 2, 3])
     expect(windows).toHaveLength(4)
-    expect(windows?.[1]).toMatchObject({ total: 0, accountCount: 0 })
+    expect(windows?.[1]).toMatchObject({ total: 0 })
   })
 
   it('drops trailing windows without contributions', async () => {

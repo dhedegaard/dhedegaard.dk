@@ -19,7 +19,6 @@ const period = (start: string, counts: readonly number[], extra?: Partial<Heatma
     start,
     counts: [...counts],
     thresholds: [],
-    accountCount: 1,
     total: counts.reduce((sum, count) => sum + count, 0),
     activeDays: counts.filter((count) => count > 0).length,
     ...extra,
@@ -118,24 +117,12 @@ describe('formatting', () => {
     expect(periodLabel(period('2024-10-17', zeros(365)), false)).toBe('17 Oct 2024 – 16 Oct 2025')
   })
 
-  it('builds captions for each window and account count', () => {
-    const latest = period('2025-10-17', zeros(365), { accountCount: 2 })
-    const older = period('2024-10-17', zeros(365), { accountCount: 2 })
-
-    expect(heatmapCaption(latest, true)).toBe(
-      'Contributions over the past year across my personal and work GitHub accounts, private repos included.'
+  it('captions each window without naming accounts or repos', () => {
+    expect(heatmapCaption(period('2025-10-17', zeros(365)), true)).toBe(
+      'Contributions over the past year.'
     )
-    expect(heatmapCaption({ ...latest, accountCount: 1 }, true)).toBe(
-      'Contributions over the past year on GitHub, private repos included.'
-    )
-    expect(heatmapCaption(older, false)).toBe(
-      'Contributions from 17 Oct 2024 to 16 Oct 2025 across my personal and work GitHub accounts, private repos included.'
-    )
-    expect(heatmapCaption({ ...older, accountCount: 1 }, false)).toBe(
-      'Contributions from 17 Oct 2024 to 16 Oct 2025 on GitHub, private repos included.'
-    )
-    expect(heatmapCaption({ ...older, accountCount: 0 }, false)).toBe(
-      'Contributions from 17 Oct 2024 to 16 Oct 2025 on GitHub, private repos included.'
+    expect(heatmapCaption(period('2024-10-17', zeros(365)), false)).toBe(
+      'Contributions from 17 Oct 2024 to 16 Oct 2025.'
     )
   })
 

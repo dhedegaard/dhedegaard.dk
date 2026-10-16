@@ -94,11 +94,7 @@ const periodPhrase = (period: HeatmapWindow, latest: boolean): string =>
     : `from ${shortDate(period.start)} to ${shortDate(windowEnd(period))}`
 
 export const heatmapCaption = (period: HeatmapWindow, latest: boolean): string =>
-  `Contributions ${periodPhrase(period, latest)}${
-    period.accountCount >= 2
-      ? ' across my personal and work GitHub accounts, private repos included.'
-      : ' on GitHub, private repos included.'
-  }`
+  `Contributions ${periodPhrase(period, latest)}.`
 
 export const heatmapSummary = (period: HeatmapWindow, latest: boolean): string =>
   `${pluralize(period.total, 'contribution')} ${periodPhrase(period, latest)}, on ${pluralize(period.activeDays, 'day')}`

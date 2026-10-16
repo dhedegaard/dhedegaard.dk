@@ -133,7 +133,6 @@ describe('buildHeatmapWindow', () => {
     expect(period.counts.slice(0, 3)).toEqual([5, 0, 1])
     expect(period.total).toBe(6)
     expect(period.activeDays).toBe(2)
-    expect(period.accountCount).toBe(2)
   })
 
   it('ignores days outside the window', () => {
@@ -149,16 +148,6 @@ describe('buildHeatmapWindow', () => {
     const period = buildHeatmapWindow(bounds, [account({ '2025-10-17': 2 }), null])
 
     expect(period.total).toBe(2)
-    expect(period.accountCount).toBe(1)
-  })
-
-  it('counts only accounts with contributions', () => {
-    const period = buildHeatmapWindow(bounds, [
-      account({ '2025-10-17': 2 }),
-      account({ '2025-10-17': 0 }),
-    ])
-
-    expect(period.accountCount).toBe(1)
   })
 
   it('sets thresholds from the quartiles of the active days', () => {
@@ -176,7 +165,6 @@ describe('buildHeatmapWindow', () => {
       thresholds: [],
       total: 0,
       activeDays: 0,
-      accountCount: 0,
     })
   })
 })

@@ -41,7 +41,6 @@ export const HeatmapWindow = z.object({
   // One count per day from `start`.
   counts: z.array(z.int().check(z.nonnegative())),
   thresholds: z.array(z.int().check(z.positive())).check(z.maxLength(3)),
-  accountCount: z.int().check(z.nonnegative()),
   total: z.int().check(z.nonnegative()),
   activeDays: z.int().check(z.nonnegative()),
 })
@@ -100,27 +99,20 @@ export const buildHeatmapWindow = (
 ): HeatmapWindow => {
   const first = dayNumber(bounds.start)
   const counts = Array.from({ length: dayNumber(bounds.end) - first + 1 }, () => 0)
-  let accountCount = 0
   for (const account of accounts) {
-    let accountTotal = 0
     for (const week of account?.contributionsCollection.contributionCalendar.weeks ?? []) {
       for (const day of week.contributionDays) {
         const index = dayNumber(day.date) - first
         if (index >= 0 && index < counts.length) {
           counts[index] = (counts[index] ?? 0) + day.contributionCount
-          accountTotal += day.contributionCount
         }
       }
-    }
-    if (accountTotal > 0) {
-      accountCount++
     }
   }
   return {
     start: bounds.start,
     counts,
     thresholds: quartiles(counts),
-    accountCount,
     total: counts.reduce((sum, count) => sum + count, 0),
     activeDays: counts.filter((count) => count > 0).length,
   }

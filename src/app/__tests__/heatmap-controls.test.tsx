@@ -8,7 +8,6 @@ const period = (start: string, days: number): HeatmapWindow => ({
   start,
   counts: Array.from({ length: days }, () => 0),
   thresholds: [],
-  accountCount: 1,
   total: 0,
   activeDays: 0,
 })
