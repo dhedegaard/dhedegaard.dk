@@ -295,23 +295,38 @@ export const transformGithubUserToData = (
   return { data, dropped }
 }
 
+const reportContributionError = (error: Error): null => {
+  console.error(error)
+  captureException(error)
+  return null
+}
+
 // The heatmap is optional: any failure hides it instead of failing the page.
 const getContributionCalendar = async (): Promise<ContributionCalendar | null> => {
   const accounts = parseContributionAccounts(process.env['GITHUB_CONTRIBUTION_ACCOUNTS'])
   if (!accounts.success) {
-    captureException(new Error('Invalid GITHUB_CONTRIBUTION_ACCOUNTS', { cause: accounts.error }))
-    return null
+    return reportContributionError(
+      new Error('Invalid GITHUB_CONTRIBUTION_ACCOUNTS', { cause: accounts.error })
+    )
   }
   if (accounts.data.length === 0) {
     return null
   }
   try {
-    return computeContributionCalendar(
+    const calendar = computeContributionCalendar(
       await Promise.all(accounts.data.map((login) => getGithubContributions(login)))
     )
+    if (calendar == null) {
+      return null
+    }
+    const parsed = ContributionCalendar.safeParse(calendar)
+    return parsed.success
+      ? parsed.data
+      : reportContributionError(new Error('Invalid contribution calendar', { cause: parsed.error }))
   } catch (error) {
-    captureException(new Error('Error fetching contribution calendars', { cause: error }))
-    return null
+    return reportContributionError(
+      new Error('Error fetching contribution calendars', { cause: error })
+    )
   }
 }
 

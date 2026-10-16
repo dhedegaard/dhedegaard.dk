@@ -23,10 +23,13 @@ const formatDate = (date: string): string => {
   return `${weekday}, ${day.getUTCDate().toString()} ${month} ${day.getUTCFullYear().toString()}`
 }
 
+const pluralize = (count: number, noun: string): string =>
+  `${numberFormat.format(count)} ${count === 1 ? noun : `${noun}s`}`
+
 const describeDay = ({ date, count }: ContributionDay): string =>
   count === 0
     ? `No contributions on ${formatDate(date)}`
-    : `${numberFormat.format(count)} ${count === 1 ? 'contribution' : 'contributions'} on ${formatDate(date)}`
+    : `${pluralize(count, 'contribution')} on ${formatDate(date)}`
 
 const levelClass = (level: number): string => LEVEL_CLASSES[level] ?? LEVEL_CLASSES[0]
 
@@ -45,7 +48,7 @@ export function ContributionHeatmap({ calendar }: ContributionHeatmapProps) {
       <div
         className="flex [--cell:11px] md:[--cell:minmax(0,1fr)]"
         role="img"
-        aria-label={`${numberFormat.format(calendar.total)} contributions over the past year, on ${numberFormat.format(calendar.activeDays)} days`}
+        aria-label={`${pluralize(calendar.total, 'contribution')} over the past year, on ${pluralize(calendar.activeDays, 'day')}`}
       >
         {/* Outside the scroller, so the labels stay put while the weeks scroll. */}
         <div className="grid w-8 flex-none grid-rows-[1.25rem_repeat(7,11px)] gap-y-[3px] self-start text-[10px] leading-none text-slate-800/60 md:grid-rows-[1.25rem_repeat(7,minmax(0,1fr))] md:self-stretch">
@@ -53,8 +56,8 @@ export function ContributionHeatmap({ calendar }: ContributionHeatmapProps) {
           <span className="row-start-4 self-center">Wed</span>
           <span className="row-start-6 self-center">Fri</span>
         </div>
-        {/* row-reverse makes the scroller open at the newest weeks. */}
-        <div className="flex min-w-0 flex-auto flex-row-reverse overflow-x-auto">
+        {/* row-reverse opens at the newest weeks; md up never scrolls, so rows stay level with the labels. */}
+        <div className="flex min-w-0 flex-auto flex-row-reverse overflow-x-auto md:overflow-x-visible">
           <div
             className="grid flex-none gap-[3px] md:flex-auto"
             style={{

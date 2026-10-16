@@ -78,6 +78,16 @@ describe('ContributionHeatmap', () => {
     )
   })
 
+  it('uses the singular in the summary for one contribution on one day', () => {
+    expect(render({ ...calendar, total: 1, activeDays: 1 })).toContain(
+      'aria-label="1 contribution over the past year, on 1 day"'
+    )
+  })
+
+  it('only scrolls below md, so a scrollbar never pushes the rows out of line with their labels', () => {
+    expect(render(calendar)).toMatch(/class="[^"]*overflow-x-auto[^"]*md:overflow-x-visible/)
+  })
+
   it('says the calendar combines personal and work accounts', () => {
     expect(render(calendar)).toContain(
       'Contributions over the past year across my personal and work GitHub accounts, private repos included.'

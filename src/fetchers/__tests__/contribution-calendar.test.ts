@@ -188,6 +188,13 @@ describe('parseContributionAccounts', () => {
     })
   })
 
+  it('drops repeated logins, ignoring case, so no account counts twice', () => {
+    expect(parseContributionAccounts('octocat,OctoCat, hubot')).toEqual({
+      success: true,
+      data: ['octocat', 'hubot'],
+    })
+  })
+
   it('rejects a value that is not a GitHub login', () => {
     expect(parseContributionAccounts('octocat,not a login').success).toBe(false)
   })

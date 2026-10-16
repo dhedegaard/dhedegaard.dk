@@ -31,10 +31,12 @@ const calendar = (contributionCount: number): GithubContributions => ({
 
 beforeEach(() => {
   vi.mocked(getGithubUser).mockResolvedValue(user)
+  vi.spyOn(console, 'error').mockImplementation(() => undefined)
 })
 
 afterEach(() => {
   vi.unstubAllEnvs()
+  vi.mocked(console.error).mockRestore()
 })
 
 describe('getDataAction', () => {
@@ -74,6 +76,18 @@ describe('getDataAction', () => {
     expect(data.contributions).toBeNull()
     expect(data.githubUrl).toBe(user.url)
     expect(captureException).toHaveBeenCalledOnce()
+    expect(console.error).toHaveBeenCalledOnce()
+  })
+
+  it('hides a calendar that fails validation instead of failing the page', async () => {
+    vi.stubEnv('GITHUB_CONTRIBUTION_ACCOUNTS', 'octocat')
+    vi.mocked(getGithubContributions).mockResolvedValue(calendar(1.5))
+
+    const data = await getDataAction()
+
+    expect(data.contributions).toBeNull()
+    expect(data.githubUrl).toBe(user.url)
+    expect(captureException).toHaveBeenCalledOnce()
   })
 
   it('reports a malformed account list instead of fetching', async () => {
@@ -84,5 +98,6 @@ describe('getDataAction', () => {
     expect(data.contributions).toBeNull()
     expect(getGithubContributions).not.toHaveBeenCalled()
     expect(captureException).toHaveBeenCalledOnce()
+    expect(console.error).toHaveBeenCalledOnce()
   })
 })

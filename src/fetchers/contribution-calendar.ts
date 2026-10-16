@@ -54,12 +54,21 @@ const GithubLogin = z
 const ContributionAccounts = z.pipe(
   z.pipe(
     z.optional(z.string()),
-    z.transform((value) =>
-      (value ?? '')
+    z.transform((value) => {
+      // Logins are case-insensitive; keep the first spelling of each.
+      const seen = new Set<string>()
+      return (value ?? '')
         .split(',')
         .map((login) => login.trim())
-        .filter((login) => login !== '')
-    )
+        .filter((login) => {
+          const key = login.toLowerCase()
+          if (login === '' || seen.has(key)) {
+            return false
+          }
+          seen.add(key)
+          return true
+        })
+    })
   ),
   z.array(GithubLogin)
 )
