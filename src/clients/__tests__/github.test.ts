@@ -100,6 +100,28 @@ describe('getGithubContributions', () => {
     ])
   })
 
+  it('rejects a count that is not a whole number', async () => {
+    process.env['GITHUB_PAT'] = 'token'
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        Response.json({
+          data: {
+            user: {
+              contributionsCollection: {
+                contributionCalendar: {
+                  weeks: [{ contributionDays: [{ date: '2026-10-12', contributionCount: 1.5 }] }],
+                },
+              },
+            },
+          },
+        })
+      )
+    )
+
+    await expect(getGithubContributions('octocat')).rejects.toThrow()
+  })
+
   it('throws when the account does not exist', async () => {
     process.env['GITHUB_PAT'] = 'token'
     vi.stubGlobal(

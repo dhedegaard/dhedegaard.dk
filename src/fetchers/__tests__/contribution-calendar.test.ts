@@ -110,12 +110,7 @@ describe('computeContributionCalendar', () => {
   it('labels the weeks where a month starts', () => {
     // Monday 2026-09-28; 1 Oct falls in week 0 and 1 Nov (a Sunday) in week 4.
     const calendar = computeContributionCalendar([
-      account(
-        daysFrom(
-          '2026-09-28',
-          Array.from({ length: 49 }, () => 1)
-        )
-      ),
+      account(daysFrom('2026-09-28', Array<number>(49).fill(1))),
     ])
 
     expect(calendar?.months).toEqual([
@@ -127,12 +122,7 @@ describe('computeContributionCalendar', () => {
   it('labels a leading partial month when the next month starts three or more weeks later', () => {
     // Monday 2026-10-05; 1 Nov falls in week 3.
     const calendar = computeContributionCalendar([
-      account(
-        daysFrom(
-          '2026-10-05',
-          Array.from({ length: 35 }, () => 1)
-        )
-      ),
+      account(daysFrom('2026-10-05', Array<number>(35).fill(1))),
     ])
 
     expect(calendar?.months).toEqual([
@@ -144,12 +134,7 @@ describe('computeContributionCalendar', () => {
   it('skips a leading partial month too narrow for its label', () => {
     // Monday 2026-10-12; 1 Nov falls in week 2.
     const calendar = computeContributionCalendar([
-      account(
-        daysFrom(
-          '2026-10-12',
-          Array.from({ length: 28 }, () => 1)
-        )
-      ),
+      account(daysFrom('2026-10-12', Array<number>(28).fill(1))),
     ])
 
     expect(calendar?.months).toEqual([{ week: 2, label: 'Nov' }])
@@ -158,12 +143,7 @@ describe('computeContributionCalendar', () => {
   it('skips a month label in the last week, where it would overflow the grid', () => {
     // Monday 2026-10-19; 1 Nov falls in week 1, the last one.
     const calendar = computeContributionCalendar([
-      account(
-        daysFrom(
-          '2026-10-19',
-          Array.from({ length: 14 }, () => 1)
-        )
-      ),
+      account(daysFrom('2026-10-19', Array<number>(14).fill(1))),
     ])
 
     expect(calendar?.months).toEqual([])

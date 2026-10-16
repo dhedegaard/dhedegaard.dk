@@ -71,7 +71,9 @@ const githubContributionsSchema = z.object({
     contributionCalendar: z.object({
       weeks: z.array(
         z.object({
-          contributionDays: z.array(z.object({ date: z.string(), contributionCount: z.number() })),
+          contributionDays: z.array(
+            z.object({ date: z.iso.date(), contributionCount: z.int().check(z.nonnegative()) })
+          ),
         })
       ),
     }),

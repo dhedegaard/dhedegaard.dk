@@ -40,12 +40,17 @@ describe('ContributionHeatmap', () => {
     expect(markup).toContain('title="No contributions on Wed, 14 Oct 2026"')
   })
 
-  it('puts Monday in the first row and Sunday in the last', () => {
+  it('puts each week in its own column, Monday first', () => {
+    // Column 1 holds the weekday labels, so week 0 is column 2.
     const markup = render(calendar)
 
-    expect(markup).toMatch(/style="grid-column:1;grid-row:2"[^>]*title="[^"]*Mon, 12 Oct/)
-    expect(markup).toMatch(/style="grid-column:1;grid-row:8"[^>]*title="[^"]*Sun, 18 Oct/)
-    expect(markup).toMatch(/style="grid-column:2;grid-row:2"[^>]*title="[^"]*Mon, 19 Oct/)
+    expect(markup).toMatch(
+      /style="grid-column:2"><span class="row-start-1 [^"]*" title="[^"]*Mon, 12 Oct[^"]*"/
+    )
+    expect(markup).toMatch(/class="row-start-7 [^"]*" title="[^"]*Sun, 18 Oct/)
+    expect(markup).toMatch(
+      /style="grid-column:3"><span class="row-start-1 [^"]*" title="[^"]*Mon, 19 Oct[^"]*"/
+    )
   })
 
   it('labels Monday, Wednesday and Friday on the rows of those days', () => {
@@ -69,7 +74,7 @@ describe('ContributionHeatmap', () => {
   })
 
   it('labels a month above the week it starts in', () => {
-    expect(render(calendar)).toMatch(/<span[^>]*style="grid-column:2;grid-row:1"[^>]*>Oct<\/span>/)
+    expect(render(calendar)).toMatch(/<span[^>]*style="grid-column:3;grid-row:1"[^>]*>Oct<\/span>/)
   })
 
   it('summarises the year for screen readers', () => {
@@ -84,8 +89,8 @@ describe('ContributionHeatmap', () => {
     )
   })
 
-  it('only scrolls below md, so a scrollbar never pushes the rows out of line with their labels', () => {
-    expect(render(calendar)).toMatch(/class="[^"]*overflow-x-auto[^"]*md:overflow-x-visible/)
+  it('keeps the weekday labels in view while the weeks scroll', () => {
+    expect(render(calendar)).toMatch(/<div class="sticky left-0 [^"]*">.*?>Mon</)
   })
 
   it('says the calendar combines personal and work accounts', () => {

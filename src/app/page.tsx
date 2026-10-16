@@ -1,5 +1,5 @@
 import { cacheLife } from 'next/cache'
-import { getDataAction } from '../fetchers/data-action'
+import { getContributionCalendar, getDataAction } from '../fetchers/data-action'
 import { Avatar } from './avatar'
 import { ContributionHeatmap } from './contribution-heatmap'
 import { FindMeElement } from './find-me-element'
@@ -12,7 +12,7 @@ export default async function Index() {
   'use cache'
   // Refresh hourly; a long expiry keeps serving the last page if GitHub refreshes keep failing.
   cacheLife({ stale: 300, revalidate: 3600, expire: 2_592_000 })
-  const data = await getDataAction()
+  const [data, contributions] = await Promise.all([getDataAction(), getContributionCalendar()])
 
   return (
     <>
@@ -33,7 +33,7 @@ export default async function Index() {
         </div>
       </div>
       <LanguageStats stats={data.languageStats} />
-      <ContributionHeatmap calendar={data.contributions} />
+      <ContributionHeatmap calendar={contributions} />
       <Repositories repositories={data.repositories} />
     </>
   )

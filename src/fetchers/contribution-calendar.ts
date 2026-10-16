@@ -51,31 +51,22 @@ const GithubLogin = z
   .string()
   .check(z.regex(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i, 'Not a GitHub login'))
 
-const ContributionAccounts = z.pipe(
-  z.pipe(
-    z.optional(z.string()),
-    z.transform((value) => {
-      // Logins are case-insensitive; keep the first spelling of each.
-      const seen = new Set<string>()
-      return (value ?? '')
-        .split(',')
-        .map((login) => login.trim())
-        .filter((login) => {
-          const key = login.toLowerCase()
-          if (login === '' || seen.has(key)) {
-            return false
-          }
-          seen.add(key)
-          return true
-        })
-    })
-  ),
-  z.array(GithubLogin)
-)
+const GithubLogins = z.array(GithubLogin)
 
 /** Parse the comma-separated `GITHUB_CONTRIBUTION_ACCOUNTS` value; unset means no accounts. */
-export const parseContributionAccounts = (value: string | undefined) =>
-  ContributionAccounts.safeParse(value)
+export const parseContributionAccounts = (value: string | undefined) => {
+  const logins = (value ?? '')
+    .split(',')
+    .map((login) => login.trim())
+    .filter((login) => login !== '')
+  // Logins are case-insensitive; keep the first spelling of each.
+  return GithubLogins.safeParse(
+    logins.filter(
+      (login, index) =>
+        logins.findIndex((other) => other.toLowerCase() === login.toLowerCase()) === index
+    )
+  )
+}
 
 const dayNumber = (date: string): number => Date.parse(`${date}T00:00:00Z`) / DAY_MS
 const mondayIndex = (date: string): number => (new Date(`${date}T00:00:00Z`).getUTCDay() + 6) % 7
@@ -98,7 +89,7 @@ const monthLabels = (weeks: readonly (readonly (ContributionDay | null)[])[]): M
     const first = week.find((day) => day?.date.endsWith('-01'))
     return first == null ? [] : [{ week: index, label: monthLabel(first.date) }]
   })
-  const firstDay = weeks[0]?.find((day) => day != null)
+  const firstDay = weeks[0]?.[0]
   const leading =
     firstDay != null && (starts[0]?.week ?? Infinity) >= MONTH_LABEL_WEEKS
       ? [{ week: 0, label: monthLabel(firstDay.date) }]
@@ -126,28 +117,22 @@ export const computeContributionCalendar = (
   if (firstMonday == null) {
     return null
   }
-  const included = dates.filter((date) => date >= firstMonday)
-  const level = levelOf(quartiles(included.map((date) => counts.get(date) ?? 0)))
+  const included = [...counts].filter(([date]) => date >= firstMonday).map(([, count]) => count)
+  const level = levelOf(quartiles(included))
+  const start = dayNumber(firstMonday)
+  const weekCount = Math.floor((dayNumber(dates.at(-1) ?? firstMonday) - start) / 7) + 1
+  const weeks = Array.from({ length: weekCount }, (_, week) =>
+    Array.from({ length: 7 }, (_, weekday): ContributionDay | null => {
+      const date = new Date((start + week * 7 + weekday) * DAY_MS).toISOString().slice(0, 10)
+      const count = counts.get(date)
+      return count == null ? null : { date, count, level: level(count) }
+    })
+  )
 
-  const weeks: (ContributionDay | null)[][] = []
-  for (const date of included) {
-    const offset = dayNumber(date) - dayNumber(firstMonday)
-    const week = Math.floor(offset / 7)
-    while (weeks.length <= week) {
-      weeks.push(Array.from({ length: 7 }, () => null))
-    }
-    const count = counts.get(date) ?? 0
-    const slots = weeks[week]
-    if (slots != null) {
-      slots[offset % 7] = { date, count, level: level(count) }
-    }
-  }
-
-  const days = weeks.flat().filter((day) => day != null)
   return {
     accountCount: accounts.length,
-    total: days.reduce((sum, day) => sum + day.count, 0),
-    activeDays: days.filter((day) => day.count > 0).length,
+    total: included.reduce((sum, count) => sum + count, 0),
+    activeDays: included.filter((count) => count > 0).length,
     weeks,
     months: monthLabels(weeks),
   } satisfies ContributionCalendar
