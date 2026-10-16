@@ -30,4 +30,12 @@ describe('ContributionHeatmap', () => {
     expect(markup).toContain('>Activity</h2>')
     expect(markup).toContain('aria-label="7 contributions over the past year, on 1 day"')
   })
+
+  it('renders the latest window with the controls hidden before hydration', () => {
+    const markup = render(windows)
+
+    expect(markup).toMatch(/<div role="group" aria-label="Activity period" class="[^"]*invisible/)
+    expect(markup).toMatch(/role="status"[^>]*>Past 12 months</)
+    expect(markup).toContain('role="img" aria-label="7 contributions over the past year, on 1 day"')
+  })
 })
