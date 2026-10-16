@@ -1,51 +1,7 @@
 import * as z from 'zod/mini'
 import type { GithubContributions } from '../clients/github'
 
-export const MONTH_LABELS = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-] as const
-
 const DAY_MS = 86_400_000
-// A month label needs about three week columns of room.
-const MONTH_LABEL_WEEKS = 3
-
-const ContributionDay = z.object({
-  date: z.iso.date(),
-  count: z.int().check(z.nonnegative()),
-  level: z.int().check(z.gte(0), z.lte(4)),
-})
-export interface ContributionDay extends z.infer<typeof ContributionDay> {}
-
-const MonthLabel = z.object({
-  week: z.int().check(z.nonnegative()),
-  label: z.string().check(z.minLength(1)),
-})
-interface MonthLabel extends z.infer<typeof MonthLabel> {}
-
-export const ContributionCalendar = z.object({
-  accountCount: z.int().check(z.positive()),
-  total: z.int().check(z.nonnegative()),
-  activeDays: z.int().check(z.nonnegative()),
-  // Monday-first weeks; null marks a day outside the calendar.
-  weeks: z.array(
-    z
-      .array(z.nullable(ContributionDay as z.ZodMiniType<ContributionDay, ContributionDay>))
-      .check(z.length(7))
-  ),
-  months: z.array(MonthLabel as z.ZodMiniType<MonthLabel, MonthLabel>),
-})
-export interface ContributionCalendar extends z.infer<typeof ContributionCalendar> {}
 
 const GithubLogin = z
   .string()
@@ -69,13 +25,8 @@ export const parseContributionAccounts = (value: string | undefined) => {
 }
 
 const dayNumber = (date: string): number => Date.parse(`${date}T00:00:00Z`) / DAY_MS
-const mondayIndex = (date: string): number => (new Date(`${date}T00:00:00Z`).getUTCDay() + 6) % 7
-const monthLabel = (date: string): string => MONTH_LABELS[Number(date.slice(5, 7)) - 1] ?? ''
 
 // GitHub-style shading: quartiles of the active days' counts.
-const levelOf = (thresholds: readonly number[]) => (count: number) =>
-  count === 0 ? 0 : 1 + thresholds.filter((threshold) => count > threshold).length
-
 const quartiles = (counts: readonly number[]): number[] => {
   const active = counts.filter((count) => count > 0).sort((left, right) => left - right)
   return [0.25, 0.5, 0.75].flatMap((fraction) => {
@@ -84,56 +35,93 @@ const quartiles = (counts: readonly number[]): number[] => {
   })
 }
 
-const monthLabels = (weeks: readonly (readonly (ContributionDay | null)[])[]): MonthLabel[] => {
-  const starts = weeks.flatMap((week, index) => {
-    const first = week.find((day) => day?.date.endsWith('-01'))
-    return first == null ? [] : [{ week: index, label: monthLabel(first.date) }]
-  })
-  const firstDay = weeks[0]?.[0]
-  const leading =
-    firstDay != null && (starts[0]?.week ?? Infinity) >= MONTH_LABEL_WEEKS
-      ? [{ week: 0, label: monthLabel(firstDay.date) }]
-      : []
-  // A label in the last week would overflow the grid.
-  return [...leading, ...starts].filter(({ week }) => week <= weeks.length - 2)
+/** One 12-month window of daily totals, compact enough to send to the browser. */
+export const HeatmapWindow = z.object({
+  start: z.iso.date(),
+  // One count per day from `start`.
+  counts: z.array(z.int().check(z.nonnegative())),
+  thresholds: z.array(z.int().check(z.positive())).check(z.maxLength(3)),
+  accountCount: z.int().check(z.nonnegative()),
+  total: z.int().check(z.nonnegative()),
+  activeDays: z.int().check(z.nonnegative()),
+})
+export interface HeatmapWindow extends z.infer<typeof HeatmapWindow> {}
+
+interface WindowBounds {
+  start: string
+  end: string
+  from: string
+  to: string
 }
 
-/** Sum the accounts' calendars by date into Monday-first weeks; null when there's nothing to show. */
-export const computeContributionCalendar = (
-  accounts: readonly GithubContributions[]
-): ContributionCalendar | null => {
-  const counts = new Map<string, number>()
-  for (const account of accounts) {
-    for (const week of account.contributionsCollection.contributionCalendar.weeks) {
-      for (const day of week.contributionDays) {
-        counts.set(day.date, (counts.get(day.date) ?? 0) + day.contributionCount)
-      }
-    }
-  }
+const isoDay = (day: number): string => new Date(day * DAY_MS).toISOString().slice(0, 10)
+const isLeapYear = (year: number): boolean =>
+  (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
 
-  // GitHub's calendar starts on the Sunday before a year ago; that day falls outside the year.
-  const dates = [...counts.keys()].sort()
-  const firstMonday = dates.find((date) => mondayIndex(date) === 0)
-  if (firstMonday == null) {
-    return null
-  }
-  const included = [...counts].filter(([date]) => date >= firstMonday).map(([, count]) => count)
-  const level = levelOf(quartiles(included))
-  const start = dayNumber(firstMonday)
-  const weekCount = Math.floor((dayNumber(dates.at(-1) ?? firstMonday) - start) / 7) + 1
-  const weeks = Array.from({ length: weekCount }, (_, week) =>
-    Array.from({ length: 7 }, (_, weekday): ContributionDay | null => {
-      const date = new Date((start + week * 7 + weekday) * DAY_MS).toISOString().slice(0, 10)
-      const count = counts.get(date)
-      return count == null ? null : { date, count, level: level(count) }
-    })
+// Keeps the month and day; setUTCFullYear would roll 29 Feb over to 1 Mar.
+const yearsBefore = (date: string, years: number): string => {
+  const year = Number(date.slice(0, 4)) - years
+  const monthDay = date.slice(5) === '02-29' && !isLeapYear(year) ? '02-28' : date.slice(5)
+  return `${year.toString().padStart(4, '0')}-${monthDay}`
+}
+
+/** Window `years` ends that many years before the anchor and starts the day after the next one ends. */
+export const windowBounds = (anchor: string, years: number): WindowBounds => {
+  const end = yearsBefore(anchor, years)
+  const start = isoDay(dayNumber(yearsBefore(anchor, years + 1)) + 1)
+  return { start, end, from: `${start}T00:00:00Z`, to: `${end}T23:59:59Z` }
+}
+
+export const windowOverlapsYears = (
+  bounds: WindowBounds,
+  activeYears: readonly number[]
+): boolean =>
+  activeYears.some(
+    (year) => bounds.start <= `${year.toString()}-12-31` && bounds.end >= `${year.toString()}-01-01`
   )
 
+/** The last window that overlaps the earliest active year; 0 without any. */
+export const oldestWindowIndex = (anchor: string, activeYears: readonly number[]): number => {
+  if (activeYears.length === 0) {
+    return 0
+  }
+  const earliestDay = `${Math.min(...activeYears).toString()}-01-01`
+  let years = 0
+  while (windowBounds(anchor, years + 1).end >= earliestDay) {
+    years++
+  }
+  return years
+}
+
+/** Sum the accounts' days inside the window; a null account wasn't fetched and counts as zeros. */
+export const buildHeatmapWindow = (
+  bounds: WindowBounds,
+  accounts: readonly (GithubContributions | null)[]
+): HeatmapWindow => {
+  const first = dayNumber(bounds.start)
+  const counts = Array.from({ length: dayNumber(bounds.end) - first + 1 }, () => 0)
+  let accountCount = 0
+  for (const account of accounts) {
+    let accountTotal = 0
+    for (const week of account?.contributionsCollection.contributionCalendar.weeks ?? []) {
+      for (const day of week.contributionDays) {
+        const index = dayNumber(day.date) - first
+        if (index >= 0 && index < counts.length) {
+          counts[index] = (counts[index] ?? 0) + day.contributionCount
+          accountTotal += day.contributionCount
+        }
+      }
+    }
+    if (accountTotal > 0) {
+      accountCount++
+    }
+  }
   return {
-    accountCount: accounts.length,
-    total: included.reduce((sum, count) => sum + count, 0),
-    activeDays: included.filter((count) => count > 0).length,
-    weeks,
-    months: monthLabels(weeks),
-  } satisfies ContributionCalendar
+    start: bounds.start,
+    counts,
+    thresholds: quartiles(counts),
+    accountCount,
+    total: counts.reduce((sum, count) => sum + count, 0),
+    activeDays: counts.filter((count) => count > 0).length,
+  }
 }

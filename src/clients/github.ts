@@ -68,6 +68,7 @@ export type GithubUser = z.infer<typeof githubUserSchema>
 
 const githubContributionsSchema = z.object({
   contributionsCollection: z.object({
+    contributionYears: z.array(z.int()),
     contributionCalendar: z.object({
       weeks: z.array(
         z.object({
@@ -86,6 +87,12 @@ export type GithubContributions = z.infer<typeof githubContributionsSchema>
 const userQueryString = print(userQuery)
 const contributionsQueryString = print(contributionsQuery)
 
+const REQUEST_TIMEOUT_MS = 10_000
+const RETRY_DELAY_MS = 1000
+// Transient failures, including secondary rate limits (403/429).
+const isRetryableStatus = (status: number): boolean =>
+  status >= 500 || status === 403 || status === 429
+
 const postGithubQuery = async (
   query: string,
   variables?: Record<string, string>
@@ -94,31 +101,54 @@ const postGithubQuery = async (
   if (typeof pat !== 'string' || pat === '') {
     throw new Error('GITHUB_PAT is not set')
   }
-  const response = await fetch('https://api.github.com/graphql', {
-    method: 'POST',
-    body: JSON.stringify({ query, variables }),
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `bearer ${pat}`,
-    },
-  })
-  if (!response.ok) {
+  const send = () =>
+    fetch('https://api.github.com/graphql', {
+      method: 'POST',
+      body: JSON.stringify({ query, variables }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `bearer ${pat}`,
+      },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    })
+  // Reading the body inside the attempt lets a timeout or network error mid-body be retried too.
+  const attempt = async (): Promise<GithubAttempt> => {
+    const response = await send()
+    return {
+      response,
+      json: response.ok ? await (response.json() as Promise<GithubResponseJson>) : null,
+    }
+  }
+  const first = await attempt().catch(() => null)
+  if (first != null && !isRetryableStatus(first.response.status)) {
+    return readGithubData(first)
+  }
+  await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS))
+  return readGithubData(await attempt())
+}
+
+interface GithubResponseJson {
+  errors?: unknown
+  data?: Record<string, unknown> | null
+}
+interface GithubAttempt {
+  response: Response
+  json: GithubResponseJson | null
+}
+
+const readGithubData = ({ response, json }: GithubAttempt): Record<string, unknown> => {
+  if (!response.ok || json == null) {
     throw new Error(`${response.status.toString()}: ${response.statusText}`)
   }
-  const responseJson = await (response.json() as Promise<{
-    errors?: unknown
-    data?: Record<string, unknown> | null
-  }>)
-
-  if (responseJson.errors != null) {
-    throw new Error(`Error in Github response: ${JSON.stringify(responseJson.errors)}`, {
-      cause: responseJson.errors,
+  if (json.errors != null) {
+    throw new Error(`Error in Github response: ${JSON.stringify(json.errors)}`, {
+      cause: json.errors,
     })
   }
-  if (responseJson.data == null) {
+  if (json.data == null) {
     throw new Error('Malformed Github response: missing "data"')
   }
-  return responseJson.data
+  return json.data
 }
 
 export const getGithubUser = async (): Promise<GithubUser> => {
@@ -130,8 +160,13 @@ export const getGithubUser = async (): Promise<GithubUser> => {
   return githubUserSchema.parse(user, { reportInput: true })
 }
 
-export const getGithubContributions = async (login: string): Promise<GithubContributions> => {
-  const user = (await postGithubQuery(contributionsQueryString, { login }))['user']
+export const getGithubContributions = async (
+  login: string,
+  range: { from: string; to: string }
+): Promise<GithubContributions> => {
+  const user = (
+    await postGithubQuery(contributionsQueryString, { login, from: range.from, to: range.to })
+  )['user']
   if (user == null) {
     throw new Error(`Github user ${login} was not found`)
   }

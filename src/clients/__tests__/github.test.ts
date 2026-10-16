@@ -10,7 +10,19 @@ afterEach(() => {
     process.env['GITHUB_PAT'] = originalGithubPat
   }
   vi.unstubAllGlobals()
+  vi.useRealTimers()
 })
+
+const validUser = {
+  id: 'U_1',
+  avatarUrl: 'https://example.com/avatar.png',
+  url: 'https://github.com/octocat',
+  email: '',
+  pinnedItems: { nodes: [] },
+  repositories: { edges: [] },
+}
+const userResponse = () => Response.json({ data: { user: validUser } })
+const statusResponse = (status: number) => new Response('nope', { status, statusText: 'Failed' })
 
 describe('getGithubUser', () => {
   it('throws when GITHUB_PAT is missing', async () => {
@@ -20,13 +32,16 @@ describe('getGithubUser', () => {
   })
 
   it('throws on non-OK HTTP responses', async () => {
+    vi.useFakeTimers()
     process.env['GITHUB_PAT'] = 'token'
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(new Response('nope', { status: 500, statusText: 'Server Error' }))
     )
 
-    await expect(getGithubUser()).rejects.toThrow('500: Server Error')
+    const assertion = expect(getGithubUser()).rejects.toThrow('500: Server Error')
+    await vi.advanceTimersByTimeAsync(1000)
+    await assertion
   })
 
   it('throws on GraphQL errors', async () => {
@@ -69,8 +84,134 @@ describe('getGithubUser', () => {
   })
 })
 
+describe('postGithubQuery retries (via getGithubUser)', () => {
+  it('retries once after a 502 and returns the second response', async () => {
+    vi.useFakeTimers()
+    process.env['GITHUB_PAT'] = 'token'
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(statusResponse(502))
+      .mockResolvedValueOnce(userResponse())
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = getGithubUser()
+    await vi.advanceTimersByTimeAsync(1000)
+
+    await expect(result).resolves.toMatchObject({ id: 'U_1' })
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('retries once after a network error', async () => {
+    vi.useFakeTimers()
+    process.env['GITHUB_PAT'] = 'token'
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockRejectedValueOnce(new TypeError('fetch failed'))
+      .mockResolvedValueOnce(userResponse())
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = getGithubUser()
+    await vi.advanceTimersByTimeAsync(1000)
+
+    await expect(result).resolves.toMatchObject({ id: 'U_1' })
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
+  it.each([403, 429, 500, 502])('retries a %i once', async (status) => {
+    vi.useFakeTimers()
+    process.env['GITHUB_PAT'] = 'token'
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(statusResponse(status))
+      .mockResolvedValueOnce(userResponse())
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = getGithubUser()
+    await vi.advanceTimersByTimeAsync(1000)
+
+    await expect(result).resolves.toMatchObject({ id: 'U_1' })
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('retries once when the body times out after the headers arrived', async () => {
+    vi.useFakeTimers()
+    process.env['GITHUB_PAT'] = 'token'
+    const slowBody = new Response('{}')
+    vi.spyOn(slowBody, 'json').mockRejectedValue(new DOMException('timed out', 'TimeoutError'))
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(slowBody)
+      .mockResolvedValueOnce(userResponse())
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = getGithubUser()
+    await vi.advanceTimersByTimeAsync(1000)
+
+    await expect(result).resolves.toMatchObject({ id: 'U_1' })
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('gives up after the second failure', async () => {
+    vi.useFakeTimers()
+    process.env['GITHUB_PAT'] = 'token'
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(statusResponse(503))
+      .mockResolvedValueOnce(statusResponse(503))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const assertion = expect(getGithubUser()).rejects.toThrow('503')
+    await vi.advanceTimersByTimeAsync(1000)
+    await assertion
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
+  // These two pass before the change on purpose: they pin what must not be retried.
+  it('does not retry a 401', async () => {
+    vi.useFakeTimers()
+    process.env['GITHUB_PAT'] = 'token'
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(statusResponse(401))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const assertion = expect(getGithubUser()).rejects.toThrow('401')
+    await vi.advanceTimersByTimeAsync(1000)
+    await assertion
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not retry GraphQL errors', async () => {
+    vi.useFakeTimers()
+    process.env['GITHUB_PAT'] = 'token'
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(Response.json({ errors: [{ message: 'Bad' }], data: null }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const assertion = expect(getGithubUser()).rejects.toThrow('Error in Github response')
+    await vi.advanceTimersByTimeAsync(1000)
+    await assertion
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('gives each request a 10 s timeout', async () => {
+    process.env['GITHUB_PAT'] = 'token'
+    const signal = new AbortController().signal
+    const timeoutSpy = vi.spyOn(AbortSignal, 'timeout').mockReturnValue(signal)
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(userResponse())
+    vi.stubGlobal('fetch', fetchMock)
+
+    await getGithubUser()
+
+    expect(timeoutSpy).toHaveBeenCalledWith(10_000)
+    expect(fetchMock.mock.calls[0]?.[1]?.signal).toBe(signal)
+    timeoutSpy.mockRestore()
+  })
+})
+
 describe('getGithubContributions', () => {
-  it('sends the login as a query variable and parses the calendar', async () => {
+  const range = { from: '2025-10-17T00:00:00Z', to: '2026-10-16T23:59:59Z' }
+
+  it('sends the login and window as query variables and parses the calendar', async () => {
     process.env['GITHUB_PAT'] = 'token'
     const days = [
       { date: '2026-10-12', contributionCount: 0 },
@@ -81,6 +222,7 @@ describe('getGithubContributions', () => {
         data: {
           user: {
             contributionsCollection: {
+              contributionYears: [2026, 2025],
               contributionCalendar: { weeks: [{ contributionDays: days }] },
             },
           },
@@ -89,12 +231,13 @@ describe('getGithubContributions', () => {
     )
     vi.stubGlobal('fetch', fetchMock)
 
-    const result = await getGithubContributions('octocat')
+    const result = await getGithubContributions('octocat', { from: 'F', to: 'T' })
 
     const rawBody = fetchMock.mock.calls[0]?.[1]?.body
     // A non-string body parses as '' and fails the test.
     const body: unknown = JSON.parse(typeof rawBody === 'string' ? rawBody : '')
-    expect(body).toMatchObject({ variables: { login: 'octocat' } })
+    expect(body).toMatchObject({ variables: { login: 'octocat', from: 'F', to: 'T' } })
+    expect(result.contributionsCollection.contributionYears).toEqual([2026, 2025])
     expect(result.contributionsCollection.contributionCalendar.weeks).toEqual([
       { contributionDays: days },
     ])
@@ -109,6 +252,7 @@ describe('getGithubContributions', () => {
           data: {
             user: {
               contributionsCollection: {
+                contributionYears: [2026],
                 contributionCalendar: {
                   weeks: [{ contributionDays: [{ date: '2026-10-12', contributionCount: 1.5 }] }],
                 },
@@ -119,7 +263,7 @@ describe('getGithubContributions', () => {
       )
     )
 
-    await expect(getGithubContributions('octocat')).rejects.toThrow()
+    await expect(getGithubContributions('octocat', range)).rejects.toThrow()
   })
 
   it('throws when the account does not exist', async () => {
@@ -139,6 +283,8 @@ describe('getGithubContributions', () => {
       )
     )
 
-    await expect(getGithubContributions('nobody')).rejects.toThrow('Error in Github response')
+    await expect(getGithubContributions('nobody', range)).rejects.toThrow(
+      'Error in Github response'
+    )
   })
 })
