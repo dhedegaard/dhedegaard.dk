@@ -9,6 +9,12 @@ describe('contributionsQuery', () => {
     expect(print(contributionsQuery)).toMatch(/user\(login:\s*\$login\)/)
   })
 
+  it('takes the window as variables', () => {
+    expect(print(contributionsQuery)).toMatch(
+      /contributionsCollection\(from:\s*\$from,\s*to:\s*\$to\)/
+    )
+  })
+
   it('selects every field the response schema parses', () => {
     // The reverse of the `satisfies` in github.ts; a missing field fails typecheck.
     expectTypeOf<

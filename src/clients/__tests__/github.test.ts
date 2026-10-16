@@ -191,7 +191,9 @@ describe('postGithubQuery retries (via getGithubUser)', () => {
 })
 
 describe('getGithubContributions', () => {
-  it('sends the login as a query variable and parses the calendar', async () => {
+  const range = { from: '2025-10-17T00:00:00Z', to: '2026-10-16T23:59:59Z' }
+
+  it('sends the login and window as query variables and parses the calendar', async () => {
     process.env['GITHUB_PAT'] = 'token'
     const days = [
       { date: '2026-10-12', contributionCount: 0 },
@@ -202,6 +204,7 @@ describe('getGithubContributions', () => {
         data: {
           user: {
             contributionsCollection: {
+              contributionYears: [2026, 2025],
               contributionCalendar: { weeks: [{ contributionDays: days }] },
             },
           },
@@ -210,12 +213,13 @@ describe('getGithubContributions', () => {
     )
     vi.stubGlobal('fetch', fetchMock)
 
-    const result = await getGithubContributions('octocat')
+    const result = await getGithubContributions('octocat', { from: 'F', to: 'T' })
 
     const rawBody = fetchMock.mock.calls[0]?.[1]?.body
     // A non-string body parses as '' and fails the test.
     const body: unknown = JSON.parse(typeof rawBody === 'string' ? rawBody : '')
-    expect(body).toMatchObject({ variables: { login: 'octocat' } })
+    expect(body).toMatchObject({ variables: { login: 'octocat', from: 'F', to: 'T' } })
+    expect(result.contributionsCollection.contributionYears).toEqual([2026, 2025])
     expect(result.contributionsCollection.contributionCalendar.weeks).toEqual([
       { contributionDays: days },
     ])
@@ -230,6 +234,7 @@ describe('getGithubContributions', () => {
           data: {
             user: {
               contributionsCollection: {
+                contributionYears: [2026],
                 contributionCalendar: {
                   weeks: [{ contributionDays: [{ date: '2026-10-12', contributionCount: 1.5 }] }],
                 },
@@ -240,7 +245,7 @@ describe('getGithubContributions', () => {
       )
     )
 
-    await expect(getGithubContributions('octocat')).rejects.toThrow()
+    await expect(getGithubContributions('octocat', range)).rejects.toThrow()
   })
 
   it('throws when the account does not exist', async () => {
@@ -260,6 +265,8 @@ describe('getGithubContributions', () => {
       )
     )
 
-    await expect(getGithubContributions('nobody')).rejects.toThrow('Error in Github response')
+    await expect(getGithubContributions('nobody', range)).rejects.toThrow(
+      'Error in Github response'
+    )
   })
 })

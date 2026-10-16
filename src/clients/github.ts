@@ -68,6 +68,7 @@ export type GithubUser = z.infer<typeof githubUserSchema>
 
 const githubContributionsSchema = z.object({
   contributionsCollection: z.object({
+    contributionYears: z.array(z.int()),
     contributionCalendar: z.object({
       weeks: z.array(
         z.object({
@@ -148,8 +149,13 @@ export const getGithubUser = async (): Promise<GithubUser> => {
   return githubUserSchema.parse(user, { reportInput: true })
 }
 
-export const getGithubContributions = async (login: string): Promise<GithubContributions> => {
-  const user = (await postGithubQuery(contributionsQueryString, { login }))['user']
+export const getGithubContributions = async (
+  login: string,
+  range: { from: string; to: string }
+): Promise<GithubContributions> => {
+  const user = (
+    await postGithubQuery(contributionsQueryString, { login, from: range.from, to: range.to })
+  )['user']
   if (user == null) {
     throw new Error(`Github user ${login} was not found`)
   }
