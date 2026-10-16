@@ -1,10 +1,12 @@
 import { cacheLife } from 'next/cache'
+import { getDeployment } from '../deployment'
 import { getDataAction, getHeatmapWindows } from '../fetchers/data-action'
 import { Avatar } from './avatar'
 import { ContributionHeatmap } from './contribution-heatmap'
 import { FindMeElement } from './find-me-element'
 import { LanguageStats } from './language-stats'
 import { Repositories } from './repositories'
+import { SiteFooter } from './site-footer'
 import { Tagline } from './tagline'
 import { TechStack } from './tech-stack'
 
@@ -12,7 +14,9 @@ export default async function Index() {
   'use cache'
   // Refresh hourly; a long expiry keeps serving the last page if GitHub refreshes keep failing.
   cacheLife({ stale: 300, revalidate: 3600, expire: 2_592_000 })
-  const [data, windows] = await Promise.all([getDataAction(), getHeatmapWindows(new Date())])
+  // Read once inside the cache scope: it's when this cached page was generated.
+  const now = new Date()
+  const [data, windows] = await Promise.all([getDataAction(), getHeatmapWindows(now)])
 
   return (
     <>
@@ -35,6 +39,7 @@ export default async function Index() {
       <LanguageStats stats={data.languageStats} />
       <ContributionHeatmap windows={windows} />
       <Repositories repositories={data.repositories} />
+      <SiteFooter deployment={getDeployment()} cachedAt={now} />
     </>
   )
 }

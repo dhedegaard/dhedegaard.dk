@@ -14,7 +14,7 @@ The site is meant to stay current without me maintaining any content. It's built
    - repositories sorted by pinned, stars and recent activity
    - language shares that weight every repository equally, so one large repo can't dominate
    - contributions summed into contiguous 12-month windows
-4. **Render.** A fully prebuilt [Next.js](https://nextjs.org) page (App Router, Cache Components) that refreshes hourly. The heatmap is the only interactive part: switching years is a client component that keeps its state in the URL (`?years=N`), while the server never reads the URL.
+4. **Render.** A fully prebuilt [Next.js](https://nextjs.org) page (App Router, Cache Components) that refreshes hourly. The heatmap is the only interactive part: switching years is a client component that keeps its state in the URL (`?years=N`), while the server never reads the URL. A footer line shows when the site was deployed and from which commit (Vercel's `VERCEL_GIT_COMMIT_SHA`, inlined at build), and when the cached data was generated. Both are shown in UTC, since a prebuilt page can't follow the visitor's timezone.
 
 ## Decisions and trade-offs
 
