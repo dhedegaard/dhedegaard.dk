@@ -1,6 +1,11 @@
 import { captureException } from '@sentry/nextjs'
 import * as z from 'zod/mini'
-import { getGithubUser } from '../clients/github'
+import { getGithubContributions, getGithubUser } from '../clients/github'
+import {
+  ContributionCalendar,
+  computeContributionCalendar,
+  parseContributionAccounts,
+} from './contribution-calendar'
 
 const DataRepositoryLanguage = z.object({
   id: z.string().check(z.minLength(1)),
@@ -281,6 +286,38 @@ export const transformGithubUserToData = (user: GithubUserData): TransformResult
   )
 
   return { data, dropped }
+}
+
+const reportContributionError = (message: string, cause: unknown): null => {
+  const error = new Error(message, { cause })
+  console.error(error)
+  captureException(error)
+  return null
+}
+
+/** The Activity heatmap's data, fetched apart from `getDataAction()`: any failure hides only the heatmap. */
+export async function getContributionCalendar(): Promise<ContributionCalendar | null> {
+  const accounts = parseContributionAccounts(process.env['GITHUB_CONTRIBUTION_ACCOUNTS'])
+  if (!accounts.success) {
+    return reportContributionError('Invalid GITHUB_CONTRIBUTION_ACCOUNTS', accounts.error)
+  }
+  if (accounts.data.length === 0) {
+    return null
+  }
+  try {
+    const calendar = computeContributionCalendar(
+      await Promise.all(accounts.data.map((login) => getGithubContributions(login)))
+    )
+    if (calendar == null) {
+      return null
+    }
+    const parsed = ContributionCalendar.safeParse(calendar)
+    return parsed.success
+      ? parsed.data
+      : reportContributionError('Invalid contribution calendar', parsed.error)
+  } catch (error) {
+    return reportContributionError('Error fetching contribution calendars', error)
+  }
 }
 
 const getData = async (): Promise<DataResult> => {

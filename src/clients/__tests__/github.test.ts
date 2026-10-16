@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { getGithubUser } from '../github'
+import { getGithubContributions, getGithubUser } from '../github'
 
 const originalGithubPat = process.env['GITHUB_PAT']
 
@@ -66,5 +66,79 @@ describe('getGithubUser', () => {
     )
 
     await expect(getGithubUser()).rejects.toThrow('Malformed Github response')
+  })
+})
+
+describe('getGithubContributions', () => {
+  it('sends the login as a query variable and parses the calendar', async () => {
+    process.env['GITHUB_PAT'] = 'token'
+    const days = [
+      { date: '2026-10-12', contributionCount: 0 },
+      { date: '2026-10-13', contributionCount: 4 },
+    ]
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      Response.json({
+        data: {
+          user: {
+            contributionsCollection: {
+              contributionCalendar: { weeks: [{ contributionDays: days }] },
+            },
+          },
+        },
+      })
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = await getGithubContributions('octocat')
+
+    const rawBody = fetchMock.mock.calls[0]?.[1]?.body
+    // A non-string body parses as '' and fails the test.
+    const body: unknown = JSON.parse(typeof rawBody === 'string' ? rawBody : '')
+    expect(body).toMatchObject({ variables: { login: 'octocat' } })
+    expect(result.contributionsCollection.contributionCalendar.weeks).toEqual([
+      { contributionDays: days },
+    ])
+  })
+
+  it('rejects a count that is not a whole number', async () => {
+    process.env['GITHUB_PAT'] = 'token'
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        Response.json({
+          data: {
+            user: {
+              contributionsCollection: {
+                contributionCalendar: {
+                  weeks: [{ contributionDays: [{ date: '2026-10-12', contributionCount: 1.5 }] }],
+                },
+              },
+            },
+          },
+        })
+      )
+    )
+
+    await expect(getGithubContributions('octocat')).rejects.toThrow()
+  })
+
+  it('throws when the account does not exist', async () => {
+    process.env['GITHUB_PAT'] = 'token'
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        Response.json({
+          errors: [
+            {
+              type: 'NOT_FOUND',
+              message: "Could not resolve to a User with the login of 'nobody'.",
+            },
+          ],
+          data: { user: null },
+        })
+      )
+    )
+
+    await expect(getGithubContributions('nobody')).rejects.toThrow('Error in Github response')
   })
 })
