@@ -24,11 +24,8 @@ const securityHeaders = [
 
 const config: NextConfig = {
   reactStrictMode: true,
-  // Inlined at build time for the footer: the deployed commit (Vercel only) and when it was built.
-  env: {
-    DEPLOYED_SHA: process.env['VERCEL_GIT_COMMIT_SHA'] ?? '',
-    DEPLOYED_AT: new Date().toISOString(),
-  },
+  // Inlined at build time: when the deployment was built, for the footer.
+  env: { DEPLOYED_AT: new Date().toISOString() },
   reactCompiler: true,
   cacheComponents: true,
   partialPrefetching: true,
