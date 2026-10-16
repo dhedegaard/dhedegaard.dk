@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import type { GithubContributions } from '../../clients/github'
-import { computeContributionCalendar, parseContributionAccounts } from '../contribution-calendar'
+import {
+  buildHeatmapWindow,
+  computeContributionCalendar,
+  oldestWindowIndex,
+  parseContributionAccounts,
+  windowBounds,
+  windowOverlapsYears,
+} from '../contribution-calendar'
 
 // One account's calendar from a date → count map; GitHub's week grouping is irrelevant here.
 const account = (counts: Record<string, number>): GithubContributions => ({
@@ -177,5 +184,126 @@ describe('parseContributionAccounts', () => {
 
   it('rejects a value that is not a GitHub login', () => {
     expect(parseContributionAccounts('octocat,not a login').success).toBe(false)
+  })
+})
+
+const DAY_MS = 86_400_000
+const dayNumber = (date: string): number => Date.parse(`${date}T00:00:00Z`) / DAY_MS
+const dayAfter = (date: string): string =>
+  new Date((dayNumber(date) + 1) * DAY_MS).toISOString().slice(0, 10)
+const isLeapYear = (year: number): boolean =>
+  (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
+
+describe('windowBounds', () => {
+  it('ends window 0 on the anchor date', () => {
+    expect(windowBounds('2026-10-16', 0)).toEqual({
+      start: '2025-10-17',
+      end: '2026-10-16',
+      from: '2025-10-17T00:00:00Z',
+      to: '2026-10-16T23:59:59Z',
+    })
+  })
+
+  it('ends window 1 one year earlier', () => {
+    expect(windowBounds('2026-10-16', 1)).toMatchObject({ start: '2024-10-17', end: '2025-10-16' })
+  })
+
+  it.each(['2026-10-16', '2028-02-29', '2027-02-28', '2028-02-28', '2028-03-01'])(
+    'gives every window for anchor %s the right end and a length of 365 or 366 days',
+    (anchor) => {
+      const anchorYear = Number(anchor.slice(0, 4))
+      const monthDay = anchor.slice(5)
+      for (let years = 0; years <= 15; years++) {
+        const bounds = windowBounds(anchor, years)
+        const year = anchorYear - years
+        const expectedMonthDay = monthDay === '02-29' && !isLeapYear(year) ? '02-28' : monthDay
+        expect(bounds.end).toBe(`${year.toString()}-${expectedMonthDay}`)
+        expect([365, 366]).toContain(dayNumber(bounds.end) - dayNumber(bounds.start) + 1)
+        expect(dayAfter(windowBounds(anchor, years + 1).end)).toBe(bounds.start)
+      }
+    }
+  )
+
+  it('uses 28 Feb for a 29 Feb anchor in non-leap years', () => {
+    expect(windowBounds('2028-02-29', 1).end).toBe('2027-02-28')
+    expect(windowBounds('2028-02-29', 0).start).toBe('2027-03-01')
+    expect(windowBounds('2028-02-29', 4).end).toBe('2024-02-29')
+  })
+})
+
+describe('windowOverlapsYears / oldestWindowIndex', () => {
+  it('matches a window against active years', () => {
+    const bounds = windowBounds('2026-10-16', 15) // 2010-10-17 – 2011-10-16
+    expect(windowOverlapsYears(bounds, [2011])).toBe(true)
+    expect(windowOverlapsYears(bounds, [2010])).toBe(true)
+    expect(windowOverlapsYears(bounds, [2012, 2009])).toBe(false)
+  })
+
+  it('finds the last window that overlaps the earliest active year', () => {
+    expect(oldestWindowIndex('2026-10-16', [2026, 2011])).toBe(15)
+    expect(oldestWindowIndex('2026-10-16', [2026, 2025, 2024, 2023])).toBe(3)
+    expect(oldestWindowIndex('2026-10-16', [])).toBe(0)
+  })
+})
+
+describe('buildHeatmapWindow', () => {
+  const bounds = windowBounds('2026-10-16', 0) // 2025-10-17 – 2026-10-16
+
+  it('sums the accounts per day, in date order, with zeros for missing days', () => {
+    const period = buildHeatmapWindow(bounds, [
+      account({ '2025-10-17': 2, '2025-10-19': 1 }),
+      account({ '2025-10-17': 3 }),
+    ])
+
+    expect(period.start).toBe('2025-10-17')
+    expect(period.counts).toHaveLength(365)
+    expect(period.counts.slice(0, 3)).toEqual([5, 0, 1])
+    expect(period.total).toBe(6)
+    expect(period.activeDays).toBe(2)
+    expect(period.accountCount).toBe(2)
+  })
+
+  it('ignores days outside the window', () => {
+    const period = buildHeatmapWindow(bounds, [
+      account({ '2025-10-16': 7, '2026-10-16': 1, '2026-10-17': 9 }),
+    ])
+
+    expect(period.counts.at(-1)).toBe(1)
+    expect(period.total).toBe(1)
+  })
+
+  it('treats an unfetched account as zeros', () => {
+    const period = buildHeatmapWindow(bounds, [account({ '2025-10-17': 2 }), null])
+
+    expect(period.total).toBe(2)
+    expect(period.accountCount).toBe(1)
+  })
+
+  it('counts only accounts with contributions', () => {
+    const period = buildHeatmapWindow(bounds, [
+      account({ '2025-10-17': 2 }),
+      account({ '2025-10-17': 0 }),
+    ])
+
+    expect(period.accountCount).toBe(1)
+  })
+
+  it('sets thresholds from the quartiles of the active days', () => {
+    const period = buildHeatmapWindow(bounds, [
+      account(daysFrom('2025-10-17', [1, 2, 3, 4, 5, 6, 7, 8])),
+    ])
+
+    expect(period.thresholds).toEqual([3, 5, 7])
+    expect(period.total).toBe(36)
+    expect(period.activeDays).toBe(8)
+  })
+
+  it('describes an empty window', () => {
+    expect(buildHeatmapWindow(bounds, [account({})])).toMatchObject({
+      thresholds: [],
+      total: 0,
+      activeDays: 0,
+      accountCount: 0,
+    })
   })
 })

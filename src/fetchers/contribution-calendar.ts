@@ -84,6 +84,97 @@ const quartiles = (counts: readonly number[]): number[] => {
   })
 }
 
+/** One 12-month window of daily totals, compact enough to send to the browser. */
+export const HeatmapWindow = z.object({
+  start: z.iso.date(),
+  // One count per day from `start`.
+  counts: z.array(z.int().check(z.nonnegative())),
+  thresholds: z.array(z.int().check(z.positive())).check(z.maxLength(3)),
+  accountCount: z.int().check(z.nonnegative()),
+  total: z.int().check(z.nonnegative()),
+  activeDays: z.int().check(z.nonnegative()),
+})
+export interface HeatmapWindow extends z.infer<typeof HeatmapWindow> {}
+
+interface WindowBounds {
+  start: string
+  end: string
+  from: string
+  to: string
+}
+
+const isoDay = (day: number): string => new Date(day * DAY_MS).toISOString().slice(0, 10)
+const isLeapYear = (year: number): boolean =>
+  (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
+
+// Keeps the month and day; setUTCFullYear would roll 29 Feb over to 1 Mar.
+const yearsBefore = (date: string, years: number): string => {
+  const year = Number(date.slice(0, 4)) - years
+  const monthDay = date.slice(5) === '02-29' && !isLeapYear(year) ? '02-28' : date.slice(5)
+  return `${year.toString().padStart(4, '0')}-${monthDay}`
+}
+
+/** Window `years` ends that many years before the anchor and starts the day after the next one ends. */
+export const windowBounds = (anchor: string, years: number): WindowBounds => {
+  const end = yearsBefore(anchor, years)
+  const start = isoDay(dayNumber(yearsBefore(anchor, years + 1)) + 1)
+  return { start, end, from: `${start}T00:00:00Z`, to: `${end}T23:59:59Z` }
+}
+
+export const windowOverlapsYears = (
+  bounds: WindowBounds,
+  activeYears: readonly number[]
+): boolean =>
+  activeYears.some(
+    (year) => bounds.start <= `${year.toString()}-12-31` && bounds.end >= `${year.toString()}-01-01`
+  )
+
+/** The last window that overlaps the earliest active year; 0 without any. */
+export const oldestWindowIndex = (anchor: string, activeYears: readonly number[]): number => {
+  if (activeYears.length === 0) {
+    return 0
+  }
+  const earliestDay = `${Math.min(...activeYears).toString()}-01-01`
+  let years = 0
+  while (windowBounds(anchor, years + 1).end >= earliestDay) {
+    years++
+  }
+  return years
+}
+
+/** Sum the accounts' days inside the window; a null account wasn't fetched and counts as zeros. */
+export const buildHeatmapWindow = (
+  bounds: WindowBounds,
+  accounts: readonly (GithubContributions | null)[]
+): HeatmapWindow => {
+  const first = dayNumber(bounds.start)
+  const counts = Array.from({ length: dayNumber(bounds.end) - first + 1 }, () => 0)
+  let accountCount = 0
+  for (const account of accounts) {
+    let accountTotal = 0
+    for (const week of account?.contributionsCollection.contributionCalendar.weeks ?? []) {
+      for (const day of week.contributionDays) {
+        const index = dayNumber(day.date) - first
+        if (index >= 0 && index < counts.length) {
+          counts[index] = (counts[index] ?? 0) + day.contributionCount
+          accountTotal += day.contributionCount
+        }
+      }
+    }
+    if (accountTotal > 0) {
+      accountCount++
+    }
+  }
+  return {
+    start: bounds.start,
+    counts,
+    thresholds: quartiles(counts),
+    accountCount,
+    total: counts.reduce((sum, count) => sum + count, 0),
+    activeDays: counts.filter((count) => count > 0).length,
+  }
+}
+
 const monthLabels = (weeks: readonly (readonly (ContributionDay | null)[])[]): MonthLabel[] => {
   const starts = weeks.flatMap((week, index) => {
     const first = week.find((day) => day?.date.endsWith('-01'))
