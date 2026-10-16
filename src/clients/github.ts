@@ -86,6 +86,12 @@ export type GithubContributions = z.infer<typeof githubContributionsSchema>
 const userQueryString = print(userQuery)
 const contributionsQueryString = print(contributionsQuery)
 
+const REQUEST_TIMEOUT_MS = 10_000
+const RETRY_DELAY_MS = 1000
+// Transient failures, including secondary rate limits (403/429).
+const isRetryableStatus = (status: number): boolean =>
+  status >= 500 || status === 403 || status === 429
+
 const postGithubQuery = async (
   query: string,
   variables?: Record<string, string>
@@ -94,14 +100,26 @@ const postGithubQuery = async (
   if (typeof pat !== 'string' || pat === '') {
     throw new Error('GITHUB_PAT is not set')
   }
-  const response = await fetch('https://api.github.com/graphql', {
-    method: 'POST',
-    body: JSON.stringify({ query, variables }),
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `bearer ${pat}`,
-    },
-  })
+  const send = () =>
+    fetch('https://api.github.com/graphql', {
+      method: 'POST',
+      body: JSON.stringify({ query, variables }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `bearer ${pat}`,
+      },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    })
+  // A network error or timeout counts as retryable, like a transient status.
+  const first = await send().catch(() => null)
+  if (first != null && !isRetryableStatus(first.status)) {
+    return readGithubData(first)
+  }
+  await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS))
+  return readGithubData(await send())
+}
+
+const readGithubData = async (response: Response): Promise<Record<string, unknown>> => {
   if (!response.ok) {
     throw new Error(`${response.status.toString()}: ${response.statusText}`)
   }
