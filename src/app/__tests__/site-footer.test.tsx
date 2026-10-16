@@ -35,6 +35,16 @@ describe('SiteFooter', () => {
     )
   })
 
+  it('opens its links in a new tab, like the rest of the site', () => {
+    const links = render({ deployment, cachedAt }).match(/<a [^>]*>/g) ?? []
+
+    expect(links).toHaveLength(2)
+    for (const link of links) {
+      expect(link).toContain('target="_blank"')
+      expect(link).toContain('rel="noopener noreferrer"')
+    }
+  })
+
   it('leaves out the deployment without a commit', () => {
     const markup = text(render({ deployment: null, cachedAt }))
 

@@ -37,6 +37,8 @@ export function SiteFooter({ deployment, cachedAt }: SiteFooterProps) {
             <a
               className={`font-mono ${LINK_CLASS}`}
               href={`${REPOSITORY_URL}/commit/${deployment.sha}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               {deployment.sha.slice(0, 7)}
             </a>
@@ -45,7 +47,7 @@ export function SiteFooter({ deployment, cachedAt }: SiteFooterProps) {
         )}
         Data cached from {formatUtc(cachedAt)}
         {' · '}
-        <a className={LINK_CLASS} href={REPOSITORY_URL}>
+        <a className={LINK_CLASS} href={REPOSITORY_URL} target="_blank" rel="noopener noreferrer">
           Source
         </a>
       </p>
