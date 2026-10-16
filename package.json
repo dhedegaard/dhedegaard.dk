@@ -27,7 +27,7 @@
   },
   "author": "Dennis Hedegaard <dennis@dhedegaard.dk>",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "dependencies": {
     "@sentry/nextjs": "^10.75.3",
     "@vercel/analytics": "^2.0.1",

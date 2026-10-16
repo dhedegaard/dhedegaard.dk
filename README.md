@@ -70,3 +70,15 @@ Other commands:
 | `npm run lint` / `npm run typecheck` | Lint or typecheck on their own                         |
 | `npm run knip`                       | Find unused files, exports and dependencies            |
 | `npm run codegen`                    | Regenerate the GitHub schema and GraphQL types         |
+
+## License
+
+The code is [MIT licensed](LICENSE).
+
+The personal content is not covered by that licence and stays all rights reserved:
+
+- my name and photo, including the icons in [`public/icons`](public/icons)
+- the tagline, tech stack and contact links
+- the site's descriptions and metadata, in [`layout.tsx`](src/app/layout.tsx) and [`manifest.json`](public/manifest.json)
+
+If you build on this, replace them with your own.
