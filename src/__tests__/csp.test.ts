@@ -3,7 +3,7 @@ import { cspHeaders } from '../csp'
 
 const DSN = 'https://abc123@o42.ingest.de.sentry.io/1337'
 const REPORT_URL =
-  'https://o42.ingest.de.sentry.io/api/1337/security/?sentry_key=abc123&sentry_environment=vercel-production'
+  'https://o42.ingest.de.sentry.io/api/1337/security/?sentry_key=abc123&sentry_environment=production'
 
 const policy = (headers: ReturnType<typeof cspHeaders>) =>
   headers.find((h) => h.key === 'Content-Security-Policy')?.value ?? ''
@@ -50,6 +50,6 @@ describe('cspHeaders', () => {
     const csp = policy(cspHeaders({ isDev: false, vercelEnv: 'preview', sentryDsn: DSN }))
     expect(csp).toContain("script-src 'self' 'unsafe-inline' https://vercel.live;")
     expect(csp).toContain("frame-src 'self' https://vercel.live;")
-    expect(csp).toContain('sentry_environment=vercel-preview')
+    expect(csp).toContain('sentry_environment=preview')
   })
 })

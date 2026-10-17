@@ -18,8 +18,8 @@ const vercelToolbar: Record<string, string[]> = {
 function sentryReportUrl(dsn: URL, vercelEnv: string | undefined): string {
   const url = new URL(dsn.pathname.replace(/\/(\d+)$/, '/api/$1/security/'), dsn.origin)
   url.searchParams.set('sentry_key', dsn.username)
-  // Matches the environment name the Sentry SDK derives from VERCEL_ENV.
-  if (vercelEnv) url.searchParams.set('sentry_environment', `vercel-${vercelEnv}`)
+  // Matches the SDK's default environment on Vercel (unprefixed since Sentry 11).
+  if (vercelEnv) url.searchParams.set('sentry_environment', vercelEnv)
   return url.toString()
 }
 
