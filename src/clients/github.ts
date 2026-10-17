@@ -89,13 +89,16 @@ const contributionsQueryString = print(contributionsQuery)
 
 const REQUEST_TIMEOUT_MS = 10_000
 const RETRY_DELAY_MS = 1000
-// Transient failures, including secondary rate limits (403/429).
-const isRetryableStatus = (status: number): boolean =>
-  status >= 500 || status === 403 || status === 429
+// Transient failures, including secondary rate limits (403/429). An exhausted primary limit
+// can't succeed until its reset, so it isn't retried.
+const isRetryable = ({ status, headers }: Response): boolean =>
+  status >= 500 ||
+  ((status === 403 || status === 429) && headers.get('x-ratelimit-remaining') !== '0')
 
 const postGithubQuery = async (
   query: string,
-  variables?: Record<string, string>
+  variables?: Record<string, string>,
+  signal?: AbortSignal
 ): Promise<Record<string, unknown>> => {
   const pat: unknown = process.env['GITHUB_PAT']
   if (typeof pat !== 'string' || pat === '') {
@@ -109,7 +112,10 @@ const postGithubQuery = async (
         'Content-Type': 'application/json',
         Authorization: `bearer ${pat}`,
       },
-      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      signal:
+        signal == null
+          ? AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+          : AbortSignal.any([AbortSignal.timeout(REQUEST_TIMEOUT_MS), signal]),
     })
   // Reading the body inside the attempt lets a timeout or network error mid-body be retried too.
   const attempt = async (): Promise<GithubAttempt> => {
@@ -120,10 +126,14 @@ const postGithubQuery = async (
     }
   }
   const first = await attempt().catch(() => null)
-  if (first != null && !isRetryableStatus(first.response.status)) {
+  if (first != null && !isRetryable(first.response)) {
     return readGithubData(first)
   }
+  // Release the failed response's connection now, not at garbage collection.
+  await first?.response.body?.cancel().catch(() => undefined)
+  signal?.throwIfAborted()
   await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS))
+  signal?.throwIfAborted()
   return readGithubData(await attempt())
 }
 
@@ -162,10 +172,15 @@ export const getGithubUser = async (): Promise<GithubUser> => {
 
 export const getGithubContributions = async (
   login: string,
-  range: { from: string; to: string }
+  range: { from: string; to: string },
+  signal?: AbortSignal
 ): Promise<GithubContributions> => {
   const user = (
-    await postGithubQuery(contributionsQueryString, { login, from: range.from, to: range.to })
+    await postGithubQuery(
+      contributionsQueryString,
+      { login, from: range.from, to: range.to },
+      signal
+    )
   )['user']
   if (user == null) {
     throw new Error(`Github user ${login} was not found`)

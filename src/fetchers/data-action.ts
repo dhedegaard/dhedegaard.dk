@@ -346,7 +346,13 @@ export async function getHeatmapWindows(now: Date): Promise<HeatmapWindow[] | nu
   const requests = older.flatMap((period, index) =>
     logins.flatMap((login, account) =>
       windowOverlapsYears(period.bounds, activeYears[account] ?? [])
-        ? [{ index, account, run: () => getGithubContributions(login, period.bounds) }]
+        ? [
+            {
+              index,
+              account,
+              run: (signal: AbortSignal) => getGithubContributions(login, period.bounds, signal),
+            },
+          ]
         : []
     )
   )

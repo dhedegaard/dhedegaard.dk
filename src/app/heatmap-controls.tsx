@@ -1,4 +1,4 @@
-import type { RefObject } from 'react'
+import type { KeyboardEventHandler, RefObject } from 'react'
 import type { HeatmapWindow } from '../fetchers/contribution-calendar'
 import { periodLabel } from './heatmap-layout'
 
@@ -13,6 +13,7 @@ interface HeatmapControlsProps {
   onOlder: () => void
   onNewer: () => void
   onLatest: () => void
+  onKeyDown: KeyboardEventHandler<HTMLButtonElement>
 }
 export function HeatmapControls({
   windows,
@@ -22,6 +23,7 @@ export function HeatmapControls({
   onOlder,
   onNewer,
   onLatest,
+  onKeyDown,
 }: HeatmapControlsProps) {
   const current = windows[selected]
   if (windows.length < 2 || current == null) {
@@ -47,6 +49,7 @@ export function HeatmapControls({
         aria-disabled={older == null ? true : undefined}
         aria-label={older == null ? undefined : `Older: ${periodLabel(older, false)}`}
         onClick={onOlder}
+        onKeyDown={onKeyDown}
       >
         <span aria-hidden="true">‹</span> Older
       </button>
@@ -56,6 +59,7 @@ export function HeatmapControls({
         aria-disabled={newer == null ? true : undefined}
         aria-label={newer == null ? undefined : `Newer: ${periodLabel(newer, selected - 1 === 0)}`}
         onClick={onNewer}
+        onKeyDown={onKeyDown}
       >
         Newer <span aria-hidden="true">›</span>
       </button>
@@ -65,6 +69,7 @@ export function HeatmapControls({
         className={`${BUTTON_CLASS} ${selected === 0 ? 'invisible' : ''}`}
         aria-label="Latest: Past 12 months"
         onClick={onLatest}
+        onKeyDown={onKeyDown}
       >
         Latest <span aria-hidden="true">»</span>
       </button>

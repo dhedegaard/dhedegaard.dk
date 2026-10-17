@@ -78,4 +78,24 @@ describe('runWithConcurrency', () => {
       { status: 'rejected', reason: new Error('deadline') },
     ])
   })
+
+  it('aborts the signal passed to tasks at the deadline', async () => {
+    vi.useFakeTimers()
+    const signals: AbortSignal[] = []
+    const result = runWithConcurrency(
+      [
+        (signal) => {
+          signals.push(signal)
+          return after(100, 'a')
+        },
+      ],
+      1,
+      Date.now() + 50
+    )
+    await vi.advanceTimersByTimeAsync(50)
+    await result
+
+    expect(signals[0]?.aborted).toBe(true)
+    expect(signals[0]?.reason).toEqual(new Error('deadline'))
+  })
 })

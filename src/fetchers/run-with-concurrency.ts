@@ -1,13 +1,15 @@
 /**
  * Run tasks with at most `limit` in flight; results come back in task order.
- * Tasks unfinished at `deadline` (epoch ms) settle as rejected with Error('deadline').
+ * Tasks unfinished at `deadline` (epoch ms) settle as rejected with Error('deadline'),
+ * and the signal passed to every task aborts, so their work stops too.
  */
 export const runWithConcurrency = async <T>(
-  tasks: readonly (() => Promise<T>)[],
+  tasks: readonly ((signal: AbortSignal) => Promise<T>)[],
   limit: number,
   deadline?: number
 ): Promise<PromiseSettledResult<T>[]> => {
   const results: (PromiseSettledResult<T> | undefined)[] = tasks.map(() => undefined)
+  const deadlineController = new AbortController()
   let next = 0
   let expired = false
   const worker = async () => {
@@ -18,7 +20,7 @@ export const runWithConcurrency = async <T>(
         return
       }
       try {
-        results[index] = { status: 'fulfilled', value: await task() }
+        results[index] = { status: 'fulfilled', value: await task(deadlineController.signal) }
       } catch (reason) {
         results[index] = { status: 'rejected', reason }
       }
@@ -35,6 +37,7 @@ export const runWithConcurrency = async <T>(
   await (expiry == null ? workers : Promise.race([workers, expiry]))
   clearTimeout(timer)
   expired = true
+  deadlineController.abort(new Error('deadline'))
   // Copy, so a task finishing after the deadline can't change the returned results.
   return results.map(
     (result): PromiseSettledResult<T> =>

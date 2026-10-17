@@ -1,8 +1,9 @@
 'use client'
 
-import { useRef, useSyncExternalStore } from 'react'
+import { useRef, useSyncExternalStore, type KeyboardEvent } from 'react'
 import * as z from 'zod/mini'
 import type { HeatmapWindow } from '../fetchers/contribution-calendar'
+import { guardEnterRepeat } from './enter-repeat'
 import { HeatmapControls } from './heatmap-controls'
 import { HeatmapGrid } from './heatmap-grid'
 import { yearsParam } from './years-param'
@@ -32,6 +33,7 @@ interface ContributionHeatmapProps {
 export function ContributionHeatmap({ windows }: ContributionHeatmapProps) {
   const search = useSyncExternalStore(subscribe, getSearch, getServerSearch)
   const olderRef = useRef<HTMLButtonElement>(null)
+  const enterPressedOn = useRef<EventTarget | null>(null)
   const [latest] = windows ?? []
   if (windows == null || latest == null) {
     return null
@@ -79,6 +81,13 @@ export function ContributionHeatmap({ windows }: ContributionHeatmapProps) {
     // Latest turns invisible, so keep keyboard focus on the controls.
     olderRef.current?.focus()
   }
+  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    const guard = guardEnterRepeat(event, enterPressedOn.current)
+    enterPressedOn.current = guard.pressedOn
+    if (guard.block) {
+      event.preventDefault()
+    }
+  }
 
   return (
     <section className="mb-12">
@@ -92,6 +101,7 @@ export function ContributionHeatmap({ windows }: ContributionHeatmapProps) {
           onOlder={onOlder}
           onNewer={onNewer}
           onLatest={onLatest}
+          onKeyDown={onKeyDown}
         />
       </div>
       {/* The key remounts the scroller, so phones reopen it at the newest weeks. */}

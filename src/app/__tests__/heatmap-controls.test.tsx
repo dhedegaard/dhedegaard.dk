@@ -24,6 +24,7 @@ const render = (selected: number, hydrated = true, list: readonly HeatmapWindow[
       onOlder: () => undefined,
       onNewer: () => undefined,
       onLatest: () => undefined,
+      onKeyDown: () => undefined,
     })
   )
 

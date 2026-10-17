@@ -133,6 +133,44 @@ describe('postGithubQuery retries (via getGithubUser)', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 
+  it.each([403, 429])(
+    'does not retry a %i from an exhausted primary rate limit',
+    async (status) => {
+      vi.useFakeTimers()
+      process.env['GITHUB_PAT'] = 'token'
+      const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+        new Response('limited', {
+          status,
+          statusText: 'Rate limited',
+          headers: { 'x-ratelimit-remaining': '0' },
+        })
+      )
+      vi.stubGlobal('fetch', fetchMock)
+
+      const assertion = expect(getGithubUser()).rejects.toThrow(status.toString())
+      await vi.advanceTimersByTimeAsync(1000)
+      await assertion
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+    }
+  )
+
+  it('cancels the failed response body before retrying', async () => {
+    vi.useFakeTimers()
+    process.env['GITHUB_PAT'] = 'token'
+    const failed = statusResponse(502)
+    const cancelSpy = vi.spyOn(failed.body ?? new ReadableStream(), 'cancel')
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof fetch>().mockResolvedValueOnce(failed).mockResolvedValueOnce(userResponse())
+    )
+
+    const result = getGithubUser()
+    await vi.advanceTimersByTimeAsync(1000)
+
+    await expect(result).resolves.toMatchObject({ id: 'U_1' })
+    expect(cancelSpy).toHaveBeenCalledOnce()
+  })
+
   it('retries once when the body times out after the headers arrived', async () => {
     vi.useFakeTimers()
     process.env['GITHUB_PAT'] = 'token'
@@ -286,5 +324,48 @@ describe('getGithubContributions', () => {
     await expect(getGithubContributions('nobody', range)).rejects.toThrow(
       'Error in Github response'
     )
+  })
+
+  it('aborts the request and skips the retry when the caller signal aborts', async () => {
+    vi.useFakeTimers()
+    process.env['GITHUB_PAT'] = 'token'
+    const controller = new AbortController()
+    const fetchMock = vi.fn<typeof fetch>((_url, init) => {
+      const signal = init?.signal
+      return new Promise<Response>((_resolve, reject) => {
+        signal?.addEventListener('abort', () => {
+          reject(signal.reason as Error)
+        })
+      })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const assertion = expect(
+      getGithubContributions('octocat', range, controller.signal)
+    ).rejects.toThrow('deadline')
+    controller.abort(new Error('deadline'))
+    await vi.advanceTimersByTimeAsync(1000)
+    await assertion
+    expect(fetchMock).toHaveBeenCalledOnce()
+  })
+
+  it('skips the retry when the caller signal aborts during the retry delay', async () => {
+    vi.useFakeTimers()
+    process.env['GITHUB_PAT'] = 'token'
+    const controller = new AbortController()
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(statusResponse(503))
+      .mockResolvedValueOnce(Response.json({ data: { user: null } }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const assertion = expect(
+      getGithubContributions('octocat', range, controller.signal)
+    ).rejects.toThrow('deadline')
+    await vi.advanceTimersByTimeAsync(500)
+    controller.abort(new Error('deadline'))
+    await vi.advanceTimersByTimeAsync(500)
+    await assertion
+    expect(fetchMock).toHaveBeenCalledOnce()
   })
 })
