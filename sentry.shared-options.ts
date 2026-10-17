@@ -18,5 +18,6 @@ export const sentryCommonOptions = {
     databaseQueryData: false,
     queues: false,
     graphQL: { document: false, variables: false },
+    frameContextLines: 7,
   },
 } satisfies Parameters<typeof init>[0]

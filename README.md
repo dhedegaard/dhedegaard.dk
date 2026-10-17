@@ -28,7 +28,7 @@ A site that maintains itself has to fail safely, because nobody is watching it d
   - Transient GitHub errors are retried once, and every request has a timeout.
   - The page cache expires after 30 days, so a broken token or a GitHub outage leaves the last good page in place for weeks. Errors go to Sentry.
 - **Costs I've accepted, on purpose.**
-  - The Sentry browser SDK is the largest client chunk. It already runs with no optional integrations (no Session Replay, no tracing), and loading it lazily would lose early errors.
+  - The Sentry browser SDK is the largest client chunk. It already runs with no optional integrations (no Session Replay, no tracing), and loading it lazily would lose early errors. It also keeps Sentry 10's stricter data-collection defaults, so error reports leave out visitors' IPs, cookies and request bodies.
   - The heatmap's URL parameter is validated with zod in the browser too, which costs more bundle than it should because Turbopack doesn't yet tree-shake `zod/mini` well.
 
 ## How it's kept correct
