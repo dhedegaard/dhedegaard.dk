@@ -69,6 +69,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
 - Fake timers: `vi.useFakeTimers()` doesn't fake `AbortSignal.timeout`, so spy on it. For a promise that should reject, attach `expect(p).rejects…` before `vi.advanceTimersByTimeAsync`, or vitest reports an unhandled rejection.
 - Vitest 5 defaults to `clearMocks: true` — don't add `vi.clearAllMocks()` in `afterEach`; spies still need `mockRestore()`.
 - Test factory functions (`makeRepository`, `makeUser`) require explicit `id` fields — no auto-generated fallbacks.
+- Language-stats fixtures: tied shares sort by name (`localeCompare`), so use single letters (`'A'…'L'`), not `L0…L11` ("L10" sorts before "L2"). Don't use names in `NON_PROGRAMMING_LANGUAGES` (HTML, CSS, Shell, …) as stand-ins for real languages.
 
 ## Code Style
 
@@ -119,6 +120,9 @@ Match the check to the change:
 - In Claude's browser pane, dark-mode emulation renders a dark canvas behind black text. Emulate a light colour scheme before visual checks.
 - Claude's browser pane is narrower than `md` (~760px), so by default it shows the mobile layout. Emulate 1280×900 for desktop and the mobile preset for phones, reloading after each switch.
 - Ad-hoc GitHub GraphQL probes: build the body with `jq -n --arg … > q.json`, then `(source ./.envrc && curl -s -H "Authorization: bearer $GITHUB_PAT" -X POST -d @q.json https://api.github.com/graphql) | jq …`. Print only aggregates, never the token or private repo names.
+- Language bar shares on production or the dev server: `curl -sL https://www.dhedegaard.dk/ | grep -o 'aria-label="Language share:[^"]*"'`. The "Other" names are in the last legend item's `title`.
+- Full language ranking (beyond what the page ships): a scratchpad `.mts` script that imports `getGithubUser` from `src/clients/github` and recomputes the shares, run with `set -a; source ./.env; set +a; npx -y tsx <file>.mts`. It must be `.mts`, since tsx's CJS output rejects top-level `await`.
+- The language legend is tuned to two lines at desktop width (848px `ul`, only about 65px to spare on the first line). After changing legend text, emulate 1280×900 and count the distinct `li` top offsets with `javascript_tool`. The pane resets the emulated size whenever its width changes, so re-set it before measuring.
 - Client JS weight: `grep -o '/_next/static/[^"]*\.js' .next/server/app/index.html | sort -u | sed 's|^/_next/|.next/|' | xargs -I{} sh -c 'gzip -9c {} | wc -c' | awk '{s+=$1} END {print s}'`. Compare it before and after any change that adds client code.
 - Rendered output after `npm run build`: grep `.next/server/app/index.html` and `index.rsc` to confirm what ships (e.g. no account names), and measure size with `gzip -9c <file> | wc -c`.
 - Preview deployments (`dhedegaard-dk-git-<branch>-d-hedegaard.vercel.app`) are behind Vercel Deployment Protection (`curl` gets a 302), so check their headers in a logged-in browser or on production.
