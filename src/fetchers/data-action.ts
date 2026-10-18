@@ -198,6 +198,16 @@ const compareRepositories = (
 
 const TOP_LANGUAGE_COUNT = 12
 
+// Data, docs and build formats GitHub detects but that aren't programming languages.
+const NON_PROGRAMMING_LANGUAGES: ReadonlySet<string> = new Set([
+  'CMake',
+  'Dockerfile',
+  'JSON',
+  'Makefile',
+  'Markdown',
+  'YAML',
+])
+
 // Each contributing repo counts once, split by byte share, so one huge repo can't dominate.
 const computeLanguageStats = (repos: readonly GithubRepoNode[]): LanguageStats => {
   const totals = new Map<string, LanguageStat>()
@@ -206,7 +216,9 @@ const computeLanguageStats = (repos: readonly GithubRepoNode[]): LanguageStats =
     if (repo.isArchived || repo.isFork) {
       continue
     }
-    const edges = uniqueLanguageEdges(repo).filter((edge) => edge.size > 0)
+    const edges = uniqueLanguageEdges(repo).filter(
+      (edge) => edge.size > 0 && !NON_PROGRAMMING_LANGUAGES.has(edge.node.name)
+    )
     if (edges.length === 0) {
       continue
     }

@@ -390,6 +390,25 @@ describe('transformGithubUserToData', () => {
     expect(data.languageStats).toEqual({ repoCount: 0, top: [], other: null })
   })
 
+  it('leaves data and build formats out of languageStats', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({ id: 'app', ...withLanguages({ Go: 300, Dockerfile: 100 }) }),
+          makeRepository({ id: 'docs', ...withLanguages({ Markdown: 100, YAML: 50 }) }),
+        ],
+      })
+    )
+
+    expect(data.languageStats.repoCount).toBe(1)
+    expect(data.languageStats.top.map((language) => [language.name, language.share])).toEqual([
+      ['Go', 1],
+    ])
+    expect(
+      data.repositories.find((repo) => repo.id === 'app')?.languages.map((l) => l.name)
+    ).toEqual(['Go', 'Dockerfile'])
+  })
+
   it('keeps the top 12 languages and folds the rest into other', () => {
     const names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
     const repositories = names.map((name) =>
