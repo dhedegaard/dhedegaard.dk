@@ -422,6 +422,21 @@ describe('transformGithubUserToData', () => {
     expect(data.languageStats.other?.share).toBeCloseTo(2 / 12)
   })
 
+  it('folds languages under 1% into other', () => {
+    const { data } = transformGithubUserToData(
+      makeUser({
+        repositories: [
+          makeRepository({ id: 'main', ...withLanguages({ Go: 980, Perl: 20 }) }),
+          makeRepository({ id: 'tiny', ...withLanguages({ Rust: 991, Lua: 9 }) }),
+        ],
+      })
+    )
+
+    expect(data.languageStats.top.map((language) => language.name)).toEqual(['Rust', 'Go', 'Perl'])
+    expect(data.languageStats.other?.names).toEqual(['Lua'])
+    expect(data.languageStats.other?.share).toBeCloseTo(0.0045)
+  })
+
   it('breaks share ties by repo count, then by name', () => {
     const { data } = transformGithubUserToData(
       makeUser({

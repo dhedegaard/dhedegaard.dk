@@ -197,6 +197,7 @@ const compareRepositories = (
 }
 
 const TOP_LANGUAGE_COUNT = 10
+const MIN_LANGUAGE_SHARE = 0.01
 
 // Markup, data, docs, build, style and shell formats left out of the language stats.
 const NON_PROGRAMMING_LANGUAGES: ReadonlySet<string> = new Set([
@@ -250,10 +251,15 @@ const computeLanguageStats = (repos: readonly GithubRepoNode[]): LanguageStats =
         right.repoCount - left.repoCount ||
         left.name.localeCompare(right.name)
     )
-  const rest = ranked.slice(TOP_LANGUAGE_COUNT)
+  // Ranked by share, so the languages above the threshold are a prefix.
+  const shownCount = Math.min(
+    TOP_LANGUAGE_COUNT,
+    ranked.filter((language) => language.share >= MIN_LANGUAGE_SHARE).length
+  )
+  const rest = ranked.slice(shownCount)
   return {
     repoCount,
-    top: ranked.slice(0, TOP_LANGUAGE_COUNT),
+    top: ranked.slice(0, shownCount),
     other:
       rest.length === 0
         ? null
