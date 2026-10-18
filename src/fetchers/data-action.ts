@@ -196,7 +196,7 @@ const compareRepositories = (
   return 0
 }
 
-const TOP_LANGUAGE_COUNT = 8
+const TOP_LANGUAGE_COUNT = 10
 
 // Each contributing repo counts once, split by byte share, so one huge repo can't dominate.
 const computeLanguageStats = (repos: readonly GithubRepoNode[]): LanguageStats => {
