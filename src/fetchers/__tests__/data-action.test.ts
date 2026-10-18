@@ -390,17 +390,17 @@ describe('transformGithubUserToData', () => {
     expect(data.languageStats).toEqual({ repoCount: 0, top: [], other: null })
   })
 
-  it('keeps the top 10 languages and folds the rest into other', () => {
-    const names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L']
+  it('keeps the top 12 languages and folds the rest into other', () => {
+    const names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
     const repositories = names.map((name) =>
       makeRepository({ id: `repo-${name}`, ...withLanguages({ [name]: 1 }) })
     )
 
     const { data } = transformGithubUserToData(makeUser({ repositories }))
 
-    expect(data.languageStats.top.map((language) => language.name)).toEqual(names.slice(0, 10))
-    expect(data.languageStats.other?.names).toEqual(['K', 'L'])
-    expect(data.languageStats.other?.share).toBeCloseTo(2 / 12)
+    expect(data.languageStats.top.map((language) => language.name)).toEqual(names.slice(0, 12))
+    expect(data.languageStats.other?.names).toEqual(['M', 'N'])
+    expect(data.languageStats.other?.share).toBeCloseTo(2 / 14)
   })
 
   it('breaks share ties by repo count, then by name', () => {
