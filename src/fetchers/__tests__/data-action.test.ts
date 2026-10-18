@@ -308,7 +308,7 @@ describe('transformGithubUserToData', () => {
               edges: [
                 { size: 60, node: { id: 'javascript', color: '#f1e05a', name: 'JavaScript' } },
                 { size: 5, node: { id: 'javascript', color: '#aabbcc', name: 'JavaScript' } },
-                { size: 35, node: { id: 'css', color: '#563d7c', name: 'CSS' } },
+                { size: 35, node: { id: 'lua', color: '#000080', name: 'Lua' } },
               ],
             },
           }),
@@ -318,11 +318,11 @@ describe('transformGithubUserToData', () => {
 
     expect(data.repositories[0]?.languages).toEqual([
       { id: 'javascript', color: '#f1e05a', name: 'JavaScript' },
-      { id: 'css', color: '#563d7c', name: 'CSS' },
+      { id: 'lua', color: '#000080', name: 'Lua' },
     ])
     expect(data.languageStats.top).toEqual([
       { name: 'JavaScript', color: '#f1e05a', share: 60 / 95, repoCount: 1 },
-      { name: 'CSS', color: '#563d7c', share: 35 / 95, repoCount: 1 },
+      { name: 'Lua', color: '#000080', share: 35 / 95, repoCount: 1 },
     ])
   })
 
@@ -332,7 +332,7 @@ describe('transformGithubUserToData', () => {
         repositories: [
           makeRepository({
             id: 'big',
-            ...withLanguages({ TypeScript: 900_000, CSS: 100_000 }, { TypeScript: '#3178c6' }),
+            ...withLanguages({ TypeScript: 900_000, Lua: 100_000 }, { TypeScript: '#3178c6' }),
           }),
           makeRepository({ id: 'small', ...withLanguages({ Rust: 10 }) }),
         ],
@@ -344,7 +344,7 @@ describe('transformGithubUserToData', () => {
       top: [
         { name: 'Rust', color: null, share: 0.5, repoCount: 1 },
         { name: 'TypeScript', color: '#3178c6', share: 0.45, repoCount: 1 },
-        { name: 'CSS', color: null, share: 0.05, repoCount: 1 },
+        { name: 'Lua', color: null, share: 0.05, repoCount: 1 },
       ],
       other: null,
     })
@@ -409,17 +409,17 @@ describe('transformGithubUserToData', () => {
     ).toEqual(['Go', 'Dockerfile'])
   })
 
-  it('keeps the top 12 languages and folds the rest into other', () => {
-    const names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
+  it('keeps the top 10 languages and folds the rest into other', () => {
+    const names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L']
     const repositories = names.map((name) =>
       makeRepository({ id: `repo-${name}`, ...withLanguages({ [name]: 1 }) })
     )
 
     const { data } = transformGithubUserToData(makeUser({ repositories }))
 
-    expect(data.languageStats.top.map((language) => language.name)).toEqual(names.slice(0, 12))
-    expect(data.languageStats.other?.names).toEqual(['M', 'N'])
-    expect(data.languageStats.other?.share).toBeCloseTo(2 / 14)
+    expect(data.languageStats.top.map((language) => language.name)).toEqual(names.slice(0, 10))
+    expect(data.languageStats.other?.names).toEqual(['K', 'L'])
+    expect(data.languageStats.other?.share).toBeCloseTo(2 / 12)
   })
 
   it('breaks share ties by repo count, then by name', () => {

@@ -21,17 +21,27 @@ describe('LanguageStats', () => {
     expect(render({ repoCount: 0, top: [], other: null })).toBe('')
   })
 
-  it('lists each language with a one-decimal percentage', () => {
+  it('lists each language with a whole percentage', () => {
     const markup = render(stats)
 
     expect(markup).toContain('Languages')
-    expect(markup).toMatch(/<li[^>]*>.*?TypeScript<span[^>]*>34\.7%</)
-    expect(markup).toMatch(/<li[^>]*>.*?Rust<span[^>]*>14\.9%</)
+    expect(markup).toMatch(/<li[^>]*>.*?TypeScript<span[^>]*>35% /)
+    expect(markup).toMatch(/<li[^>]*>.*?Rust<span[^>]*>15% /)
+  })
+
+  it('shows how many repos use each language', () => {
+    const markup = render({
+      ...stats,
+      top: [...stats.top, { name: 'Lua', color: null, share: 0.004, repoCount: 1 }],
+    })
+
+    expect(markup).toMatch(/TypeScript<span[^>]*>35% · 12 repos<\/span>/)
+    expect(markup).toMatch(/Lua<span[^>]*>&lt;1% · 1 repo<\/span>/)
   })
 
   it('describes the bar for screen readers', () => {
     expect(render(stats)).toContain(
-      'role="img" aria-label="Language share: TypeScript 34.7%, Rust 14.9%"'
+      'role="img" aria-label="Language share: TypeScript 35%, Rust 15%"'
     )
   })
 
@@ -43,10 +53,10 @@ describe('LanguageStats', () => {
   })
 
   it('folds the remaining languages into other, naming them in a tooltip', () => {
-    const markup = render({ ...stats, other: { share: 0.05, names: ['Lua', 'Shell'] } })
+    const markup = render({ ...stats, other: { share: 0.05, names: ['Lua', 'Perl'] } })
 
-    expect(markup).toMatch(/title="Lua, Shell"[^>]*>.*Other.*5\.0%/)
-    expect(markup).toContain('Other 5.0%"')
+    expect(markup).toMatch(/title="Lua, Perl"[^>]*>.*Other<span[^>]*>5%<\/span><\/li>/)
+    expect(markup).toContain('Other 5%"')
   })
 
   it('states how many repositories the stats cover', () => {

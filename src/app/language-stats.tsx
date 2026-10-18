@@ -1,12 +1,17 @@
 import type { LanguageStats as LanguageStatsData } from '../fetchers/data-action'
+import { pluralize } from './heatmap-layout'
 
-const formatShare = (share: number): string => `${(share * 100).toFixed(1)}%`
+const formatShare = (share: number): string => {
+  const percent = Math.round(share * 100)
+  return percent === 0 && share > 0 ? '<1%' : `${String(percent)}%`
+}
 
 interface Segment {
   key: string
   label: string
   color: string | null
   share: number
+  repoCount?: number
   title?: string
 }
 
@@ -25,6 +30,7 @@ export function LanguageStats({ stats }: LanguageStatsProps) {
         label: language.name,
         color: language.color,
         share: language.share,
+        repoCount: language.repoCount,
       }) satisfies Segment
   )
   if (stats.other != null) {
@@ -61,13 +67,16 @@ export function LanguageStats({ stats }: LanguageStatsProps) {
           <li key={segment.key} className="flex items-center gap-1.5" title={segment.title}>
             <Swatch color={segment.color} className="size-2.5 rounded-full" />
             {segment.label}
-            <span className="text-slate-800/60 tabular-nums">{formatShare(segment.share)}</span>
+            <span className="text-xs text-slate-800/60 tabular-nums">
+              {formatShare(segment.share)}
+              {segment.repoCount != null && ` · ${pluralize(segment.repoCount, 'repo')}`}
+            </span>
           </li>
         ))}
       </ul>
       <p className="mt-2 text-xs text-slate-800/60">
-        Share of code across {stats.repoCount} {stats.repoCount === 1 ? 'repo' : 'repos'} (excluding
-        archived repos and forks), each repo weighted equally.
+        Share of code across {pluralize(stats.repoCount, 'repo')} (excluding archived repos and
+        forks), each repo weighted equally.
       </p>
     </section>
   )

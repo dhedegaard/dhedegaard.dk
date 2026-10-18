@@ -196,15 +196,19 @@ const compareRepositories = (
   return 0
 }
 
-const TOP_LANGUAGE_COUNT = 12
+const TOP_LANGUAGE_COUNT = 10
 
-// Data, docs and build formats GitHub detects but that aren't programming languages.
+// Markup, data, docs, build, style and shell formats left out of the language stats.
 const NON_PROGRAMMING_LANGUAGES: ReadonlySet<string> = new Set([
   'CMake',
+  'CSS',
   'Dockerfile',
+  'HTML',
   'JSON',
   'Makefile',
   'Markdown',
+  'SCSS',
+  'Shell',
   'YAML',
 ])
 
