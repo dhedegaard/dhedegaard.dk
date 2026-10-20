@@ -73,7 +73,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
 
 ## Code Style
 
-`README.md` is the public engineering write-up for developers and hiring managers. Keep it current in the same change whenever the architecture, a decision or trade-off, the CI gates, an env var or a command changes. It stays matter-of-fact: no counts that go stale (tests, repos) and no account names.
+`README.md` is the public engineering write-up for anyone exploring how the site is built. Keep it current in the same change whenever the architecture, a decision or trade-off, the CI gates, an env var or a command changes. It stays matter-of-fact: no counts that go stale (tests, repos) and no account names.
 
 Keep code comments short — one brief line; point to CLAUDE.md or commit messages for rationale instead of explaining inline.
 
