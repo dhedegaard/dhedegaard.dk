@@ -1,6 +1,6 @@
-import { Link, Pin, Star } from 'lucide-react'
 import { DataRepository } from '../fetchers/data-action'
 import { GithubIcon } from '../icons/github'
+import { LinkIcon, PinIcon, StarIcon } from '../icons/lucide'
 import { Badge } from './badge'
 import { formatHomepageUrl } from './format-homepage-url'
 
@@ -49,12 +49,12 @@ function Repo({ repo }: RepoProps) {
               <span className="text-sm tabular-nums" aria-hidden="true">
                 {repo.stargazerCount}
               </span>
-              <Star size={16} />
+              <StarIcon width={16} height={16} />
             </div>
           )}
           {repo.pinned && (
             <div role="img" aria-label="Pinned">
-              <Pin size={16} />
+              <PinIcon width={16} height={16} />
             </div>
           )}
         </div>
@@ -71,7 +71,7 @@ function Repo({ repo }: RepoProps) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Link size={11} className="inline-block" />
+          <LinkIcon className="inline-block" width={11} height={11} />
           &nbsp;
           {formatHomepageUrl(repo.homepageUrl)}
         </a>

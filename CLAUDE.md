@@ -31,7 +31,7 @@ Packages with install scripts must be allowlisted in `package.json` `allowScript
 
 ## Architecture
 
-Personal site built with Next.js App Router, TypeScript (strictest config), and Tailwind CSS v4. Styling is plain Tailwind utility classes (no component library); `lucide-react` provides icons.
+Personal site built with Next.js App Router, TypeScript (strictest config), and Tailwind CSS v4. Styling is plain Tailwind utility classes (no component library); icons are inlined SVG components in `src/icons/` (`lucide.tsx` copies the few Lucide icons used, since `lucide-react`'s `Icon` is a client component).
 
 **Data flow:**
 

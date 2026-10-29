@@ -1,7 +1,7 @@
-import { Mail } from 'lucide-react'
 import type { DataResult } from '../fetchers/data-action'
 import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
+import { MailIcon } from '../icons/lucide'
 
 const LINKEDIN_URL = 'https://www.linkedin.com/in/dennis-hedegaard-39a02a22/'
 const baseLinkClass =
@@ -20,7 +20,7 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
       </a>
       {email != null && (
         <a className={secondaryLinkClass} href={`mailto:${email}`}>
-          <Mail size={16} />
+          <MailIcon width={16} height={16} />
           <span>Email</span>
         </a>
       )}

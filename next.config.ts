@@ -39,7 +39,7 @@ const config: NextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ['zod/mini', 'lucide-react'],
+    optimizePackageImports: ['zod/mini'],
   },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }]
