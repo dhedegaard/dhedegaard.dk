@@ -3,6 +3,8 @@ import { getDeployment } from '../deployment'
 import { getDataAction, getHeatmapWindows } from '../fetchers/data-action'
 import { Avatar } from './avatar'
 import { ContributionHeatmap } from './contribution-heatmap'
+import { contactEmail, LOCATION } from './about-me-data'
+import { About, Education, Experience } from './about-me-sections'
 import { FindMeElement } from './find-me-element'
 import { LanguageStats } from './language-stats'
 import { Repositories } from './repositories'
@@ -23,19 +25,25 @@ export default async function Index() {
       <div className="mt-10 mb-12 flex gap-6">
         <div className="flex flex-auto flex-col gap-4">
           <h1 className="text-5xl">Dennis Hedegaard</h1>
-          <Tagline />
+          <div>
+            <Tagline />
+            <p className="text-sm text-slate-800/60">{LOCATION}</p>
+          </div>
           <TechStack />
           <div className="md:hidden">
-            <FindMeElement githubUrl={data.githubUrl} email={data.email} />
+            <FindMeElement githubUrl={data.githubUrl} email={contactEmail(data.email)} />
           </div>
         </div>
         <div className="flex w-32 flex-none flex-col gap-3 self-start max-md:w-[60px]">
           <Avatar src={data.avatarUrl} />
           <div className="max-md:hidden">
-            <FindMeElement githubUrl={data.githubUrl} email={data.email} />
+            <FindMeElement githubUrl={data.githubUrl} email={contactEmail(data.email)} />
           </div>
         </div>
       </div>
+      <About />
+      <Experience />
+      <Education />
       <LanguageStats stats={data.languageStats} />
       <ContributionHeatmap windows={windows} />
       <Repositories repositories={data.repositories} />
