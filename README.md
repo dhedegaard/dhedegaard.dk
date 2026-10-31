@@ -4,7 +4,7 @@
 
 The source of [dhedegaard.dk](https://www.dhedegaard.dk), my personal site.
 
-The site is meant to stay current without me maintaining any content. It's built from my GitHub account: the open-source projects, the Languages bar, and an Activity heatmap you can step back through year by year. When I push a new project or start using a new language, the site picks it up within the hour. The only hand-written parts are the tagline and the tech stack.
+Most of the site stays current on its own. It's built from my GitHub account: the open-source projects, the Languages bar, and an Activity heatmap you can step back through year by year. When I push a new project or start using a new language, the site picks it up within the hour. The hand-written parts are the tagline, the tech stack and an about-me section (about, experience and education).
 
 ## How it works
 
@@ -78,7 +78,7 @@ The code is [MIT licensed](LICENSE).
 The personal content is not covered by that licence and stays all rights reserved:
 
 - my name and photo, including the icons in [`public/icons`](public/icons)
-- the tagline, tech stack and contact links
-- the site's descriptions and metadata, in [`layout.tsx`](src/app/layout.tsx) and [`manifest.json`](public/manifest.json)
+- the tagline, tech stack, about-me text and contact links
+- the site's descriptions and metadata, in [`site-meta.ts`](src/app/site-meta.ts), [`json-ld.ts`](src/app/json-ld.ts) and [`manifest.json`](public/manifest.json)
 
 If you build on this, replace them with your own.
