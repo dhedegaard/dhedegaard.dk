@@ -43,7 +43,15 @@ describe('About-me sections', () => {
 })
 
 describe('PHONE_PATTERN', () => {
-  it.each(['12 34 56 78', '+45 12345678', '12345678', '12-34-56-78'])('matches %s', (value) => {
+  it.each([
+    '12 34 56 78',
+    '+45 12345678',
+    '12345678',
+    '12-34-56-78',
+    '12.34.56.78',
+    '1234 5678',
+    '+45 1234 5678',
+  ])('matches %s', (value) => {
     expect(value).toMatch(PHONE_PATTERN)
   })
 
