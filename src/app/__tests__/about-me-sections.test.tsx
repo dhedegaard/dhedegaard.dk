@@ -1,0 +1,55 @@
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { describe, expect, it } from 'vitest'
+import { About, Education, Experience } from '../about-me-sections'
+import { PHONE_PATTERN } from './phone-pattern'
+
+const about = renderToStaticMarkup(createElement(About))
+const experience = renderToStaticMarkup(createElement(Experience))
+const education = renderToStaticMarkup(createElement(Education))
+
+describe('About-me sections', () => {
+  it.each([
+    ['About', about],
+    ['Experience', experience],
+    ['Education', education],
+  ])('renders the %s heading', (heading, markup) => {
+    expect(markup).toMatch(new RegExp(`<h2[^>]*>${heading}</h2>`))
+  })
+
+  it('ends Education with spoken languages and outside work', () => {
+    expect(education).toMatch(/<h3[^>]*>Spoken languages<\/h3>/)
+    expect(education).toMatch(/<h3[^>]*>Outside work<\/h3>/)
+  })
+
+  it('links the company name without showing its domain', () => {
+    expect(experience).toContain('href="https://www.digisense.dk/"')
+    expect(experience).toContain('Digisense A/S')
+    expect(experience.replace(/href="[^"]*"/g, '')).not.toContain('digisense.dk')
+  })
+
+  it('names the schools and where they are', () => {
+    expect(education).toContain('Erhvervsakademi Aarhus (EAAA)')
+    expect(education).toContain('Aarhus Tech')
+    expect(education).toContain('HTX')
+    expect(education).toContain('Viby J')
+  })
+
+  it('contains no phone number', () => {
+    for (const markup of [about, experience, education]) {
+      expect(markup).not.toMatch(PHONE_PATTERN)
+    }
+  })
+})
+
+describe('PHONE_PATTERN', () => {
+  it.each(['12 34 56 78', '+45 12345678', '12345678', '12-34-56-78'])('matches %s', (value) => {
+    expect(value).toMatch(PHONE_PATTERN)
+  })
+
+  it('ignores long hex hashes', () => {
+    expect('d3fc3961d888b6792ee5b869bc64094527509d6ee9eb1e60bde5854009eb640f').not.toMatch(
+      PHONE_PATTERN
+    )
+  })
+})
