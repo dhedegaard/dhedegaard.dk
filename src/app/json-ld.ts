@@ -1,30 +1,56 @@
 import { SITE_URL } from '../site'
 import { CITY, EDUCATION, EXPERIENCE } from './about-me-data'
-import { LINKEDIN_URL } from './find-me-element'
-import { GRAVATAR_AVATAR, JOB_TITLE, SITE_DESCRIPTION, SITE_NAME } from './site-meta'
+import { GRAVATAR_AVATAR, JOB_TITLE, LINKEDIN_URL, SITE_DESCRIPTION, SITE_NAME } from './site-meta'
 import { STACK } from './tech-stack'
 
-interface EducationalOrganization {
+interface OrganizationLd {
+  '@type': 'Organization'
+  name: string
+  url: string
+}
+
+interface EducationalOrganizationLd {
   '@type': 'EducationalOrganization'
   name: string
   alternateName?: string
 }
 
-// "Name (ABBR)" on the page becomes name + alternateName for search engines.
-function educationalOrganization(school: string): EducationalOrganization {
-  const { name, alternateName } =
-    /^(?<name>.+) \((?<alternateName>[^)]+)\)$/.exec(school)?.groups ?? {}
-  if (name !== undefined && alternateName !== undefined) {
-    return {
-      '@type': 'EducationalOrganization',
-      name,
-      alternateName,
-    } satisfies EducationalOrganization
-  }
-  return { '@type': 'EducationalOrganization', name: school } satisfies EducationalOrganization
+interface PersonLd {
+  '@type': 'Person'
+  '@id': string
+  name: string
+  alternateName: string
+  url: string
+  image: string
+  jobTitle: string
+  knowsAbout: readonly string[]
+  worksFor: OrganizationLd
+  alumniOf: readonly EducationalOrganizationLd[]
+  address: { '@type': 'PostalAddress'; addressLocality: string; addressCountry: string }
+  sameAs: readonly string[]
+}
+
+interface WebSiteLd {
+  '@type': 'WebSite'
+  '@id': string
+  url: string
+  name: string
+  description: string
+  inLanguage: string
+  author: { '@id': string }
 }
 
 const currentCompany = EXPERIENCE[0].companies[0]
+
+// One entry per school; the abbreviation becomes alternateName.
+const alumniOf = [...new Map(EDUCATION.map(({ school }) => [school.name, school])).values()].map(
+  (school) =>
+    ({
+      '@type': 'EducationalOrganization',
+      name: school.name,
+      ...('abbreviation' in school && { alternateName: school.abbreviation }),
+    }) satisfies EducationalOrganizationLd
+)
 
 // Structured data for search engines: identifies the site's subject (Person)
 // and the site itself (WebSite), linked via @id so the person is the author.
@@ -41,7 +67,7 @@ export const JSON_LD = {
       jobTitle: JOB_TITLE,
       knowsAbout: STACK.flatMap(({ items }) => items),
       worksFor: { '@type': 'Organization', name: currentCompany.name, url: currentCompany.url },
-      alumniOf: [...new Set(EDUCATION.map(({ school }) => school))].map(educationalOrganization),
+      alumniOf,
       address: { '@type': 'PostalAddress', addressLocality: CITY, addressCountry: 'DK' },
       sameAs: ['https://github.com/dhedegaard', LINKEDIN_URL],
     },
@@ -55,4 +81,4 @@ export const JSON_LD = {
       author: { '@id': `${SITE_URL}/#person` },
     },
   ],
-} as const
+} as const satisfies { '@context': string; '@graph': readonly [PersonLd, WebSiteLd] }

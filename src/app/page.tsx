@@ -8,6 +8,7 @@ import { About, Education, Experience } from './about-me-sections'
 import { FindMeElement } from './find-me-element'
 import { LanguageStats } from './language-stats'
 import { Repositories } from './repositories'
+import { SITE_NAME } from './site-meta'
 import { SiteFooter } from './site-footer'
 import { Tagline } from './tagline'
 import { TechStack } from './tech-stack'
@@ -19,25 +20,26 @@ export default async function Index() {
   // Read once inside the cache scope: it's when this cached page was generated.
   const now = new Date()
   const [data, windows] = await Promise.all([getDataAction(), getHeatmapWindows(now)])
+  const email = contactEmail(data.email)
 
   return (
     <>
       <div className="mt-10 mb-12 flex gap-6">
         <div className="flex flex-auto flex-col gap-4">
-          <h1 className="text-5xl">Dennis Hedegaard</h1>
+          <h1 className="text-5xl">{SITE_NAME}</h1>
           <div>
             <Tagline />
             <p className="text-sm text-slate-800/60">{LOCATION}</p>
           </div>
           <TechStack />
           <div className="md:hidden">
-            <FindMeElement githubUrl={data.githubUrl} email={contactEmail(data.email)} />
+            <FindMeElement githubUrl={data.githubUrl} email={email} />
           </div>
         </div>
         <div className="flex w-32 flex-none flex-col gap-3 self-start max-md:w-[60px]">
           <Avatar src={data.avatarUrl} />
           <div className="max-md:hidden">
-            <FindMeElement githubUrl={data.githubUrl} email={contactEmail(data.email)} />
+            <FindMeElement githubUrl={data.githubUrl} email={email} />
           </div>
         </div>
       </div>

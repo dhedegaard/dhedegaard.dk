@@ -2,8 +2,8 @@ import type { DataResult } from '../fetchers/data-action'
 import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
 import { MailIcon } from '../icons/lucide'
+import { LINKEDIN_URL } from './site-meta'
 
-export const LINKEDIN_URL = 'https://www.linkedin.com/in/dennis-hedegaard-39a02a22/'
 const baseLinkClass =
   'flex items-center gap-2.5 rounded border px-3 py-1.5 text-sm no-underline shadow-sm transition-colors motion-reduce:transition-none'
 const primaryLinkClass = `${baseLinkClass} border-blue-600 bg-blue-600/10 text-blue-600 hover:bg-blue-600/20 active:bg-blue-600/30`

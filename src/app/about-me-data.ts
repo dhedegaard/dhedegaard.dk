@@ -11,10 +11,15 @@ interface Job {
   tech: readonly string[]
 }
 
+interface School {
+  name: string
+  abbreviation?: string
+}
+
 interface Degree {
   period: string
   degree: string
-  school: string
+  school: School
   place: string
   summary: string
 }
@@ -75,7 +80,7 @@ export const EDUCATION = [
   {
     period: 'Jan 2011 – Jun 2012',
     degree: 'Professional Bachelor in Software Development (top-up)',
-    school: 'Erhvervsakademi Aarhus (EAAA)',
+    school: { name: 'Erhvervsakademi Aarhus', abbreviation: 'EAAA' },
     place: 'Viby J',
     summary:
       'Systems integration, large-scale systems, testing, Android development and cloud computing.',
@@ -83,14 +88,14 @@ export const EDUCATION = [
   {
     period: 'Aug 2008 – Jan 2011',
     degree: 'AP Degree in Computer Science (Datamatiker)',
-    school: 'Erhvervsakademi Aarhus (EAAA)',
+    school: { name: 'Erhvervsakademi Aarhus', abbreviation: 'EAAA' },
     place: 'Viby J',
     summary: 'Software design and development, networking and databases.',
   },
   {
     period: '2004 – 2007',
     degree: 'HTX (Higher Technical Examination)',
-    school: 'Aarhus Tech',
+    school: { name: 'Aarhus Tech' },
     place: 'Viby J',
     summary: 'Upper secondary education focused on science, mathematics and technology.',
   },

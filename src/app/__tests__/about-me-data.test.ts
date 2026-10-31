@@ -19,7 +19,7 @@ describe('about-me-data', () => {
   })
 
   it('names the HTX school', () => {
-    expect(EDUCATION[2].school).toBe('Aarhus Tech')
+    expect(EDUCATION[2].school.name).toBe('Aarhus Tech')
   })
 
   it('gives the city and country only', () => {
