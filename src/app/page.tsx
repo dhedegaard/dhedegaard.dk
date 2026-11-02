@@ -43,11 +43,11 @@ export default async function Index() {
           </div>
         </div>
       </div>
+      <LanguageStats stats={data.languageStats} />
+      <ContributionHeatmap windows={windows} />
       <About />
       <Experience />
       <Education />
-      <LanguageStats stats={data.languageStats} />
-      <ContributionHeatmap windows={windows} />
       <Repositories repositories={data.repositories} />
       <SiteFooter deployment={getDeployment()} cachedAt={now} />
     </>
