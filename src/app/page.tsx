@@ -44,9 +44,12 @@ export default async function Index() {
       </div>
       <LanguageStats stats={data.languageStats} />
       <ContributionHeatmap windows={windows} />
-      <About />
-      <Experience />
-      <Education />
+      {/* Print only for now; see CLAUDE.md. */}
+      <div className="hidden print:block">
+        <About />
+        <Experience />
+        <Education />
+      </div>
       <Repositories repositories={data.repositories} />
       <SiteFooter deployment={getDeployment()} cachedAt={now} />
     </>

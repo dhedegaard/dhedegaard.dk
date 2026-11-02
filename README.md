@@ -4,7 +4,7 @@
 
 The source of [dhedegaard.dk](https://www.dhedegaard.dk), my personal site.
 
-Most of the site stays current on its own. It's built from my GitHub account: the open-source projects, the Languages bar, and an Activity heatmap you can step back through year by year. When I push a new project or start using a new language, the site picks it up within the hour. The hand-written parts are the tagline, the tech stack and an about-me section (about, experience and education).
+Most of the site stays current on its own. It's built from my GitHub account: the open-source projects, the Languages bar, and an Activity heatmap you can step back through year by year. When I push a new project or start using a new language, the site picks it up within the hour. The hand-written parts are the tagline, the tech stack and an about-me section (about, experience and education), which for now shows only when the page is printed.
 
 ## How it works
 
