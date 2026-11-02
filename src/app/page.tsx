@@ -45,11 +45,9 @@ export default async function Index() {
       <LanguageStats stats={data.languageStats} />
       <ContributionHeatmap windows={windows} />
       {/* Print only for now; see CLAUDE.md. */}
-      <div className="hidden print:block">
-        <About />
-        <Experience />
-        <Education />
-      </div>
+      <About className="hidden print:block" />
+      <Experience className="hidden print:block" />
+      <Education className="hidden print:block" />
       <Repositories repositories={data.repositories} />
       <SiteFooter deployment={getDeployment()} cachedAt={now} />
     </>

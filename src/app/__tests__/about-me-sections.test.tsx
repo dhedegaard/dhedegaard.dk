@@ -17,6 +17,12 @@ describe('About-me sections', () => {
     expect(markup).toMatch(new RegExp(`<h2[^>]*>${heading}</h2>`))
   })
 
+  it.each([About, Experience, Education])('adds className to the %o section', (Section) => {
+    expect(
+      renderToStaticMarkup(createElement(Section, { className: 'hidden print:block' }))
+    ).toMatch(/^<section class="mb-12 hidden print:block">/)
+  })
+
   it('ends Education with spoken languages', () => {
     expect(education).toMatch(/<h3[^>]*>Spoken languages<\/h3>/)
   })

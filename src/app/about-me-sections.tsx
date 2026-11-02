@@ -3,9 +3,13 @@ import { Badge } from './badge'
 import { ABOUT, type Degree, EDUCATION, EXPERIENCE, SPOKEN_LANGUAGES } from './about-me-data'
 import { SectionHeading } from './section-heading'
 
-export function About() {
+interface SectionProps {
+  className?: string
+}
+
+export function About({ className }: SectionProps) {
   return (
-    <section className="mb-12">
+    <section className={`mb-12 ${className ?? ''}`}>
       <SectionHeading>About</SectionHeading>
       <div className="flex flex-col gap-3">
         {ABOUT.map((paragraph) => (
@@ -16,9 +20,9 @@ export function About() {
   )
 }
 
-export function Experience() {
+export function Experience({ className }: SectionProps) {
   return (
-    <section className="mb-12">
+    <section className={`mb-12 ${className ?? ''}`}>
       <SectionHeading>Experience</SectionHeading>
       <div className="flex flex-col gap-6">
         {EXPERIENCE.map((job) => (
@@ -29,9 +33,9 @@ export function Experience() {
   )
 }
 
-export function Education() {
+export function Education({ className }: SectionProps) {
   return (
-    <section className="mb-12">
+    <section className={`mb-12 ${className ?? ''}`}>
       <SectionHeading>Education</SectionHeading>
       <div className="flex flex-col gap-4">
         {EDUCATION.map((entry) => (
