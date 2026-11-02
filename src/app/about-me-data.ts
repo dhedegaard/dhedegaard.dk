@@ -58,7 +58,7 @@ export const EXPERIENCE = [
       'Worked directly with clients to understand their problems and shape the solutions.',
       'Kept quality high with code review and automated testing and deployment.',
     ],
-    tech: ['Node.js', 'TypeScript', 'React', 'Next.js', 'PostgreSQL', 'Docker'],
+    tech: ['Node.js', 'TypeScript', 'React', 'Next.js', 'PostgreSQL', 'Docker', 'AWS', 'GitLab'],
   },
   {
     period: 'Jul 2012 – Aug 2018',
