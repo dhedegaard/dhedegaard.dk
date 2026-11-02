@@ -1,4 +1,5 @@
 import { Badge } from './badge'
+import { SectionHeading } from './section-heading'
 
 interface StackCategory {
   category: string
@@ -15,18 +16,20 @@ export const STACK = [
 
 export function TechStack() {
   return (
-    <div className="flex flex-col gap-2">
-      <h2 className="text-sm text-slate-800/40">Tech stack</h2>
-      {STACK.map(({ category, items }) => (
-        <div key={category} className="flex items-start gap-3">
-          <span className="w-20 shrink-0 pt-1 text-xs text-slate-800/60">{category}</span>
-          <div className="flex flex-wrap gap-1">
-            {items.map((item) => (
-              <Badge key={item} label={item} />
-            ))}
+    <div className="mt-4">
+      <SectionHeading>Tech stack</SectionHeading>
+      <div className="flex flex-col gap-2">
+        {STACK.map(({ category, items }) => (
+          <div key={category} className="flex items-start gap-3">
+            <span className="w-20 shrink-0 pt-1 text-xs text-slate-800/60">{category}</span>
+            <div className="flex flex-wrap gap-1">
+              {items.map((item) => (
+                <Badge key={item} label={item} />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
