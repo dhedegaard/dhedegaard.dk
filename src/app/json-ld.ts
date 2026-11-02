@@ -1,5 +1,5 @@
 import { SITE_URL } from '../site'
-import { CITY, EDUCATION, EXPERIENCE } from './about-me-data'
+import { CITY, type Degree, EDUCATION, EXPERIENCE } from './about-me-data'
 import { GRAVATAR_AVATAR, JOB_TITLE, LINKEDIN_URL, SITE_DESCRIPTION, SITE_NAME } from './site-meta'
 import { STACK } from './tech-stack'
 
@@ -43,12 +43,12 @@ interface WebSiteLd {
 const currentCompany = EXPERIENCE[0].companies[0]
 
 // One entry per school; the abbreviation becomes alternateName.
-const alumniOf = [...new Map(EDUCATION.map(({ school }) => [school.name, school])).values()].map(
+const alumniOf = [...new Set<Degree['school']>(EDUCATION.map(({ school }) => school))].map(
   (school) =>
     ({
       '@type': 'EducationalOrganization',
       name: school.name,
-      ...('abbreviation' in school && { alternateName: school.abbreviation }),
+      ...(school.abbreviation !== undefined && { alternateName: school.abbreviation }),
     }) satisfies EducationalOrganizationLd
 )
 

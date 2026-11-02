@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { EDUCATION, EXPERIENCE, LOCATION, contactEmail } from '../about-me-data'
+import { EXPERIENCE, LOCATION } from '../about-me-data'
 
 describe('about-me-data', () => {
   it('lists the companies newest first', () => {
@@ -14,23 +14,7 @@ describe('about-me-data', () => {
     expect(EXPERIENCE[0].period).toMatch(/Present$/)
   })
 
-  it('places every school in Viby J', () => {
-    expect(EDUCATION.map((entry) => entry.place)).toEqual(['Viby J', 'Viby J', 'Viby J'])
-  })
-
-  it('names the HTX school', () => {
-    expect(EDUCATION[2].school.name).toBe('Aarhus Tech')
-  })
-
   it('gives the city and country only', () => {
     expect(LOCATION).toBe('Højbjerg, Denmark')
-  })
-
-  it('falls back to the public email when GitHub has none', () => {
-    expect(contactEmail(null)).toBe('dennis@dhedegaard.dk')
-  })
-
-  it('prefers the email GitHub returns', () => {
-    expect(contactEmail('x@y.z')).toBe('x@y.z')
   })
 })

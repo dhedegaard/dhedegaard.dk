@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { SITE_NAME } from './site-meta'
 
 interface AvatarProps {
   src: string
@@ -11,7 +12,7 @@ export function Avatar({ src }: AvatarProps) {
         priority
         src={src}
         crossOrigin="anonymous"
-        alt="Dennis Hedegaard"
+        alt={SITE_NAME}
         fill
         sizes="(max-width: 767px) 60px, 128px"
       />

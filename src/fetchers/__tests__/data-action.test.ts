@@ -501,10 +501,10 @@ describe('transformGithubUserToData', () => {
     expect(data.repositories[0]?.topics).toEqual([{ id: 't2', name: 'react' }])
   })
 
-  it('converts missing, empty, or invalid GitHub public email values to null', () => {
-    expect(transformGithubUserToData(makeUser({ email: '' })).data.email).toBeNull()
-    expect(transformGithubUserToData(makeUser({ email: '   ' })).data.email).toBeNull()
-    expect(transformGithubUserToData(makeUser({ email: 'not-an-email' })).data.email).toBeNull()
+  it('falls back to the site email for empty or invalid GitHub public emails', () => {
+    for (const email of ['', '   ', 'not-an-email']) {
+      expect(transformGithubUserToData(makeUser({ email })).data.email).toBe('dennis@dhedegaard.dk')
+    }
   })
 
   it('keeps a repository but nulls a homepage that cannot become a valid URL', () => {

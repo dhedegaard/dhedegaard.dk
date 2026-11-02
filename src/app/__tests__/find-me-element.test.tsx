@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { FindMeElement } from '../find-me-element'
 
 describe('FindMeElement', () => {
-  it('renders GitHub, LinkedIn, and Email links when email is available', () => {
+  it('renders GitHub, LinkedIn, and Email links', () => {
     const markup = renderToStaticMarkup(
       createElement(FindMeElement, {
         githubUrl: 'https://github.com/dhedegaard',
@@ -22,23 +22,12 @@ describe('FindMeElement', () => {
 
   it('marks the GitHub and LinkedIn profiles as rel="me"', () => {
     const markup = renderToStaticMarkup(
-      createElement(FindMeElement, { githubUrl: 'https://github.com/dhedegaard', email: null })
-    )
-
-    expect(markup.match(/rel="me noopener noreferrer"/g)).toHaveLength(2)
-  })
-
-  it('renders GitHub and LinkedIn links without Email when email is null', () => {
-    const markup = renderToStaticMarkup(
       createElement(FindMeElement, {
         githubUrl: 'https://github.com/dhedegaard',
-        email: null,
+        email: 'dennis@example.com',
       })
     )
 
-    expect(markup).toContain('href="https://github.com/dhedegaard"')
-    expect(markup).toContain('href="https://www.linkedin.com/in/dennis-hedegaard-39a02a22/"')
-    expect(markup).not.toContain('mailto:')
-    expect(markup).not.toContain('Email')
+    expect(markup.match(/rel="me noopener noreferrer"/g)).toHaveLength(2)
   })
 })

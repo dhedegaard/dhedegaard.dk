@@ -3,7 +3,7 @@ import { getDeployment } from '../deployment'
 import { getDataAction, getHeatmapWindows } from '../fetchers/data-action'
 import { Avatar } from './avatar'
 import { ContributionHeatmap } from './contribution-heatmap'
-import { contactEmail, LOCATION } from './about-me-data'
+import { LOCATION } from './about-me-data'
 import { About, Education, Experience } from './about-me-sections'
 import { FindMeElement } from './find-me-element'
 import { LanguageStats } from './language-stats'
@@ -20,7 +20,6 @@ export default async function Index() {
   // Read once inside the cache scope: it's when this cached page was generated.
   const now = new Date()
   const [data, windows] = await Promise.all([getDataAction(), getHeatmapWindows(now)])
-  const email = contactEmail(data.email)
 
   return (
     <>
@@ -33,13 +32,13 @@ export default async function Index() {
           </div>
           <TechStack />
           <div className="md:hidden">
-            <FindMeElement githubUrl={data.githubUrl} email={email} />
+            <FindMeElement githubUrl={data.githubUrl} email={data.email} />
           </div>
         </div>
         <div className="flex w-32 flex-none flex-col gap-3 self-start max-md:w-[60px]">
           <Avatar src={data.avatarUrl} />
           <div className="max-md:hidden">
-            <FindMeElement githubUrl={data.githubUrl} email={email} />
+            <FindMeElement githubUrl={data.githubUrl} email={data.email} />
           </div>
         </div>
       </div>

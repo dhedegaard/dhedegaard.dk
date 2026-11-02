@@ -61,7 +61,7 @@ export interface LanguageStats extends z.infer<typeof LanguageStats> {}
 const DataResult = z.object({
   avatarUrl: z.url(),
   githubUrl: z.url(),
-  email: z.nullable(z.email()),
+  email: z.email(),
   repositories: z.array(DataRepository as z.ZodMiniType<DataRepository, DataRepository>),
   languageStats: LanguageStats,
 })
@@ -306,7 +306,7 @@ export const transformGithubUserToData = (user: GithubUserData): TransformResult
       languageStats: computeLanguageStats(statsRepos),
       avatarUrl: ensureString(user.avatarUrl, 'user avatar URL'),
       githubUrl: ensureString(user.url, 'user profile URL'),
-      email: ensureEmail(user.email),
+      email: ensureEmail(user.email) ?? FALLBACK_EMAIL,
     } satisfies DataResult,
     { reportInput: true }
   )
@@ -476,6 +476,8 @@ const ensureNonEmptyNullableString = (value: unknown): string | null => {
   return trimmed === '' ? null : trimmed
 }
 
+// Shown when GitHub has no public email.
+const FALLBACK_EMAIL = 'dennis@dhedegaard.dk'
 const Email = z.email()
 const ensureEmail = (value: unknown): string | null => {
   if (typeof value !== 'string' || value.trim() === '') {

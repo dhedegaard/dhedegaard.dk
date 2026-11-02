@@ -18,12 +18,10 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
         <GithubIcon className="fill-blue-600" width={16} height={16} />
         <span>GitHub</span>
       </a>
-      {email != null && (
-        <a className={secondaryLinkClass} href={`mailto:${email}`}>
-          <MailIcon width={16} height={16} />
-          <span>Email</span>
-        </a>
-      )}
+      <a className={secondaryLinkClass} href={`mailto:${email}`}>
+        <MailIcon width={16} height={16} />
+        <span>Email</span>
+      </a>
       <a
         className={secondaryLinkClass}
         href={LINKEDIN_URL}

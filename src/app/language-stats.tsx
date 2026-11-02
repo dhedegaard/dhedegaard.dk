@@ -1,5 +1,6 @@
 import type { LanguageStats as LanguageStatsData } from '../fetchers/data-action'
 import { pluralize } from './heatmap-layout'
+import { SectionHeading } from './section-heading'
 
 const formatShare = (share: number): string => {
   const percent = Math.round(share * 100)
@@ -45,7 +46,7 @@ export function LanguageStats({ stats }: LanguageStatsProps) {
 
   return (
     <section className="mb-12">
-      <h2 className="mb-4 text-xl">Languages</h2>
+      <SectionHeading>Languages</SectionHeading>
       <div
         className="flex h-3 w-full overflow-hidden rounded-md bg-slate-800/10"
         role="img"

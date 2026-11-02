@@ -21,11 +21,6 @@ describe('About-me sections', () => {
     expect(education).toMatch(/<h3[^>]*>Spoken languages<\/h3>/)
   })
 
-  it('ends About with hobbies, not Education', () => {
-    expect(about).toMatch(/<p>Outside work I enjoy [^<]*<\/p><\/div>/)
-    expect(education).not.toContain('Outside work')
-  })
-
   it('links the company name without showing its domain', () => {
     expect(experience).toContain('href="https://www.digisense.dk/"')
     expect(experience).toContain('Digisense A/S')

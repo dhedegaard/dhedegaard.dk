@@ -3,6 +3,7 @@ import { GithubIcon } from '../icons/github'
 import { LinkIcon, PinIcon, StarIcon } from '../icons/lucide'
 import { Badge } from './badge'
 import { formatHomepageUrl } from './format-homepage-url'
+import { SectionHeading } from './section-heading'
 
 interface RepositoriesProps {
   repositories: readonly DataRepository[]
@@ -10,7 +11,7 @@ interface RepositoriesProps {
 export function Repositories({ repositories }: RepositoriesProps) {
   return (
     <div>
-      <h2 className="mb-4 text-xl">Open source projects</h2>
+      <SectionHeading>Open source projects</SectionHeading>
       <div className="mb-9 grid w-full grid-flow-row grid-cols-2 gap-6 max-md:grid-cols-1">
         {repositories.map((repo) => (
           <Repo key={repo.id} repo={repo} />

@@ -14,17 +14,15 @@ interface Job {
 interface School {
   name: string
   abbreviation?: string
+  place: string
 }
 
-interface Degree {
+export interface Degree {
   period: string
   degree: string
   school: School
-  place: string
   summary: string
 }
-
-const FALLBACK_EMAIL = 'dennis@dhedegaard.dk'
 
 export const CITY = 'Højbjerg'
 export const LOCATION = `${CITY}, Denmark`
@@ -76,33 +74,33 @@ export const EXPERIENCE = [
   },
 ] as const satisfies readonly Job[]
 
+const EAAA = {
+  name: 'Erhvervsakademi Aarhus',
+  abbreviation: 'EAAA',
+  place: 'Viby J',
+} as const satisfies School
+
 // Newest first.
 export const EDUCATION = [
   {
     period: 'Jan 2011 – Jun 2012',
     degree: 'Professional Bachelor in Software Development (top-up)',
-    school: { name: 'Erhvervsakademi Aarhus', abbreviation: 'EAAA' },
-    place: 'Viby J',
+    school: EAAA,
     summary:
       'Systems integration, large-scale systems, testing, Android development and cloud computing.',
   },
   {
     period: 'Aug 2008 – Jan 2011',
     degree: 'AP Degree in Computer Science (Datamatiker)',
-    school: { name: 'Erhvervsakademi Aarhus', abbreviation: 'EAAA' },
-    place: 'Viby J',
+    school: EAAA,
     summary: 'Software design and development, networking and databases.',
   },
   {
     period: '2004 – 2007',
     degree: 'HTX (Higher Technical Examination)',
-    school: { name: 'Aarhus Tech' },
-    place: 'Viby J',
+    school: { name: 'Aarhus Tech', place: 'Viby J' },
     summary: 'Upper secondary education focused on science, mathematics and technology.',
   },
 ] as const satisfies readonly Degree[]
 
 export const SPOKEN_LANGUAGES = 'Danish (native) · English (fluent, daily use)'
-
-// GitHub's public email can be null.
-export const contactEmail = (email: string | null): string => email ?? FALLBACK_EMAIL

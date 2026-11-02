@@ -1,6 +1,6 @@
 import { Fragment, type ReactNode } from 'react'
 import { Badge } from './badge'
-import { ABOUT, EDUCATION, EXPERIENCE, SPOKEN_LANGUAGES } from './about-me-data'
+import { ABOUT, type Degree, EDUCATION, EXPERIENCE, SPOKEN_LANGUAGES } from './about-me-data'
 import { SectionHeading } from './section-heading'
 
 export function About() {
@@ -101,18 +101,18 @@ function JobEntry({ job }: JobEntryProps) {
 }
 
 interface EducationEntryProps {
-  entry: (typeof EDUCATION)[number]
+  entry: Degree
 }
 
-function EducationEntry({
-  entry: { degree, period, school, place, summary },
-}: EducationEntryProps) {
+function EducationEntry({ entry: { degree, period, school, summary } }: EducationEntryProps) {
   return (
     <article className="flex flex-col gap-1">
       <EntryHeader title={degree} period={period} />
       <p className="text-sm text-slate-800/60">
-        {'abbreviation' in school ? `${school.name} (${school.abbreviation})` : school.name},{' '}
-        {place}
+        {school.abbreviation === undefined
+          ? school.name
+          : `${school.name} (${school.abbreviation})`}
+        , {school.place}
       </p>
       <p className="text-sm">{summary}</p>
     </article>
