@@ -1,6 +1,6 @@
 import { Fragment, type ReactNode } from 'react'
 import { Badge } from './badge'
-import { ABOUT, EDUCATION, EXPERIENCE, OUTSIDE_WORK, SPOKEN_LANGUAGES } from './about-me-data'
+import { ABOUT, EDUCATION, EXPERIENCE, SPOKEN_LANGUAGES } from './about-me-data'
 import { SectionHeading } from './section-heading'
 
 export function About() {
@@ -40,8 +40,6 @@ export function Education() {
       </div>
       <h3 className="mt-6 mb-1 font-semibold">Spoken languages</h3>
       <p className="text-sm">{SPOKEN_LANGUAGES}</p>
-      <h3 className="mt-4 mb-1 font-semibold">Outside work</h3>
-      <p className="text-sm">{OUTSIDE_WORK}</p>
     </section>
   )
 }

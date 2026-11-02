@@ -33,6 +33,7 @@ export const ABOUT = [
   "I've been into technology since I was seven or eight, and the curiosity grew into a career. Open source and spare-time experimenting keep me learning, and what I pick up feeds straight into my work.",
   "Working as a consultant brought me into contact with many kinds of people and businesses, and taught me that not every problem should be solved with technology. I enjoy solving problems in a clean, maintainable way that makes other people's work easier and faster.",
   "Collaboration and clear communication matter to me: I say what I think and often play devil's advocate, but once a decision is made I'm a team player.",
+  'Outside work I enjoy fitness, running, walks, reading, computer games and tinkering with technology.',
 ] as const satisfies readonly string[]
 
 // Newest first; [0] is the current job.
@@ -102,9 +103,6 @@ export const EDUCATION = [
 ] as const satisfies readonly Degree[]
 
 export const SPOKEN_LANGUAGES = 'Danish (native) · English (fluent, daily use)'
-
-export const OUTSIDE_WORK =
-  'Fitness, running, walks, reading, computer games and tinkering with technology.'
 
 // GitHub's public email can be null.
 export const contactEmail = (email: string | null): string => email ?? FALLBACK_EMAIL

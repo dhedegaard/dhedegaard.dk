@@ -17,9 +17,13 @@ describe('About-me sections', () => {
     expect(markup).toMatch(new RegExp(`<h2[^>]*>${heading}</h2>`))
   })
 
-  it('ends Education with spoken languages and outside work', () => {
+  it('ends Education with spoken languages', () => {
     expect(education).toMatch(/<h3[^>]*>Spoken languages<\/h3>/)
-    expect(education).toMatch(/<h3[^>]*>Outside work<\/h3>/)
+  })
+
+  it('ends About with hobbies, not Education', () => {
+    expect(about).toMatch(/<p>Outside work I enjoy [^<]*<\/p><\/div>/)
+    expect(education).not.toContain('Outside work')
   })
 
   it('links the company name without showing its domain', () => {
