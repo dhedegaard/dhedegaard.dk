@@ -42,17 +42,15 @@ export function HeatmapGrid({ period, latest }: HeatmapGridProps) {
 
   return (
     <>
-      {/* Fixed-size cells scroll sideways on phones, opening at the newest weeks (row-reverse); from md up the year fills the width. */}
+      {/* Square tracks: 11px cells scroll sideways on phones (newest first); from md up they're sized from the container width, since Safari mis-sizes aspect-ratio cells in auto rows. */}
       <div
-        className="flex flex-row-reverse overflow-x-auto [--cell:11px] md:[--cell:minmax(0,1fr)]"
+        className="@container flex flex-row-reverse overflow-x-auto"
         role="img"
         aria-label={heatmapSummary(period, latest)}
       >
         <div
-          className="grid flex-none grid-rows-[1.25rem_repeat(7,auto)] gap-[3px] md:flex-auto"
-          style={{
-            gridTemplateColumns: `2rem repeat(${weeks.length.toString()}, var(--cell))`,
-          }}
+          className="grid flex-none grid-cols-[2rem_repeat(var(--weeks),var(--cell))] grid-rows-[1.25rem_repeat(7,var(--cell))] gap-[3px] [--cell:11px] md:[--cell:calc((100cqi-2rem-var(--weeks)*3px)/var(--weeks))]"
+          style={{ '--weeks': weeks.length }}
         >
           {/* Shares the grid's rows, so the labels line up by construction; sticky keeps them in view. */}
           <div className="sticky left-0 z-10 col-start-1 row-span-full -mr-[3px] grid grid-rows-subgrid bg-white text-[10px] leading-none text-slate-800/60">
@@ -72,7 +70,7 @@ export function HeatmapGrid({ period, latest }: HeatmapGridProps) {
           {weeks.map((week, weekIndex) => (
             <div
               key={weekIndex}
-              className="row-span-7 row-start-2 grid grid-rows-subgrid *:aspect-square *:rounded-xs *:hover:outline *:hover:outline-slate-800/40"
+              className="row-span-7 row-start-2 grid grid-rows-subgrid *:rounded-xs *:hover:outline *:hover:outline-slate-800/40"
               style={{ gridColumn: weekIndex + 2 }}
             >
               {week.map((day, dayIndex) =>
