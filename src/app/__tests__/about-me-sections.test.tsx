@@ -97,4 +97,11 @@ describe('PHONE_PATTERN', () => {
       experience.match(/<a [^>]*>/g)?.every((link) => link.includes('print:no-underline'))
     ).toBe(true)
   })
+
+  it('prints the Experience tech badges with their background', () => {
+    const badges = experience.match(/<span class="rounded[^"]*"/g) ?? []
+
+    expect(badges.length).toBeGreaterThan(0)
+    for (const badge of badges) expect(badge).toContain('[print-color-adjust:exact]')
+  })
 })

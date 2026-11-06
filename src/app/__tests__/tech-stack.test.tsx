@@ -27,7 +27,12 @@ describe('TechStack', () => {
   it('prints the badge backgrounds', () => {
     const markup = renderToStaticMarkup(createElement(TechStack))
 
-    expect(markup).toMatch(/^<div class="[^"]*\[print-color-adjust:exact\]/)
-    expect(markup).toMatch(/^<div class="[^"]*\[-webkit-print-color-adjust:exact\]/)
+    const badges = markup.match(/<span class="rounded[^"]*"/g) ?? []
+
+    expect(badges.length).toBeGreaterThan(0)
+    for (const badge of badges) {
+      expect(badge).toContain('[print-color-adjust:exact]')
+      expect(badge).toContain('[-webkit-print-color-adjust:exact]')
+    }
   })
 })
