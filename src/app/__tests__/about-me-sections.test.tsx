@@ -65,4 +65,36 @@ describe('PHONE_PATTERN', () => {
       PHONE_PATTERN
     )
   })
+
+  it.each([
+    ['Experience', experience],
+    ['Education', education],
+  ])('keeps each %s entry on one printed page', (_, markup) => {
+    const articles = markup.match(/<article[^>]*>/g) ?? []
+
+    expect(articles.length).toBeGreaterThan(0)
+    for (const article of articles) expect(article).toContain('print:break-inside-avoid')
+  })
+
+  it.each([
+    ['About', about, '<p>'],
+    ['Experience', experience, '<article'],
+    ['Education', education, '<article'],
+  ])('prints the %s heading together with the first entry', (heading, markup, first) => {
+    expect(markup).toContain(
+      `<div class="print:break-inside-avoid"><h2 class="mb-4 text-xl print:break-after-avoid">${heading}</h2>${first}`
+    )
+  })
+
+  it('prints the spoken languages heading with its line', () => {
+    expect(education).toMatch(
+      /<div class="[^"]*print:break-inside-avoid[^"]*"><h3[^>]*>Spoken languages<\/h3><p/
+    )
+  })
+
+  it('prints company names as plain text', () => {
+    expect(
+      experience.match(/<a [^>]*>/g)?.every((link) => link.includes('print:no-underline'))
+    ).toBe(true)
+  })
 })

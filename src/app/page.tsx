@@ -35,7 +35,7 @@ export default async function Index() {
             <FindMeElement githubUrl={data.githubUrl} email={data.email} />
           </div>
         </div>
-        <div className="flex w-32 flex-none flex-col gap-3 self-start max-md:w-[60px]">
+        <div className="flex w-32 flex-none flex-col gap-3 self-start max-md:w-[60px] print:w-28">
           <Avatar src={data.avatarUrl} />
           <div className="max-md:hidden print:hidden">
             <FindMeElement githubUrl={data.githubUrl} email={data.email} />

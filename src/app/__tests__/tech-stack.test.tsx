@@ -17,4 +17,10 @@ describe('TechStack', () => {
     expect(markup).not.toContain('print:hidden')
     expect(markup).toMatch(/^<div class="[^"]*\bprint:order-last\b/)
   })
+
+  it('prints on one page', () => {
+    expect(renderToStaticMarkup(createElement(TechStack))).toMatch(
+      /^<div class="[^"]*\bprint:break-inside-avoid\b/
+    )
+  })
 })

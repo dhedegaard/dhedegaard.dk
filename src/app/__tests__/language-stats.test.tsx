@@ -66,4 +66,12 @@ describe('LanguageStats', () => {
   it('stays visible when printing', () => {
     expect(render(stats)).not.toContain('print:hidden')
   })
+
+  it('prints the bar in colour and on one page', () => {
+    const markup = render(stats)
+
+    expect(markup).toMatch(/^<section class="[^"]*\bprint:break-inside-avoid\b/)
+    expect(markup).toContain('[print-color-adjust:exact]')
+    expect(markup).toContain('[-webkit-print-color-adjust:exact]')
+  })
 })

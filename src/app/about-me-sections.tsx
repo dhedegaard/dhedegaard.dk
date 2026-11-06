@@ -10,12 +10,11 @@ interface SectionProps {
 export function About({ className }: SectionProps) {
   return (
     <section className={`mb-12 ${className ?? ''}`}>
-      <SectionHeading>About</SectionHeading>
-      <div className="flex flex-col gap-3">
+      <HeadedList heading="About" listClassName="mt-3 gap-3">
         {ABOUT.map((paragraph) => (
           <p key={paragraph}>{paragraph}</p>
         ))}
-      </div>
+      </HeadedList>
     </section>
   )
 }
@@ -23,12 +22,11 @@ export function About({ className }: SectionProps) {
 export function Experience({ className }: SectionProps) {
   return (
     <section className={`mb-12 ${className ?? ''}`}>
-      <SectionHeading>Experience</SectionHeading>
-      <div className="flex flex-col gap-6">
+      <HeadedList heading="Experience" listClassName="mt-6 gap-6">
         {EXPERIENCE.map((job) => (
           <JobEntry key={job.period} job={job} />
         ))}
-      </div>
+      </HeadedList>
     </section>
   )
 }
@@ -36,15 +34,37 @@ export function Experience({ className }: SectionProps) {
 export function Education({ className }: SectionProps) {
   return (
     <section className={`mb-12 ${className ?? ''}`}>
-      <SectionHeading>Education</SectionHeading>
-      <div className="flex flex-col gap-4">
+      <HeadedList heading="Education" listClassName="mt-4 gap-4">
         {EDUCATION.map((entry) => (
           <EducationEntry key={entry.period} entry={entry} />
         ))}
+      </HeadedList>
+      <div className="mt-6 print:break-inside-avoid">
+        <h3 className="mb-1 font-semibold">Spoken languages</h3>
+        <p className="text-sm">{SPOKEN_LANGUAGES}</p>
       </div>
-      <h3 className="mt-6 mb-1 font-semibold">Spoken languages</h3>
-      <p className="text-sm">{SPOKEN_LANGUAGES}</p>
     </section>
+  )
+}
+
+interface HeadedListProps {
+  heading: string
+  // Static Tailwind classes: the top margin and the gap between the remaining items.
+  listClassName: string
+  children: readonly ReactNode[]
+}
+
+// Wraps the heading with the first item so a printed page never ends on a bare heading.
+function HeadedList({ heading, listClassName, children }: HeadedListProps) {
+  const [first, ...rest] = children
+  return (
+    <>
+      <div className="print:break-inside-avoid">
+        <SectionHeading>{heading}</SectionHeading>
+        {first}
+      </div>
+      {rest.length > 0 && <div className={`flex flex-col ${listClassName}`}>{rest}</div>}
+    </>
   )
 }
 
@@ -68,7 +88,7 @@ interface JobEntryProps {
 
 function JobEntry({ job }: JobEntryProps) {
   return (
-    <article className="flex flex-col gap-2">
+    <article className="flex flex-col gap-2 print:break-inside-avoid">
       <EntryHeader
         period={job.period}
         title={
@@ -78,7 +98,7 @@ function JobEntry({ job }: JobEntryProps) {
               <Fragment key={company.name}>
                 {index > 0 && ' and '}
                 <a
-                  className="underline decoration-slate-800/30 underline-offset-2 hover:decoration-current"
+                  className="underline decoration-slate-800/30 underline-offset-2 hover:decoration-current print:no-underline"
                   href={company.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -110,7 +130,7 @@ interface EducationEntryProps {
 
 function EducationEntry({ entry: { degree, period, school, summary } }: EducationEntryProps) {
   return (
-    <article className="flex flex-col gap-1">
+    <article className="flex flex-col gap-1 print:break-inside-avoid">
       <EntryHeader title={degree} period={period} />
       <p className="text-sm text-slate-800/60">
         {school.abbreviation === undefined
