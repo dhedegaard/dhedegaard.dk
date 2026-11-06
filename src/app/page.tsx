@@ -28,7 +28,7 @@ export default async function Index() {
       {/* In print, a grid puts the contact links under the avatar and gives the tech stack full width. */}
       <div className="mt-10 mb-12 flex gap-6 print:mt-0 print:mb-8 print:grid print:grid-cols-[1fr_auto] print:grid-rows-[auto_1fr] print:gap-x-6 print:gap-y-4">
         <div className="flex flex-auto flex-col gap-4 print:contents">
-          <h1 className="text-5xl print:text-4xl">{SITE_NAME}</h1>
+          <h1 className="text-5xl">{SITE_NAME}</h1>
           <div>
             <Tagline />
             <p className="text-sm text-slate-800/60">{LOCATION}</p>

@@ -10,7 +10,7 @@ const displayUrl = (url: string): string =>
   url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
 
 const baseLinkClass =
-  'flex items-center gap-2.5 rounded border px-3 py-1.5 text-sm no-underline shadow-sm transition-colors motion-reduce:transition-none print:gap-1.5 print:border-0 print:bg-transparent print:p-0 print:text-xs print:text-blue-600 print:shadow-none'
+  'flex items-center gap-2.5 rounded border px-3 py-1.5 text-sm no-underline shadow-sm transition-colors motion-reduce:transition-none print:gap-1.5 print:border-0 print:bg-transparent print:p-0 print:text-blue-600 print:shadow-none'
 const primaryLinkClass = `${baseLinkClass} border-blue-600 bg-blue-600/10 text-blue-600 hover:bg-blue-600/20 active:bg-blue-600/30`
 const secondaryLinkClass = `${baseLinkClass} border-gray-400 bg-slate-800/5 hover:bg-slate-800/10 active:bg-slate-800/15`
 
@@ -28,7 +28,7 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
         <Label screen="Email" print={email} />
       </a>
       <a
-        className={secondaryLinkClass}
+        className={`${secondaryLinkClass} print:hidden`}
         href={LINKEDIN_URL}
         target="_blank"
         rel="me noopener noreferrer"
