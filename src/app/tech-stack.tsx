@@ -16,7 +16,7 @@ export const STACK = [
 
 export function TechStack() {
   return (
-    <div className="mt-4">
+    <div className="mt-4 print:order-last">
       <SectionHeading>Tech stack</SectionHeading>
       <div className="flex flex-col gap-2">
         {STACK.map(({ category, items }) => (

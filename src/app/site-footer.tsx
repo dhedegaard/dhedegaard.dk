@@ -29,7 +29,7 @@ interface SiteFooterProps {
 }
 export function SiteFooter({ deployment, cachedAt }: SiteFooterProps) {
   return (
-    <footer className="mb-10 text-xs text-slate-800/60">
+    <footer className="mb-10 text-xs text-slate-800/60 print:hidden">
       <p>
         {deployment != null && (
           <>

@@ -30,4 +30,23 @@ describe('FindMeElement', () => {
 
     expect(markup.match(/rel="me noopener noreferrer"/g)).toHaveLength(2)
   })
+  it('prints each link as its target next to the icon', () => {
+    const markup = renderToStaticMarkup(
+      createElement(FindMeElement, {
+        githubUrl: 'https://github.com/dhedegaard',
+        email: 'dennis@example.com',
+      })
+    )
+    const printLabels = [
+      ...markup.matchAll(/<span class="hidden print:inline">([^<]*)<\/span>/g),
+    ].map(([, label]) => label)
+
+    expect(printLabels).toEqual([
+      'github.com/dhedegaard',
+      'dennis@example.com',
+      'linkedin.com/in/dennis-hedegaard-39a02a22',
+    ])
+    expect(markup.match(/<span class="print:hidden">/g)).toHaveLength(3)
+    expect(markup.match(/<svg/g)).toHaveLength(3)
+  })
 })

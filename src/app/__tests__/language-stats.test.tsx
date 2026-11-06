@@ -63,4 +63,7 @@ describe('LanguageStats', () => {
     expect(render(stats)).toContain('23 repos')
     expect(render({ ...stats, repoCount: 1 })).toContain('1 repo ')
   })
+  it('stays visible when printing', () => {
+    expect(render(stats)).not.toContain('print:hidden')
+  })
 })

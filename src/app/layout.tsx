@@ -66,7 +66,9 @@ export default function RootLayout({ children }: Readonly<Props>) {
         />
       </head>
       <body>
-        <div className="mx-auto max-w-4xl px-6 max-md:px-4">{children}</div>
+        <div className="mx-auto max-w-4xl px-6 max-md:px-4 print:max-w-none print:px-0">
+          {children}
+        </div>
 
         <Analytics debug={false} />
         <SpeedInsights debug={false} />

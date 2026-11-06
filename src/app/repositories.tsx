@@ -10,7 +10,7 @@ interface RepositoriesProps {
 }
 export function Repositories({ repositories }: RepositoriesProps) {
   return (
-    <div>
+    <div className="print:hidden">
       <SectionHeading>Open source projects</SectionHeading>
       <div className="mb-9 grid w-full grid-flow-row grid-cols-2 gap-6 max-md:grid-cols-1">
         {repositories.map((repo) => (

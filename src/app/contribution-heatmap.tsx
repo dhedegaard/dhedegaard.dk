@@ -90,7 +90,7 @@ export function ContributionHeatmap({ windows }: ContributionHeatmapProps) {
   }
 
   return (
-    <section className="mb-12">
+    <section className="mb-12 print:hidden">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <h2 className="text-xl">Activity</h2>
         <HeatmapControls

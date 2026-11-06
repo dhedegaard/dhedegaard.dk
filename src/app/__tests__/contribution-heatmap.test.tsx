@@ -37,4 +37,7 @@ describe('ContributionHeatmap', () => {
     expect(markup).toMatch(/role="status"[^>]*>Past 12 months</)
     expect(markup).toContain('role="img" aria-label="7 contributions over the past year, on 1 day"')
   })
+  it('hides the section when printing', () => {
+    expect(render(windows)).toMatch(/^<\w+ class=\"[^\"]*\bprint:hidden\b/)
+  })
 })

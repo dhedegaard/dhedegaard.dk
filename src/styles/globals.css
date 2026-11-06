@@ -4,6 +4,11 @@
   color-scheme: light;
 }
 
+@page {
+  size: A4;
+  margin: 15mm 16mm;
+}
+
 /* Honor the user's reduced-motion preference globally: near-instant animations
    and transitions (covers the skeleton animate-pulse and card hover). */
 @media (prefers-reduced-motion: reduce) {

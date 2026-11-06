@@ -65,4 +65,7 @@ describe('SiteFooter', () => {
       'Deployed 16 Oct 2026, 20:58 UTC from 2acdd44 · Data cached from 16 Oct 2026, 21:30 UTC'
     )
   })
+  it('hides the footer when printing', () => {
+    expect(render({ deployment, cachedAt })).toMatch(/^<\w+ class=\"[^\"]*\bprint:hidden\b/)
+  })
 })

@@ -31,13 +31,13 @@ export default async function Index() {
             <p className="text-sm text-slate-800/60">{LOCATION}</p>
           </div>
           <TechStack />
-          <div className="md:hidden">
+          <div className="md:hidden print:block">
             <FindMeElement githubUrl={data.githubUrl} email={data.email} />
           </div>
         </div>
         <div className="flex w-32 flex-none flex-col gap-3 self-start max-md:w-[60px]">
           <Avatar src={data.avatarUrl} />
-          <div className="max-md:hidden">
+          <div className="max-md:hidden print:hidden">
             <FindMeElement githubUrl={data.githubUrl} email={data.email} />
           </div>
         </div>

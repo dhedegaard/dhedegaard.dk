@@ -109,4 +109,7 @@ describe('Repositories', () => {
     expect(markup).toContain('Neat thing')
     expect(markup).toContain('title="Neat thing"')
   })
+  it('hides the section when printing', () => {
+    expect(render([makeRepository({ id: 'r1' })])).toMatch(/^<\w+ class=\"[^\"]*\bprint:hidden\b/)
+  })
 })
