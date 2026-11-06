@@ -11,11 +11,11 @@ describe('TechStack', () => {
   it('keeps the badge text selectable', () => {
     expect(renderToStaticMarkup(createElement(TechStack))).not.toContain('select-none')
   })
-  it('stays visible when printing, after the contact links', () => {
+
+  it('stays visible when printing', () => {
     const markup = renderToStaticMarkup(createElement(TechStack))
 
     expect(markup).not.toContain('print:hidden')
-    expect(markup).toMatch(/^<div class="[^"]*\bprint:order-last\b/)
   })
 
   it('prints on one page', () => {

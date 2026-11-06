@@ -25,22 +25,27 @@ export default async function Index() {
 
   return (
     <>
-      <div className="mt-10 mb-12 flex gap-6 print:mt-0 print:mb-8">
-        <div className="flex flex-auto flex-col gap-4">
-          <h1 className="text-5xl">{SITE_NAME}</h1>
+      {/* In print, a grid puts the contact links under the avatar and gives the tech stack full width. */}
+      <div className="mt-10 mb-12 flex gap-6 print:mt-0 print:mb-8 print:grid print:grid-cols-[1fr_auto] print:grid-rows-[auto_1fr] print:gap-x-6 print:gap-y-4">
+        <div className="flex flex-auto flex-col gap-4 print:contents">
+          <h1 className="text-5xl print:text-4xl">{SITE_NAME}</h1>
           <div>
             <Tagline />
             <p className="text-sm text-slate-800/60">{LOCATION}</p>
             <PrintStamp deployedAt={deployment?.deployedAt ?? null} cachedAt={now} />
           </div>
-          <TechStack />
-          <div className="md:hidden print:block">
+          <div className="print:col-span-2">
+            <TechStack />
+          </div>
+          <div className="md:hidden print:hidden">
             <FindMeElement githubUrl={data.githubUrl} email={data.email} />
           </div>
         </div>
-        <div className="flex w-32 flex-none flex-col gap-3 self-start max-md:w-[60px] print:w-28">
-          <Avatar src={data.avatarUrl} />
-          <div className="max-md:hidden print:hidden">
+        <div className="flex w-32 flex-none flex-col gap-3 self-start max-md:w-[60px] print:col-start-2 print:row-span-2 print:row-start-1 print:w-auto">
+          <div className="print:w-28 print:self-end">
+            <Avatar src={data.avatarUrl} />
+          </div>
+          <div className="max-md:hidden print:block">
             <FindMeElement githubUrl={data.githubUrl} email={data.email} />
           </div>
         </div>

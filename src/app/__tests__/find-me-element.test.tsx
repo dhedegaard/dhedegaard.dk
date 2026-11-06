@@ -48,5 +48,6 @@ describe('FindMeElement', () => {
     ])
     expect(markup.match(/<span class="print:hidden">/g)).toHaveLength(3)
     expect(markup.match(/<svg/g)).toHaveLength(3)
+    expect(markup.match(/<a [^>]*print:text-blue-600/g)).toHaveLength(3)
   })
 })
