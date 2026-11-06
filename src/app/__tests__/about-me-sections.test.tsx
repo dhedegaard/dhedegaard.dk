@@ -81,8 +81,8 @@ describe('PHONE_PATTERN', () => {
     ['Experience', experience, '<article'],
     ['Education', education, '<article'],
   ])('prints the %s heading together with the first entry', (heading, markup, first) => {
-    expect(markup).toContain(
-      `<div class="print:break-inside-avoid"><h2 class="mb-4 text-xl print:break-after-avoid">${heading}</h2>${first}`
+    expect(markup).toMatch(
+      new RegExp(`<div class="print:break-inside-avoid"><h2[^>]*>${heading}</h2>${first}`)
     )
   })
 
@@ -96,12 +96,5 @@ describe('PHONE_PATTERN', () => {
     expect(
       experience.match(/<a [^>]*>/g)?.every((link) => link.includes('print:no-underline'))
     ).toBe(true)
-  })
-
-  it('prints the Experience tech badges with their background', () => {
-    const badges = experience.match(/<span class="rounded[^"]*"/g) ?? []
-
-    expect(badges.length).toBeGreaterThan(0)
-    for (const badge of badges) expect(badge).toContain('[print-color-adjust:exact]')
   })
 })

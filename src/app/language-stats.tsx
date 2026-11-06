@@ -45,7 +45,7 @@ export function LanguageStats({ stats }: LanguageStatsProps) {
   }
 
   return (
-    <section className="mb-12 [-webkit-print-color-adjust:exact] [print-color-adjust:exact] print:mb-8 print:break-inside-avoid">
+    <section className="mb-12 print:mb-8 print:break-inside-avoid">
       <SectionHeading>Languages</SectionHeading>
       <div
         className="flex h-3 w-full overflow-hidden rounded-md bg-slate-800/10"

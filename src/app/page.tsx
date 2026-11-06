@@ -25,21 +25,20 @@ export default async function Index() {
 
   return (
     <>
-      {/* In print, a grid puts the contact links under the avatar, beside the tech stack. */}
-      <div className="mt-10 mb-12 flex gap-6 print:mt-0 print:mb-8 print:grid print:grid-cols-[1fr_auto] print:gap-x-6 print:gap-y-4">
-        <div className="flex flex-auto flex-col gap-4 print:contents">
+      <div className="mt-10 mb-12 flex gap-6 print:mt-0 print:mb-8">
+        <div className="flex flex-auto flex-col gap-4">
           <h1 className="text-5xl">{SITE_NAME}</h1>
           <div>
             <Tagline />
             <p className="text-sm text-slate-800/60">{LOCATION}</p>
-            <PrintStamp deployedAt={deployment?.deployedAt ?? null} cachedAt={now} />
+            <PrintStamp deployment={deployment} cachedAt={now} />
           </div>
           <TechStack />
           <div className="md:hidden print:hidden">
             <FindMeElement githubUrl={data.githubUrl} email={data.email} />
           </div>
         </div>
-        <div className="flex w-32 flex-none flex-col gap-3 self-start max-md:w-[60px] print:col-start-2 print:row-span-3 print:row-start-1 print:w-auto">
+        <div className="flex w-32 flex-none flex-col gap-3 self-start max-md:w-[60px] print:w-auto">
           <div className="print:w-28 print:self-end">
             <Avatar src={data.avatarUrl} />
           </div>

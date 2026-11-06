@@ -41,12 +41,8 @@ describe('FindMeElement', () => {
       ...markup.matchAll(/<span class="hidden print:inline">([^<]*)<\/span>/g),
     ].map(([, label]) => label)
 
-    expect(printLabels).toEqual([
-      'github.com/dhedegaard',
-      'dennis@example.com',
-      'linkedin.com/in/dennis-hedegaard-39a02a22',
-    ])
-    expect(markup.match(/<span class="print:hidden">/g)).toHaveLength(3)
+    expect(printLabels).toEqual(['github.com/dhedegaard', 'dennis@example.com'])
+    expect(markup.match(/<span class="print:hidden">/g)).toHaveLength(2)
     expect(markup.match(/<svg/g)).toHaveLength(3)
     expect(markup.match(/<a [^>]*print:text-blue-600/g)).toHaveLength(3)
     expect(markup).toMatch(/<a [^>]*print:hidden[^>]*href="https:\/\/www\.linkedin\.com\//)

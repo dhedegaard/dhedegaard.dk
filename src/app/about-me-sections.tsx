@@ -10,7 +10,7 @@ interface SectionProps {
 export function About({ className }: SectionProps) {
   return (
     <section className={`mb-12 ${className ?? ''}`}>
-      <HeadedList heading="About" listClassName="mt-3 gap-3">
+      <HeadedList heading="About" gapClassName="gap-3">
         {ABOUT.map((paragraph) => (
           <p key={paragraph}>{paragraph}</p>
         ))}
@@ -22,7 +22,7 @@ export function About({ className }: SectionProps) {
 export function Experience({ className }: SectionProps) {
   return (
     <section className={`mb-12 ${className ?? ''}`}>
-      <HeadedList heading="Experience" listClassName="mt-6 gap-6">
+      <HeadedList heading="Experience" gapClassName="gap-6">
         {EXPERIENCE.map((job) => (
           <JobEntry key={job.period} job={job} />
         ))}
@@ -34,7 +34,7 @@ export function Experience({ className }: SectionProps) {
 export function Education({ className }: SectionProps) {
   return (
     <section className={`mb-12 ${className ?? ''}`}>
-      <HeadedList heading="Education" listClassName="mt-4 gap-4">
+      <HeadedList heading="Education" gapClassName="gap-4">
         {EDUCATION.map((entry) => (
           <EducationEntry key={entry.period} entry={entry} />
         ))}
@@ -49,22 +49,22 @@ export function Education({ className }: SectionProps) {
 
 interface HeadedListProps {
   heading: string
-  // Static Tailwind classes: the top margin and the gap between the remaining items.
-  listClassName: string
+  // A static Tailwind gap class, e.g. "gap-6".
+  gapClassName: string
   children: readonly ReactNode[]
 }
 
 // Wraps the heading with the first item so a printed page never ends on a bare heading.
-function HeadedList({ heading, listClassName, children }: HeadedListProps) {
+function HeadedList({ heading, gapClassName, children }: HeadedListProps) {
   const [first, ...rest] = children
   return (
-    <>
+    <div className={`flex flex-col ${gapClassName}`}>
       <div className="print:break-inside-avoid">
         <SectionHeading>{heading}</SectionHeading>
         {first}
       </div>
-      {rest.length > 0 && <div className={`flex flex-col ${listClassName}`}>{rest}</div>}
-    </>
+      {rest}
+    </div>
   )
 }
 

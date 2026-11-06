@@ -9,6 +9,14 @@
   margin: 15mm 16mm;
 }
 
+/* Keep badge and language-bar colours without the dialog's "Print backgrounds". */
+@media print {
+  html {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
 /* Honor the user's reduced-motion preference globally: near-instant animations
    and transitions (covers the skeleton animate-pulse and card hover). */
 @media (prefers-reduced-motion: reduce) {
