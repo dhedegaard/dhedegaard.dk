@@ -7,6 +7,7 @@ import { LOCATION } from './about-me-data'
 import { About, Education, Experience } from './about-me-sections'
 import { FindMeElement } from './find-me-element'
 import { LanguageStats } from './language-stats'
+import { PrintStamp } from './print-stamp'
 import { Repositories } from './repositories'
 import { SITE_NAME } from './site-meta'
 import { SiteFooter } from './site-footer'
@@ -20,6 +21,7 @@ export default async function Index() {
   // Read once inside the cache scope: it's when this cached page was generated.
   const now = new Date()
   const [data, windows] = await Promise.all([getDataAction(), getHeatmapWindows(now)])
+  const deployment = getDeployment()
 
   return (
     <>
@@ -48,8 +50,9 @@ export default async function Index() {
       <About className="hidden print:block" />
       <Experience className="hidden print:block" />
       <Education className="hidden print:block" />
+      <PrintStamp deployedAt={deployment?.deployedAt ?? null} cachedAt={now} />
       <Repositories repositories={data.repositories} />
-      <SiteFooter deployment={getDeployment()} cachedAt={now} />
+      <SiteFooter deployment={deployment} cachedAt={now} />
     </>
   )
 }
