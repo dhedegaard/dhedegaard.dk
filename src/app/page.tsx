@@ -51,7 +51,7 @@ export default async function Index() {
       <ContributionHeatmap windows={windows} />
       {/* Print only for now; see CLAUDE.md. The last printed section drops its margin. */}
       <About className="hidden print:mb-8 print:block" />
-      <Experience className="hidden print:mb-8 print:block" />
+      <Experience className="hidden print:mb-6 print:block" />
       <Education className="hidden print:mb-0 print:block" />
       <Repositories repositories={data.repositories} />
       <SiteFooter deployment={deployment} cachedAt={now} />

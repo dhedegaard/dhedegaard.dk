@@ -22,7 +22,7 @@ export function About({ className }: SectionProps) {
 export function Experience({ className }: SectionProps) {
   return (
     <section className={`mb-12 ${className ?? ''}`}>
-      <HeadedList heading="Experience" gapClassName="gap-6">
+      <HeadedList heading="Experience" gapClassName="gap-6 print:gap-4">
         {EXPERIENCE.map((job) => (
           <JobEntry key={job.period} job={job} />
         ))}
@@ -34,12 +34,12 @@ export function Experience({ className }: SectionProps) {
 export function Education({ className }: SectionProps) {
   return (
     <section className={`mb-12 ${className ?? ''}`}>
-      <HeadedList heading="Education" gapClassName="gap-4">
+      <HeadedList heading="Education" gapClassName="gap-4 print:gap-3">
         {EDUCATION.map((entry) => (
           <EducationEntry key={entry.period} entry={entry} />
         ))}
       </HeadedList>
-      <div className="mt-6 print:break-inside-avoid">
+      <div className="mt-6 print:mt-4 print:break-inside-avoid">
         <h3 className="mb-1 font-semibold">Spoken languages</h3>
         <p className="text-sm">{SPOKEN_LANGUAGES}</p>
       </div>
@@ -49,7 +49,7 @@ export function Education({ className }: SectionProps) {
 
 interface HeadedListProps {
   heading: string
-  // A static Tailwind gap class, e.g. "gap-6".
+  // Static Tailwind gap classes, e.g. "gap-6 print:gap-4".
   gapClassName: string
   children: readonly ReactNode[]
 }
@@ -88,7 +88,7 @@ interface JobEntryProps {
 
 function JobEntry({ job }: JobEntryProps) {
   return (
-    <article className="flex flex-col gap-2 print:break-inside-avoid">
+    <article className="flex flex-col gap-2 print:break-inside-avoid print:gap-1.5">
       <EntryHeader
         period={job.period}
         title={
@@ -110,7 +110,7 @@ function JobEntry({ job }: JobEntryProps) {
           </>
         }
       />
-      <ul className="flex list-disc flex-col gap-1 pl-5 text-sm">
+      <ul className="flex list-disc flex-col gap-1 pl-5 text-sm print:gap-0.5">
         {job.description.map((line) => (
           <li key={line}>{line}</li>
         ))}
