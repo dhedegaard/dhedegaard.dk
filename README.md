@@ -6,6 +6,8 @@ The source of [dhedegaard.dk](https://www.dhedegaard.dk), my personal site.
 
 Most of the site stays current on its own. It's built from my GitHub account: the open-source projects, the Languages bar, and an Activity heatmap you can step back through year by year. When I push a new project or start using a new language, the site picks it up within the hour. The hand-written parts are the tagline, the tech stack and an about-me section (about, experience and education), which for now shows only when the page is printed.
 
+Printing the page (or saving it as a PDF) gives a concise A4 version: the header with plain contact links, the tech stack, the Languages bar and the about-me section, without the heatmap, the projects or the footer, and with no entry split across pages. It's plain CSS (Tailwind's `print:` variants and an `@page` rule), so it works from any browser; turn off the print dialog's headers and footers.
+
 ## How it works
 
 1. **Fetch.** Typed GraphQL queries ([`src/clients`](src/clients)) ask the GitHub API for my profile, my public repositories and my contribution calendar.
