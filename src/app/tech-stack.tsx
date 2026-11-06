@@ -16,7 +16,7 @@ export const STACK = [
 
 export function TechStack() {
   return (
-    <div className="mt-4 print:break-inside-avoid">
+    <div className="mt-4 [-webkit-print-color-adjust:exact] [print-color-adjust:exact] print:break-inside-avoid">
       <SectionHeading>Tech stack</SectionHeading>
       <div className="flex flex-col gap-2 print:gap-1">
         {STACK.map(({ category, items }) => (

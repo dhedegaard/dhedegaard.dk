@@ -23,4 +23,11 @@ describe('TechStack', () => {
       /^<div class="[^"]*\bprint:break-inside-avoid\b/
     )
   })
+
+  it('prints the badge backgrounds', () => {
+    const markup = renderToStaticMarkup(createElement(TechStack))
+
+    expect(markup).toMatch(/^<div class="[^"]*\[print-color-adjust:exact\]/)
+    expect(markup).toMatch(/^<div class="[^"]*\[-webkit-print-color-adjust:exact\]/)
+  })
 })
