@@ -25,12 +25,13 @@ export default async function Index() {
 
   return (
     <>
-      <div className="mt-10 mb-12 flex gap-6">
+      <div className="mt-10 mb-12 flex gap-6 print:mt-0 print:mb-8">
         <div className="flex flex-auto flex-col gap-4">
           <h1 className="text-5xl">{SITE_NAME}</h1>
           <div>
             <Tagline />
             <p className="text-sm text-slate-800/60">{LOCATION}</p>
+            <PrintStamp deployedAt={deployment?.deployedAt ?? null} cachedAt={now} />
           </div>
           <TechStack />
           <div className="md:hidden print:block">
@@ -46,11 +47,10 @@ export default async function Index() {
       </div>
       <LanguageStats stats={data.languageStats} />
       <ContributionHeatmap windows={windows} />
-      {/* Print only for now; see CLAUDE.md. */}
-      <About className="hidden print:block" />
-      <Experience className="hidden print:block" />
-      <Education className="hidden print:block" />
-      <PrintStamp deployedAt={deployment?.deployedAt ?? null} cachedAt={now} />
+      {/* Print only for now; see CLAUDE.md. The last printed section drops its margin. */}
+      <About className="hidden print:mb-8 print:block" />
+      <Experience className="hidden print:mb-8 print:block" />
+      <Education className="hidden print:mb-0 print:block" />
       <Repositories repositories={data.repositories} />
       <SiteFooter deployment={deployment} cachedAt={now} />
     </>
