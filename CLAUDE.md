@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run knip` — detect unused exports, deps, and files (zero-config; hard CI gate)
 - `npm run codegen` — regenerate GraphQL types from GitHub API (requires `GITHUB_PAT` env var)
 - `.claude/launch.json` — preview configs: `dev` (`npm run dev`, port 3000, or the next free one) and `prod` (`next start` on 3100, after `npm run build`)
-- Release: rebase the branch on `origin/main`, then `git push origin <branch>:main` (fast-forward; no PR, no merge commit). Then watch the CI workflow and the Vercel commit status.
+- Release: rebase the branch on `origin/main`, then `git push origin <branch>:main` (fast-forward; no PR, no merge commit). Then watch the CI workflow and the Vercel commit status. Markdown-only pushes get no CI run (`paths-ignore: ['**/*.md']`), only Vercel.
 
 `npm run build` is the primary correctness check; `npm test` covers unit logic. CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm test`, `npm run build` (with `GITHUB_PAT` injected), then `npm run knip` on push — all four are hard gates, so a green local build alone does not mean green CI. knip runs _after_ the build on purpose: it needs the generated `src/graphql-env.d.ts` that `graphql.ts` imports, so running it on a fresh clone before `npm run codegen` fails on an unresolvable import. knip itself needs no `GITHUB_PAT`.
 
@@ -105,6 +105,7 @@ Match the check to the change:
 
 - Unit logic — `npm test`
 - Normal code edits — `npm run lint`
+- Type-only changes (types, zod schemas, GraphQL documents) — `npm run typecheck`; lint doesn't typecheck
 - Removing an export, dep, or file — `npm run knip` (CI fails on anything left unused)
 - `knip --production` flags `src/csp.ts` (it only treats `next.config.ts` as an entry outside production mode) and test-only exports like `transformGithubUserToData` — expected, not dead code
 - Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `npm run build`
