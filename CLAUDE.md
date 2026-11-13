@@ -29,7 +29,7 @@ Packages with install scripts must be allowlisted in `package.json` `allowScript
 
 ## Architecture
 
-Personal site built with Next.js App Router, TypeScript (strictest config), and Tailwind CSS v4. Styling is plain Tailwind utility classes (no component library); icons are inlined SVG components in `src/icons/` (`lucide.tsx` copies the few Lucide icons used, since `lucide-react`'s `Icon` is a client component).
+Styling is plain Tailwind utility classes (no component library); icons are inlined SVG components in `src/icons/` (`lucide.tsx` copies the few Lucide icons used, since `lucide-react`'s `Icon` is a client component).
 
 ### Key conventions
 
@@ -42,11 +42,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
 - Zod schemas import from `zod/mini` (the tree-shakeable subset of the `zod` v4 package, also listed in `optimizePackageImports`) — never import from `zod` directly; follow existing patterns. In client bundles Turbopack still ships its unused string formats (~19 KB gzip for one codec). Neither `optimizePackageImports` nor the namespace import helps, and `turbopackModuleFragments` breaks the build, so don't retry them.
 - `src/site.ts` exports `SITE_URL`, the canonical origin (no trailing slash, overridable via the `SITE_URL` env var for preview deploys). It is the single source for absolute URLs — `layout.tsx` metadata, `json-ld.ts`, `robots.ts`, and `sitemap.ts` all read it rather than hardcoding the domain.
 - Repository sort order: archived repos always last (shown with an "Archived" badge), then pinned first, then by star count, then by `pushedAt`. This logic lives in `data-action.ts`. There's no render cap: the query's `first: 100` (no pagination) is the only limit, so past 100 public repos the least recently pushed ones drop silently.
-- Language stats (`computeLanguageStats` in `data-action.ts`, rendered by `language-stats.tsx`):
-  - Each non-archived, non-fork repo weighs equally, split by byte share (each language's `size` over the sum of the repo's language sizes), so one large repo can't dominate.
-  - Markup, data, docs, build, style and shell formats (`NON_PROGRAMMING_LANGUAGES`: HTML, CSS, SCSS, Markdown, JSON, YAML, Dockerfile, Makefile, CMake, Shell) are left out before the shares are taken, so a repo with only those doesn't count.
-  - Up to 10 languages with at least a 1% share are shown, each with how many repos use it, and the rest fold into "Other" (no repo count).
-  - Archived repos, forks and the excluded formats are left out of the stats only; they're still listed, and repo cards still show every language.
+- Language stats (`computeLanguageStats` in `data-action.ts`, rendered by `language-stats.tsx`): weighting, exclusions and caps are in `.claude/rules/language-stats.md`, which loads when you touch those files.
 - Activity heatmap (one 12-month window at a time, newest first): fetching, shaping, failure handling, client state and grid sizing are in `.claude/rules/activity-heatmap.md`, which loads when you touch the heatmap files.
 - Caching lives at the route level: `page.tsx` and `sitemap.ts` open a `'use cache'` scope — `page.tsx` with a custom `cacheLife` (refresh hourly, 30-day expiry, so stars and new repos show within the hour while a broken `GITHUB_PAT` leaves weeks of grace before the page errors), `sitemap.ts` with `cacheLife('days')` (Next.js 16 Cache Components, enabled via `cacheComponents: true` plus `partialPrefetching: true` in `next.config.ts`). `getDataAction()` itself has no `cache()` wrapper or fetch-level `revalidate` — it inherits caching from the calling scope.
 - The root `layout.tsx` exports `ensureStatic = 'navigation'`, so `next dev`/`next build` fail on any request-time server work in any route: uncached fetches, `cookies()`/`headers()`/`connection()`, or a `cacheLife` with `stale` < 30s or `expire` < 5min — even inside `<Suspense>`. This enforces the static-prerender requirement the CSP relies on; debug failures with `npx next build --debug-prerender`.
@@ -76,14 +72,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
 ### Testing conventions
 
 - The test toolchain has a non-obvious dependency: `vitest.config.ts` uses `@vitejs/plugin-react` to transform JSX in `.tsx` test files, and `vite` is a required (non-optional) peer of vitest (still true as of v5) — so both `vite` and `@vitejs/plugin-react` must stay explicit `devDependencies`. If `vite` drops out of the tree (e.g. a lockfile regen), a clean `npm ci` leaves vitest unable to import it and `npm test` fails at startup with `ERR_MODULE_NOT_FOUND` — even though it may still pass locally on a stale `node_modules`.
-- `transformGithubUserToData` (in `data-action.ts`) is the pure, sync extraction of all data-shaping logic. Test data transformations through it directly rather than mocking `fetch`.
-- Use `renderToStaticMarkup` + `createElement` (from `react-dom/server`) to test server component output without a DOM environment. Client components render their server snapshot there (`useSyncExternalStore`'s third argument). Verify interaction in the browser.
-- Use `vi.stubGlobal('fetch', vi.fn(...))` to mock network calls in `github.ts` tests; restore with `vi.unstubAllGlobals()` in `afterEach`.
-- Env-driven code: `vi.stubEnv(...)`, restored with `vi.unstubAllEnvs()` in `afterEach`. `vi.mock` of `../../clients/github` or `@sentry/nextjs` hoists file-wide, so keep module mocks in their own test file (see `get-heatmap-windows.test.ts`).
-- Fake timers: `vi.useFakeTimers()` doesn't fake `AbortSignal.timeout`, so spy on it. For a promise that should reject, attach `expect(p).rejects…` before `vi.advanceTimersByTimeAsync`, or vitest reports an unhandled rejection.
-- Vitest 5 defaults to `clearMocks: true` — don't add `vi.clearAllMocks()` in `afterEach`; spies still need `mockRestore()`.
-- Test factory functions (`makeRepository`, `makeUser`) require explicit `id` fields — no auto-generated fallbacks.
-- Language-stats fixtures: tied shares sort by name (`localeCompare`), so use single letters (`'A'…'L'`), not `L0…L11` ("L10" sorts before "L2"). Don't use names in `NON_PROGRAMMING_LANGUAGES` (HTML, CSS, Shell, …) as stand-ins for real languages.
+- How to write tests (fixtures, mocks, env, timers, server-component rendering) is in `.claude/rules/testing.md`, which loads when you touch test files.
 
 ## Code Style
 
