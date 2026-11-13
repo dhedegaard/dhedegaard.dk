@@ -4,13 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-- `npm ci` — lockfile-faithful install; use `npm install` only when intentionally updating deps
-- `npm run dev` — dev server with Turbopack
+- `npm ci` for installs; `npm install` only when intentionally updating deps
 - `npm run build` — production build (runs `next build` and lint concurrently; this is the CI check)
-- `npm run lint` — ESLint only
-- `npm run typecheck` — `tsc --noEmit` (standalone; `npm run build` also typechecks)
-- `npm test` — Vitest test suite (`vitest run`)
-- `npm test -- src/path/to/file.test.ts` — run a single test file
 - `npm run knip` — detect unused exports, deps, and files (zero-config; hard CI gate)
 - `npm run codegen` — regenerate GraphQL types from GitHub API (requires `GITHUB_PAT` env var)
 - `.claude/launch.json` — preview configs: `dev` (`npm run dev`, port 3000, or the next free one) and `prod` (`next start` on 3100, after `npm run build`)
@@ -25,6 +20,7 @@ Packages with install scripts must be allowlisted in `package.json` `allowScript
 - Node 24 required — enforced at install via `.npmrc` `engine-strict=true` (deliberate, replaces pnpm's built-in engines check); wrong Node fails `npm ci`
 - npm >=11 required — enforced by `package.json` `devEngines.packageManager` (`onFail: "error"`), which npm checks on install; it also makes pnpm refuse to run. Don't reintroduce a top-level `packageManager`: npm ignores it and Corepack is off by default, so an exact pin there is never enforced
 - `GITHUB_PAT` — required for runtime data fetching and for `npm run codegen`
+- `GITHUB_PAT` is in `.env` (Next loads it, so `npm run build` works) and `.envrc`, but the tool shell doesn't load direnv — run codegen as `(source ./.envrc && npm run codegen)` and never echo the value. Only if neither file has it, state which checks were blocked.
 - `GITHUB_PAT` is a classic token scoped `public_repo` + `read:user` (no `repo`/`read:org`): fields needing `read:org` (e.g. `user.organizations`) fail with `INSUFFICIENT_SCOPES`, and private repos return no `languages`
 - `GITHUB_CONTRIBUTION_ACCOUNTS` — comma-separated GitHub logins whose contribution calendars are summed into the Activity heatmap (optional; unset hides the section). The repo is public, so these GitHub logins live only in `.env`/`.envrc` and the Vercel project env — never in code, tests, docs or commit messages. Private contributions count only if `GITHUB_PAT` has the `read:user` scope and, per account, either the token's owner can see those repos or the account shares private contribution counts on its profile; otherwise they silently drop out. Check with `restrictedContributionsCount` (0 means nothing hidden). CI has no value for it, so CI builds hide the section; only Vercel builds run the real fetch.
 - `NEXT_PUBLIC_SENTRY_DSN` — Sentry (optional locally)
@@ -35,16 +31,8 @@ Packages with install scripts must be allowlisted in `package.json` `allowScript
 
 Personal site built with Next.js App Router, TypeScript (strictest config), and Tailwind CSS v4. Styling is plain Tailwind utility classes (no component library); icons are inlined SVG components in `src/icons/` (`lucide.tsx` copies the few Lucide icons used, since `lucide-react`'s `Icon` is a client component).
 
-**Data flow:**
-
-1. `src/clients/user-query.ts` — typed GraphQL document (built with `gql.tada`'s `graphql()` from `src/clients/graphql.ts`) queried against the GitHub API; `contributions-query.ts` is a second document, run per `GITHUB_CONTRIBUTION_ACCOUNTS` login and per 12-month window, with the login and the window's `$from`/`$to` as variables
-2. `src/clients/github.ts` — authenticated fetch + `zod/mini` parse of the raw GitHub response
-3. `src/fetchers/data-action.ts` — shapes/filters the parsed response into `DataResult`, validates the final shape with `zod/mini`. This is the single source of truth for all page data; its `getHeatmapWindows(now)` is fetched separately for the Activity heatmap.
-4. `src/app/*` — server components consume `getDataAction()` (and `page.tsx` also `getHeatmapWindows(new Date())`, in parallel) directly from inside a `'use cache'` scope
-
 ### Key conventions
 
-- Components are server-side by default; `'use client'` only when hooks/browser APIs are needed.
 - `getDataAction()` has no `'use server'` directive — it is not a server action, just an async function called directly from server components.
 - GraphQL types come from `gql.tada` (no codegen step that emits per-query types):
   - Documents are written with `graphql()` from `src/clients/graphql.ts`; their result types are inferred at compile time via `src/graphql-env.d.ts`. To get the query string for a raw `fetch` body, use `print()` from `graphql` (see `github.ts`). The GitHub `URI`/`DateTime`/`Date` scalars are mapped to `string` in `graphql.ts` so document types line up with the zod schema.
@@ -59,12 +47,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
   - Markup, data, docs, build, style and shell formats (`NON_PROGRAMMING_LANGUAGES`: HTML, CSS, SCSS, Markdown, JSON, YAML, Dockerfile, Makefile, CMake, Shell) are left out before the shares are taken, so a repo with only those doesn't count.
   - Up to 10 languages with at least a 1% share are shown, each with how many repos use it, and the rest fold into "Other" (no repo count).
   - Archived repos, forks and the excluded formats are left out of the stats only; they're still listed, and repo cards still show every language.
-- Activity heatmap — one 12-month window at a time, newest first:
-  - Fetching: `getHeatmapWindows(now)` (in `data-action.ts`) anchors the windows on `now`'s UTC date, read inside `page.tsx`'s `'use cache'` scope. Windows are contiguous, back to the earliest of the accounts' `contributionYears`. It fetches window 0 for every account first, then only the older windows each account was active in, at most 6 requests at a time. `postGithubQuery` retries a transient failure once and times each request out after 10 s, and the older windows have a 25 s budget to stay inside Next's 50 s prerender limit.
-  - Shaping: `buildHeatmapWindow` (in `contribution-calendar.ts`) sums the accounts' daily counts per window and precomputes each window's quartile thresholds, so each window is shaded on its own scale. Middle windows without data stay as zeros, so the numbering never shifts, and trailing empty windows are dropped.
-  - Failure: if window 0 fails for any account, or `GITHUB_CONTRIBUTION_ACCOUNTS` is unset or invalid, the section hides (failures go to Sentry) while the rest of the page renders. An older failure only cuts the history short. That's why it's a separate request, kept out of `getDataAction()` (so the sitemap doesn't fetch it): `postGithubQuery` throws on any GraphQL error, so a bad login inside the main query would take the whole page down.
-  - Client: `contribution-heatmap.tsx` is the site's one stateful client component. It reads `?years=N` with `useSyncExternalStore` and the `yearsParam` `zod/mini` codec (`years-param.ts`, the only zod in the browser; its cost is accepted, see `zod/mini` above), and writes it with `history.replaceState`. The server never reads the param, so the static HTML always shows window 0, and the controls (`heatmap-controls.tsx`) stay `invisible` until hydration. `heatmap-grid.tsx` and `heatmap-layout.ts` are hook-free and zod-free.
-  - Grid: each window starts on its own first day, so week 0 is padded with empty slots in Monday-first weeks. The weekday labels are a sticky column inside the cell grid, sharing its rows via `grid-rows-subgrid`, so they line up at every width without matching track sizes by hand. Every track is sized explicitly from `--cell` (11px on phones; from `md` up, the `@container` wrapper's `100cqi` minus the label column and gaps, divided by `--weeks`). Don't switch back to `aspect-square` cells in `auto` rows against `1fr` columns: Safari sizes those rows wrongly, so the cells stretch tall and the grid overflows.
+- Activity heatmap (one 12-month window at a time, newest first): fetching, shaping, failure handling, client state and grid sizing are in `.claude/rules/activity-heatmap.md`, which loads when you touch the heatmap files.
 - Caching lives at the route level: `page.tsx` and `sitemap.ts` open a `'use cache'` scope — `page.tsx` with a custom `cacheLife` (refresh hourly, 30-day expiry, so stars and new repos show within the hour while a broken `GITHUB_PAT` leaves weeks of grace before the page errors), `sitemap.ts` with `cacheLife('days')` (Next.js 16 Cache Components, enabled via `cacheComponents: true` plus `partialPrefetching: true` in `next.config.ts`). `getDataAction()` itself has no `cache()` wrapper or fetch-level `revalidate` — it inherits caching from the calling scope.
 - The root `layout.tsx` exports `ensureStatic = 'navigation'`, so `next dev`/`next build` fail on any request-time server work in any route: uncached fetches, `cookies()`/`headers()`/`connection()`, or a `cacheLife` with `stale` < 30s or `expire` < 5min — even inside `<Suspense>`. This enforces the static-prerender requirement the CSP relies on; debug failures with `npx next build --debug-prerender`.
 - The React Compiler is enabled (`reactCompiler: true`). Write components in standard React style — the compiler handles memoization. Avoid patterns it can't optimize (conditional hook calls, etc.). The compiler's lint rules come from `eslint-plugin-react-hooks` (v6+, pulled in and enabled by `eslint-config-next`'s `recommended` config — surfaced as the granular `react-hooks/*` rules like `set-state-in-render`, `purity`, `immutability`). Do **not** add the standalone `eslint-plugin-react-compiler`: React Compiler 1.0 merged those rules into `eslint-plugin-react-hooks`, so the standalone package is deprecated and redundant here.
@@ -92,7 +75,6 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
 
 ### Testing conventions
 
-- Tests live in `__tests__/` subdirectories alongside source files. Vitest runs with `environment: 'node'` and no globals (config in `vitest.config.ts`).
 - The test toolchain has a non-obvious dependency: `vitest.config.ts` uses `@vitejs/plugin-react` to transform JSX in `.tsx` test files, and `vite` is a required (non-optional) peer of vitest (still true as of v5) — so both `vite` and `@vitejs/plugin-react` must stay explicit `devDependencies`. If `vite` drops out of the tree (e.g. a lockfile regen), a clean `npm ci` leaves vitest unable to import it and `npm test` fails at startup with `ERR_MODULE_NOT_FOUND` — even though it may still pass locally on a stale `node_modules`.
 - `transformGithubUserToData` (in `data-action.ts`) is the pure, sync extraction of all data-shaping logic. Test data transformations through it directly rather than mocking `fetch`.
 - Use `renderToStaticMarkup` + `createElement` (from `react-dom/server`) to test server component output without a DOM environment. Client components render their server snapshot there (`useSyncExternalStore`'s third argument). Verify interaction in the browser.
@@ -109,7 +91,7 @@ Personal site built with Next.js App Router, TypeScript (strictest config), and 
 
 Keep code comments short — one brief line; point to CLAUDE.md or commit messages for rationale instead of explaining inline.
 
-ESLint uses `typescript-eslint` `strictTypeChecked` (type-aware via `projectService`) + `prettier` flat config. The generated `src/graphql-env.d.ts` is excluded from lint (it carries its own `eslint-disable`/`prettier-ignore` headers too). `prettier-plugin-tailwindcss` is active — Tailwind class order is enforced automatically, don't reorder manually.
+`prettier-plugin-tailwindcss` is active — Tailwind class order is enforced automatically, don't reorder manually.
 
 Prettier isn't enforced by lint or CI: `eslint-config-prettier` only turns off conflicting rules, and there's no `format` script. Run `npx prettier --write <files>` on files you touch (that's also what applies the Tailwind class order). Several older files aren't Prettier-clean yet, so formatting a file you touch can add unrelated Tailwind class-order changes. That's expected; mention it in the commit message.
 
@@ -130,48 +112,11 @@ Sentry is wired across three runtimes via `src/instrumentation.ts`, `sentry.serv
 
 ## Verification
 
-### What to run
-
 Match the check to the change:
 
 - Unit logic — `npm test`
 - Normal code edits — `npm run lint`
 - Removing an export, dep, or file — `npm run knip` (CI fails on anything left unused)
 - `knip --production` flags `src/csp.ts` (it only treats `next.config.ts` as an entry outside production mode) and test-only exports like `transformGithubUserToData` — expected, not dead code
-- Dependency major bumps — watch `npm install` output for `ERESOLVE` peer warnings and inspect with `npm ls <pkg>`; the tree currently has no accepted mismatches, so any `ERESOLVE` warning indicates a problem.
-- Next.js upgrades — `npx @next/codemod upgrade` fails under npm 12: it runs `npm view … --field version`, npm 12 rejects the unknown flag, and the codemod surfaces it as a misleading `Invalid revision provided`. Run it with npm 11 on PATH: `npx -y -p npm@11 -p @next/codemod@<ver> -c 'codemod upgrade <ver>'`, then restore the `eslint` caret (see Dependencies and bundle).
-- GitHub schema changes — `npm run codegen` (regenerates the git-ignored `github-schema.graphql` + `src/graphql-env.d.ts`; editing an existing query needs no regeneration)
-- graphql / gql.tada bumps — `npx gql.tada generate-output` rebuilds `src/graphql-env.d.ts` from the local schema (no token/network); identical output means the bump is type-neutral. A full `npm run codegen` also pulls GitHub's upstream schema changes, so a schema diff there isn't caused by the bump.
 - Runtime behavior, caching, Next config, Sentry wiring, or data fetching — `npm run build`
-- `ensureStatic` guard still enforced (after Next upgrades) — temporarily add `src/app/<probe>/page.tsx` that does `await connection()` inside `<Suspense>`; `npx next build` must fail with "must be fully static". Delete the probe afterwards, then run `npm run build` once: the failed build leaves `.next/types/validator.ts` pointing at the deleted page, which breaks `npm run typecheck` until the types regenerate.
-- `loading.tsx` only shows during client navigation. To see it, temporarily add `src/app/<probe>/page.tsx` that renders `<Loading />` (imported from `../loading`), open it on the dev server, then delete it.
-- Metadata / JSON-LD changes: `curl -s localhost:3000/` and parse the `<meta name="description">` tag and the `application/ld+json` script. `json-ld.test.ts` covers the JSON-LD and `SITE_DESCRIPTION`; nothing covers the rest of `layout.tsx`'s metadata.
-- Prefetch / client-navigation changes — only observable in a production build (`npm run build`, then `npx next start -p <port>`). The 404 page's `<Link href="/">` is the site's only client navigation; its prefetch shows up as `/?_rsc=…` requests.
-- Anything that loads a new external resource or integration — check `cspHeaders()` in `src/csp.ts` still allows it (and nothing stale remains), then `npm test`
-- CSP headers locally — `NEXT_PUBLIC_SENTRY_DSN=<dummy> VERCEL_ENV=production npm run build`, then `npx next start -p <port>` and `curl -sI`; a dummy DSN gets baked into `.next`, so rebuild afterwards. Locally, `/_vercel/*` scripts 404 (Vercel serves them), which is not a CSP issue, and headless Chrome won't deliver Reporting API reports over http localhost. To check enforcement, load the page in a browser: CSP blocks show as console errors (`Refused to …`). With the dummy DSN, Sentry `envelope` requests return 400, which means they got through.
-- Production headers — `curl -sI https://www.dhedegaard.dk/` (the apex 308-redirects to `www`, so curl it with `-L` or you'll see no CSP header)
-- The language legend is tuned to two lines at desktop width (848px `ul`, only about 65px to spare on the first line). After changing legend text, emulate 1280×900 and count the distinct `li` top offsets with `javascript_tool`. The pane resets the emulated size whenever its width changes, so re-set it before measuring.
-- Client JS weight: `grep -o '/_next/static/[^"]*\.js' .next/server/app/index.html | sort -u | sed 's|^/_next/|.next/|' | xargs -I{} sh -c 'gzip -9c {} | wc -c' | awk '{s+=$1} END {print s}'`. Compare it before and after any change that adds client code. The total includes Next's polyfill chunk (the `<script noModule>` one, about 39 KB gzip), which modern browsers skip; leave it out when comparing.
-- Per-source client-bundle attribution: `npx next analyze --output --snapshot <name>`, then `npx next analyze export --snapshot <name> | gzip > <scratch>.jsonl.gz`. The export has `part` records with `[client-fs]` filenames and a per-source `compressed_size`. Use distinct snapshot names for before and after a change.
-- A failing `npm run build` may be the lint leg, not your change — check the `[build]`/`[lint]` output prefix, and reproduce on a clean tree before attributing it to your edit.
-
-### Inspecting output and data
-
-- Rendered output after `npm run build`: grep `.next/server/app/index.html` and `index.rsc` to confirm what ships (e.g. no GitHub account logins), and measure size with `gzip -9c <file> | wc -c`.
-- When scanning built HTML for phone numbers, strip the tags first. Digit runs in icon SVG `path` data match 8-digit patterns and are false positives.
-- Language bar shares on production or the dev server: `curl -sL https://www.dhedegaard.dk/ | grep -o 'aria-label="Language share:[^"]*"'`. The "Other" names are in the last legend item's `title`.
-- Full language ranking (beyond what the page ships): a scratchpad `.mts` script that imports `getGithubUser` from `src/clients/github` and recomputes the shares, run with `set -a; source ./.env; set +a; npx -y tsx <file>.mts`. It must be `.mts`, since tsx's CJS output rejects top-level `await`.
-- Ad-hoc GitHub GraphQL probes: build the body with `jq -n --arg … > q.json`, then `(source ./.envrc && curl -s -H "Authorization: bearer $GITHUB_PAT" -X POST -d @q.json https://api.github.com/graphql) | jq …`. Print only aggregates, never the token or private repo names.
-- On production, Vercel Analytics/Speed Insights load from hashed same-origin paths (e.g. `/ce77bbabbf5abf1f/script.js`), not `/_vercel/*`. `'self'` already covers them, so don't add Vercel origins for them.
-- Preview deployments (`dhedegaard-dk-git-<branch>-d-hedegaard.vercel.app`) are behind Vercel Deployment Protection (`curl` gets a 302), so check their headers in a logged-in browser or on production.
-
-### Tooling quirks
-
-- `GITHUB_PAT` is in `.env` (Next loads it, so `npm run build` works) and `.envrc`, but the tool shell doesn't load direnv — run codegen as `(source ./.envrc && npm run codegen)` and never echo the value. Only if neither file has it, state which checks were blocked.
-- In `next dev`, the console shows CSP `Loading the script … violates` errors for Vercel Analytics/Speed Insights debug scripts from `va.vercel-scripts.com`. This is dev-only and expected; production serves them same-origin.
-- `next dev` can show a server error from an earlier render (e.g. a query/schema mismatch mid-edit) in the browser console even after a reload. Check the current state with `curl -s localhost:3000/ | grep …` before chasing it.
-- While Claude's browser pane is hidden, the page runs as a background page and `requestAnimationFrame` never fires. React then never reveals the page's streamed Suspense boundary, so nothing below the layout hydrates. Check `tabs_context`, or script the cached Playwright Chromium (`~/Library/Caches/ms-playwright/chromium-*/…/Google Chrome for Testing`) with `playwright-core` from the scratchpad. Switching the heatmap shows one favicon request per URL change: Chrome refetches the Gravatar icon, and the app fetches no data.
-- In Claude's browser pane, dark-mode emulation renders a dark canvas behind black text. Emulate a light colour scheme before visual checks.
-- Claude's browser pane is narrower than `md` (~760px), so by default it shows the mobile layout. Emulate 1280×900 for desktop and the mobile preset for phones, reloading after each switch.
-- Print media: the browser pane can't emulate print. Script the cached Playwright Chromium with `playwright-core`, call `page.emulateMedia({ media: 'print' })`, and list the visible `h2`s (`offsetParent !== null`). For the real layout, run `npm run build` and `npx next start -p 3100`, render `page.pdf({ format: 'A4', preferCSSPageSize: true, printBackground: false })` and Read the PDF: expect two pages, no split entries and a coloured language bar. Safari lays text out a little taller than Chromium, so keep page 2 well short of full: Experience plus Education measured about 930 of the page's 1009 CSS px in Chromium (2026-11-07), and at 992 Safari spilled onto a third page. `printBackground: false` matches the dialog's default; badges and the bar still print in colour.
-- Safari/WebKit: Playwright's cache has no WebKit, so Claude can't render in it. For Safari-only layout bugs, check in headless Chromium, then ask the user to open the dev server in Safari.
+- Anything else (dependency or Next.js bumps, codegen, `ensureStatic`/`loading.tsx` probes, metadata, prefetch, CSP, bundle weight, browser/print checks, inspecting built output, GitHub probes): load the `verify-site` skill (`.claude/skills/verify-site/SKILL.md`).
