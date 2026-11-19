@@ -89,19 +89,13 @@ type GithubRepoEdge = GithubUserData['repositories']['edges'] extends
   : never
 type GithubRepoNode = NonNullable<NonNullable<GithubRepoEdge>['node']>
 
-const getOrderedPinnedNodeIds = (user: GithubUserData): string[] =>
-  user.pinnedItems.nodes?.flatMap((node) => (node?.__typename === 'Repository' ? [node.id] : [])) ??
-  []
-
-const buildPinnedRankMap = (
-  orderedPinnedNodeIds: readonly string[]
-): ReadonlyMap<string, number> => {
-  const pinnedRankMap = new Map<string, number>()
-  for (const [index, repositoryId] of orderedPinnedNodeIds.entries()) {
-    pinnedRankMap.set(repositoryId, index)
-  }
-  return pinnedRankMap
-}
+// Pinned repository ids mapped to their position on the profile.
+const buildPinnedRankMap = (user: GithubUserData): ReadonlyMap<string, number> =>
+  new Map(
+    (user.pinnedItems.nodes ?? [])
+      .flatMap((node) => (node?.__typename === 'Repository' ? [node.id] : []))
+      .map((id, rank) => [id, rank])
+  )
 
 // First occurrence wins when GitHub lists a language id twice.
 const uniqueLanguageEdges = (repo: GithubRepoNode) => {
@@ -136,9 +130,6 @@ const extractTopics = (repo: GithubRepoNode): DataRepositoryTopic[] =>
       name: topic.topic.name,
     })) ?? []
 
-const getPinnedRank = (repositoryId: string, pinnedRankMap: ReadonlyMap<string, number>): number =>
-  pinnedRankMap.get(repositoryId) ?? Infinity
-
 /** Parse a nullable ISO timestamp to epoch millis, treating null as the oldest possible. */
 export const pushedAtTimestamp = (pushedAt: string | null): number =>
   pushedAt != null ? Date.parse(pushedAt) : Number.NEGATIVE_INFINITY
@@ -172,28 +163,16 @@ const compareRepositories = (
   right: DataRepository,
   pinnedRankMap: ReadonlyMap<string, number>
 ): number => {
-  if (left.archived !== right.archived) {
-    return left.archived ? 1 : -1
-  }
-
-  const leftPinnedRank = getPinnedRank(left.id, pinnedRankMap)
-  const rightPinnedRank = getPinnedRank(right.id, pinnedRankMap)
-  if (leftPinnedRank !== rightPinnedRank) {
-    return leftPinnedRank - rightPinnedRank
-  }
-
-  const stargazerCountDiff = right.stargazerCount - left.stargazerCount
-  if (stargazerCountDiff !== 0) {
-    return stargazerCountDiff
-  }
-
-  const leftPushedAt = pushedAtTimestamp(left.pushedAt)
-  const rightPushedAt = pushedAtTimestamp(right.pushedAt)
-  if (leftPushedAt !== rightPushedAt) {
-    return rightPushedAt - leftPushedAt
-  }
-
-  return 0
+  // Unpinned repos rank after every pinned one.
+  const pinnedRank = (repo: DataRepository) => pinnedRankMap.get(repo.id) ?? pinnedRankMap.size
+  return (
+    Number(left.archived) - Number(right.archived) ||
+    pinnedRank(left) - pinnedRank(right) ||
+    right.stargazerCount - left.stargazerCount ||
+    // Two never-pushed repos give -Infinity - -Infinity = NaN: a tie.
+    pushedAtTimestamp(right.pushedAt) - pushedAtTimestamp(left.pushedAt) ||
+    0
+  )
 }
 
 const TOP_LANGUAGE_COUNT = 10
@@ -271,8 +250,7 @@ const computeLanguageStats = (repos: readonly GithubRepoNode[]): LanguageStats =
 }
 
 export const transformGithubUserToData = (user: GithubUserData): TransformResult => {
-  const orderedPinnedNodeIds = getOrderedPinnedNodeIds(user)
-  const pinnedRankMap = buildPinnedRankMap(orderedPinnedNodeIds)
+  const pinnedRankMap = buildPinnedRankMap(user)
   const repos: DataRepository[] = []
   const statsRepos: GithubRepoNode[] = []
   const dropped: DroppedRepository[] = []

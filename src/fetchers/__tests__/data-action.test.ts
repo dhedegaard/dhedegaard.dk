@@ -185,6 +185,20 @@ describe('transformGithubUserToData', () => {
     ])
   })
 
+  it('sorts never-pushed repositories last and keeps their order', () => {
+    const neverA = makeRepository({ id: 'never-a', pushedAt: null })
+    const pushed = makeRepository({ id: 'pushed', pushedAt: '2020-01-01T00:00:00Z' })
+    const neverB = makeRepository({ id: 'never-b', pushedAt: null })
+
+    const { data } = transformGithubUserToData(makeUser({ repositories: [neverA, pushed, neverB] }))
+
+    expect(data.repositories.map((repository) => repository.id)).toEqual([
+      'pushed',
+      'never-a',
+      'never-b',
+    ])
+  })
+
   it('orders the pushedAt tiebreak chronologically across timezone offsets', () => {
     const { data } = transformGithubUserToData(
       makeUser({
