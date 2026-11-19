@@ -4,18 +4,18 @@ import { contributionsQuery } from './contributions-query'
 import type { ResultOf } from './graphql'
 import { userQuery } from './user-query'
 
-const languageSchema = z.object({
+const GithubLanguage = z.object({
   id: z.string(),
   color: z.nullable(z.string()),
   name: z.string(),
 })
 
-const topicNodeSchema = z.object({
+const GithubTopicNode = z.object({
   id: z.string(),
   topic: z.object({ id: z.string(), name: z.string() }),
 })
 
-const repositoryNodeSchema = z.object({
+const GithubRepositoryNode = z.object({
   id: z.string(),
   name: z.string(),
   url: z.string(),
@@ -28,35 +28,35 @@ const repositoryNodeSchema = z.object({
   homepageUrl: z.nullable(z.string()),
   owner: z.object({ id: z.string() }),
   repositoryTopics: z.object({
-    edges: z.nullable(z.array(z.nullable(z.object({ node: z.nullable(topicNodeSchema) })))),
+    edges: z.nullable(z.array(z.nullable(z.object({ node: z.nullable(GithubTopicNode) })))),
   }),
-  primaryLanguage: z.nullable(languageSchema),
+  primaryLanguage: z.nullable(GithubLanguage),
   languages: z.nullable(
     z.object({
-      edges: z.nullable(z.array(z.nullable(z.object({ size: z.number(), node: languageSchema })))),
+      edges: z.nullable(z.array(z.nullable(z.object({ size: z.number(), node: GithubLanguage })))),
     })
   ),
 })
 
-const pinnedItemSchema = z.union([
+const GithubPinnedItem = z.union([
   z.object({ __typename: z.literal('Gist') }),
   z.object({ __typename: z.literal('Repository'), id: z.string(), name: z.string() }),
 ])
 
-const githubUserSchema = z.object({
+const GithubUser = z.object({
   id: z.string(),
   avatarUrl: z.string(),
   url: z.string(),
   email: z.string(),
   pinnedItems: z.object({
-    nodes: z.nullable(z.array(z.nullable(pinnedItemSchema))),
+    nodes: z.nullable(z.array(z.nullable(GithubPinnedItem))),
   }),
   repositories: z.object({
     edges: z.nullable(
       z.array(
         z.nullable(
           z.object({
-            node: z.nullable(repositoryNodeSchema),
+            node: z.nullable(GithubRepositoryNode),
           })
         )
       )
@@ -64,9 +64,9 @@ const githubUserSchema = z.object({
   }),
 }) satisfies z.ZodMiniType<NonNullable<ResultOf<typeof userQuery>['user']>>
 
-export type GithubUser = z.infer<typeof githubUserSchema>
+export interface GithubUser extends z.infer<typeof GithubUser> {}
 
-const githubContributionsSchema = z.object({
+const GithubContributions = z.object({
   contributionsCollection: z.object({
     contributionYears: z.array(z.int()),
     contributionCalendar: z.object({
@@ -81,7 +81,7 @@ const githubContributionsSchema = z.object({
   }),
 }) satisfies z.ZodMiniType<NonNullable<ResultOf<typeof contributionsQuery>['user']>>
 
-export type GithubContributions = z.infer<typeof githubContributionsSchema>
+export interface GithubContributions extends z.infer<typeof GithubContributions> {}
 
 // The query documents are static, so serialize them once at module load.
 const userQueryString = print(userQuery)
@@ -167,7 +167,7 @@ export const getGithubUser = async (): Promise<GithubUser> => {
     throw new Error('Github user was not found')
   }
 
-  return githubUserSchema.parse(user, { reportInput: true })
+  return GithubUser.parse(user, { reportInput: true })
 }
 
 export const getGithubContributions = async (
@@ -186,5 +186,5 @@ export const getGithubContributions = async (
     throw new Error(`Github user ${login} was not found`)
   }
 
-  return githubContributionsSchema.parse(user, { reportInput: true })
+  return GithubContributions.parse(user, { reportInput: true })
 }
