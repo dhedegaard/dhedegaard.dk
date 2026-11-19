@@ -8,6 +8,10 @@ describe('globals.css', () => {
     expect(css).toMatch(/@page\s*\{[^}]*size:\s*A4/)
   })
 
+  it('reserves the scrollbar gutter', () => {
+    expect(css).toMatch(/(^|\n)html\s*\{[^}]*\bscrollbar-gutter:\s*stable/)
+  })
+
   it('keeps colours in print without "Print backgrounds"', () => {
     expect(css).toMatch(/@media print\s*\{\s*html\s*\{[^}]*\bprint-color-adjust:\s*exact/)
   })
