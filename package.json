@@ -5,7 +5,7 @@
   "homepage": "https://www.dhedegaard.dk/",
   "type": "module",
   "engines": {
-    "node": "24"
+    "node": "26"
   },
   "devEngines": {
     "packageManager": {

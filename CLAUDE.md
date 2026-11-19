@@ -15,7 +15,7 @@ Packages with install scripts must be allowlisted in `package.json` `allowScript
 
 ## Environment
 
-- Node 24 required — enforced at install via `.npmrc` `engine-strict=true` (deliberate, replaces pnpm's built-in engines check); wrong Node fails `npm ci`
+- Node 26 required — enforced at install via `.npmrc` `engine-strict=true` (deliberate, replaces pnpm's built-in engines check); wrong Node fails `npm ci`
 - npm >=11 required — enforced by `package.json` `devEngines.packageManager` (`onFail: "error"`), which npm checks on install; it also makes pnpm refuse to run. Don't reintroduce a top-level `packageManager`: npm ignores it and Corepack is off by default, so an exact pin there is never enforced
 - `GITHUB_PAT` — required for runtime data fetching and for `npm run codegen`
 - `GITHUB_PAT` is in `.env` (Next loads it, so `npm run build` works) and `.envrc`, but the tool shell doesn't load direnv — run codegen as `(source ./.envrc && npm run codegen)` and never echo the value. Only if neither file has it, state which checks were blocked.

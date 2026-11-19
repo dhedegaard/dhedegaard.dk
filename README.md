@@ -48,7 +48,7 @@ A site that maintains itself has to fail safely, because nobody is watching it d
 
 ## Running it locally
 
-You need Node 24, npm 11 or later, and a GitHub token.
+You need Node 26, npm 11 or later, and a GitHub token.
 
 ```bash
 npm ci
