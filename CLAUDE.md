@@ -7,7 +7,7 @@
 - `npm run knip` — detect unused exports, deps, and files (zero-config; hard CI gate)
 - `npm run codegen` — regenerate GraphQL types from GitHub API (requires `GITHUB_PAT` env var)
 - `.claude/launch.json` — preview configs: `dev` (`npm run dev`, port 3000, or the next free one) and `prod` (`next start` on 3100, after `npm run build`)
-- Release: usually rebase the branch on `origin/main`, then `git push origin <branch>:main` (fast-forward). When a PR is asked for, merge it with a merge commit, never squash. Then watch the CI workflow and the Vercel commit status. Markdown-only pushes get no CI run (`paths-ignore: ['**/*.md']`), only Vercel.
+- Release: usually rebase the branch on `origin/main`, then `git push origin <branch>:main` (fast-forward). When a PR is asked for, merge it with a merge commit, never squash. Then watch the CI workflow (`gh run list --commit "$(git rev-parse HEAD)"`) and the Vercel commit status (the `Vercel` context in `gh api repos/dhedegaard/dhedegaard.dk/commits/<sha>/status`). Markdown-only pushes get no CI run (`paths-ignore: ['**/*.md']`), only Vercel.
 
 `npm run build` is the primary correctness check; `npm test` covers unit logic. CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm test`, `npm run build` (with `GITHUB_PAT` injected), then `npm run knip` on push — all four are hard gates, so a green local build alone does not mean green CI. knip runs _after_ the build on purpose: it needs the generated `src/graphql-env.d.ts` that `graphql.ts` imports, so running it on a fresh clone before `npm run codegen` fails on an unresolvable import. knip itself needs no `GITHUB_PAT`.
 

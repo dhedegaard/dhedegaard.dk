@@ -14,3 +14,4 @@ paths:
 - Vitest 5 defaults to `clearMocks: true` — don't add `vi.clearAllMocks()` in `afterEach`; spies still need `mockRestore()`.
 - Test factory functions (`makeRepository`, `makeUser`) require explicit `id` fields — no auto-generated fallbacks.
 - Language-stats fixtures: tied shares sort by name (`localeCompare`), so use single letters (`'A'…'L'`), not `L0…L11` ("L10" sorts before "L2"). Don't use names in `NON_PROGRAMMING_LANGUAGES` (HTML, CSS, Shell, …) as stand-ins for real languages.
+- To render a component that requires `children` in a test, use JSX in the `.tsx` test (`<C prop={…}><button /></C>`): `createElement(C, { children })` fails `react/no-children-prop`, and passing children as the third argument fails the typecheck.
