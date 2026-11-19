@@ -1,3 +1,5 @@
+'use client'
+
 import * as Sentry from '@sentry/nextjs'
 import { useEffect, type ReactNode } from 'react'
 
