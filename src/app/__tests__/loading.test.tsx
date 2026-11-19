@@ -9,16 +9,19 @@ const render = () => renderToStaticMarkup(createElement(Loading))
 const headings = (markup: string) =>
   [...markup.matchAll(/<h[12][^>]*>([^<]*)<\/h[12]>/g)].map((match) => match[1])
 
-// Top-level components in a file's JSX (conditional ones too), in render order.
+// Top-level on-screen components in a file's JSX (conditional ones too), in render order.
+// Print-only ones (`className="hidden …`) are skipped.
 const sectionsOf = (file: string) =>
   [
     ...readFileSync(new URL(`../${file}`, import.meta.url), 'utf8').matchAll(
-      /^ {6}(?:\{\w+ && )?<([A-Z]\w*)/gm
+      /^ {6}(?:\{\w+ && )?<([A-Z]\w*)(.*)$/gm
     ),
-  ].map((match) => match[1] ?? '')
+  ]
+    .filter((match) => !(match[2] ?? '').includes('className="hidden'))
+    .map((match) => match[1] ?? '')
 
-// Rendered by page.tsx but not by the skeleton: print-only or below everything else.
-const PAGE_ONLY = new Set(['About', 'Experience', 'Education', 'SiteFooter'])
+// Below everything the skeleton covers.
+const PAGE_ONLY = new Set(['SiteFooter'])
 
 afterEach(() => {
   vi.unstubAllEnvs()
@@ -53,9 +56,10 @@ describe('Loading', () => {
   })
 
   it('hides placeholder text from screen readers', () => {
-    const markup = render()
+    const spans = [...render().matchAll(/<span[^>]*text-transparent[^>]*>/g)].map(([span]) => span)
 
-    for (const [span] of markup.matchAll(/<span[^>]*text-transparent[^>]*>/g)) {
+    expect(spans.length).toBeGreaterThan(0)
+    for (const span of spans) {
       expect(span).toContain('aria-hidden="true"')
     }
   })
