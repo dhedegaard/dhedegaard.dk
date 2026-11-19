@@ -5,7 +5,7 @@ import {
   HeatmapWindow,
   buildHeatmapWindow,
   oldestWindowIndex,
-  parseContributionAccounts,
+  contributionAccountsFromEnv,
   windowBounds,
   windowOverlapsYears,
 } from './contribution-calendar'
@@ -333,7 +333,7 @@ const HeatmapWindows = z.array(HeatmapWindow).check(z.minLength(1))
  */
 export async function getHeatmapWindows(now: Date): Promise<HeatmapWindow[] | null> {
   const started = Date.now()
-  const accounts = parseContributionAccounts(process.env['GITHUB_CONTRIBUTION_ACCOUNTS'])
+  const accounts = contributionAccountsFromEnv()
   if (!accounts.success) {
     return reportContributionError('Invalid GITHUB_CONTRIBUTION_ACCOUNTS', accounts.error)
   }

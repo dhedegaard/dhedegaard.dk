@@ -29,6 +29,8 @@ describe('Loading', () => {
     const page = sectionsOf('page.tsx').filter((name) => !PAGE_ONLY.has(name))
     const skeleton = sectionsOf('loading.tsx').map((name) => name.replace(/Skeleton$/, ''))
 
+    // Guards against the source scan silently matching nothing.
+    expect(page).toContain('LanguageStats')
     expect(skeleton).toEqual(page)
   })
 

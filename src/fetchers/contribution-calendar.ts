@@ -24,6 +24,16 @@ export const parseContributionAccounts = (value: string | undefined) => {
   )
 }
 
+/** The parsed `GITHUB_CONTRIBUTION_ACCOUNTS`, read by the heatmap fetch and its skeleton. */
+export const contributionAccountsFromEnv = () =>
+  parseContributionAccounts(process.env['GITHUB_CONTRIBUTION_ACCOUNTS'])
+
+/** Whether the Activity section shows at all: valid accounts, at least one. */
+export const hasContributionAccounts = (): boolean => {
+  const accounts = contributionAccountsFromEnv()
+  return accounts.success && accounts.data.length > 0
+}
+
 const dayNumber = (date: string): number => Date.parse(`${date}T00:00:00Z`) / DAY_MS
 
 // GitHub-style shading: quartiles of the active days' counts.
