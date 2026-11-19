@@ -3,6 +3,7 @@
 import { useRef, useSyncExternalStore, type KeyboardEvent } from 'react'
 import * as z from 'zod/mini'
 import type { HeatmapWindow } from '../fetchers/contribution-calendar'
+import { ActivitySection } from './activity-section'
 import { guardEnterRepeat } from './enter-repeat'
 import { HeatmapControls } from './heatmap-controls'
 import { HeatmapGrid } from './heatmap-grid'
@@ -90,9 +91,8 @@ export function ContributionHeatmap({ windows }: ContributionHeatmapProps) {
   }
 
   return (
-    <section className="mb-12 print:hidden">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <h2 className="text-xl">Activity</h2>
+    <ActivitySection
+      controls={
         <HeatmapControls
           windows={windows}
           selected={selected}
@@ -103,9 +103,10 @@ export function ContributionHeatmap({ windows }: ContributionHeatmapProps) {
           onLatest={onLatest}
           onKeyDown={onKeyDown}
         />
-      </div>
+      }
+    >
       {/* The key remounts the scroller, so phones reopen it at the newest weeks. */}
       <HeatmapGrid key={selected} period={windows[selected] ?? latest} latest={selected === 0} />
-    </section>
+    </ActivitySection>
   )
 }

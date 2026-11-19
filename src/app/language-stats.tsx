@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react'
 import type { LanguageStats as LanguageStatsData } from '../fetchers/data-action'
 import { pluralize } from './heatmap-layout'
 import { SectionHeading } from './section-heading'
+import { BONE, TextBone } from './skeleton'
 
 const formatShare = (share: number): string => {
   const percent = Math.round(share * 100)
@@ -45,40 +47,72 @@ export function LanguageStats({ stats }: LanguageStatsProps) {
   }
 
   return (
+    <LanguagesSection
+      bar={
+        <div
+          className="flex h-3 w-full overflow-hidden rounded-md bg-slate-800/10"
+          role="img"
+          aria-label={`Language share: ${segments
+            .map((segment) => `${segment.label} ${formatShare(segment.share)}`)
+            .join(', ')}`}
+        >
+          {segments.map((segment) => (
+            <Swatch
+              key={segment.key}
+              color={segment.color}
+              className="h-full basis-0"
+              grow={segment.share}
+            />
+          ))}
+        </div>
+      }
+      caption={languageCaption(stats.repoCount)}
+    >
+      {segments.map((segment) => (
+        <li key={segment.key} className="flex items-center gap-1.5" title={segment.title}>
+          <Swatch color={segment.color} className="size-2.5 rounded-full" />
+          {segment.label}
+          <span className="text-xs text-slate-800/60 tabular-nums">
+            {formatShare(segment.share)}
+            {segment.repoCount != null && ` · ${pluralize(segment.repoCount, 'repo')}`}
+          </span>
+        </li>
+      ))}
+    </LanguagesSection>
+  )
+}
+
+// Roughly the widths of ten legend items with repo counts: two lines on desktop.
+const LEGEND_BONE_WIDTHS = [168, 140, 136, 128, 124, 148, 120, 132, 120, 116]
+
+export function LanguageStatsSkeleton() {
+  return (
+    <LanguagesSection
+      bar={<div className={`h-3 w-full rounded-md ${BONE}`} />}
+      caption={<TextBone>{languageCaption(50)}</TextBone>}
+    >
+      {LEGEND_BONE_WIDTHS.map((width, index) => (
+        <li key={index} className={`h-5 rounded ${BONE}`} style={{ width }} />
+      ))}
+    </LanguagesSection>
+  )
+}
+
+interface LanguagesSectionProps {
+  bar: ReactNode
+  caption: ReactNode
+  /** The legend's `<li>` items. */
+  children: ReactNode
+}
+
+/** The Languages section's frame, shared by the stats and their skeleton. */
+function LanguagesSection({ bar, caption, children }: LanguagesSectionProps) {
+  return (
     <section className="mb-12 print:mb-8 print:break-inside-avoid">
       <SectionHeading>Languages</SectionHeading>
-      <div
-        className="flex h-3 w-full overflow-hidden rounded-md bg-slate-800/10"
-        role="img"
-        aria-label={`Language share: ${segments
-          .map((segment) => `${segment.label} ${formatShare(segment.share)}`)
-          .join(', ')}`}
-      >
-        {segments.map((segment) => (
-          <Swatch
-            key={segment.key}
-            color={segment.color}
-            className="h-full basis-0"
-            grow={segment.share}
-          />
-        ))}
-      </div>
-      <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">
-        {segments.map((segment) => (
-          <li key={segment.key} className="flex items-center gap-1.5" title={segment.title}>
-            <Swatch color={segment.color} className="size-2.5 rounded-full" />
-            {segment.label}
-            <span className="text-xs text-slate-800/60 tabular-nums">
-              {formatShare(segment.share)}
-              {segment.repoCount != null && ` · ${pluralize(segment.repoCount, 'repo')}`}
-            </span>
-          </li>
-        ))}
-      </ul>
-      <p className="mt-2 text-xs text-slate-800/60">
-        Share of code across {pluralize(stats.repoCount, 'repo')} (excluding archived repos and
-        forks), each repo weighted equally.
-      </p>
+      {bar}
+      <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">{children}</ul>
+      <p className="mt-2 text-xs text-slate-800/60">{caption}</p>
     </section>
   )
 }
@@ -97,3 +131,6 @@ function Swatch({ color, className, grow }: SwatchProps) {
     />
   )
 }
+
+const languageCaption = (repoCount: number): string =>
+  `Share of code across ${pluralize(repoCount, 'repo')} (excluding archived repos and forks), each repo weighted equally.`

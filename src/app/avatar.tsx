@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { SITE_NAME } from './site-meta'
+import { BONE } from './skeleton'
 
 interface AvatarProps {
   src: string
@@ -18,4 +19,8 @@ export function Avatar({ src }: AvatarProps) {
       />
     </div>
   )
+}
+
+export function AvatarSkeleton() {
+  return <div className={`aspect-square w-full rounded-full ${BONE}`} />
 }
