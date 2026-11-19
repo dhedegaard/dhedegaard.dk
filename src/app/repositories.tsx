@@ -1,21 +1,46 @@
+import type { ReactNode } from 'react'
 import { DataRepository } from '../fetchers/data-action'
 import { GithubIcon } from '../icons/github'
 import { LinkIcon, PinIcon, StarIcon } from '../icons/lucide'
 import { Badge } from './badge'
 import { formatHomepageUrl } from './format-homepage-url'
 import { SectionHeading } from './section-heading'
+import { BONE } from './skeleton'
 
 interface RepositoriesProps {
   repositories: readonly DataRepository[]
 }
 export function Repositories({ repositories }: RepositoriesProps) {
   return (
+    <RepositoriesSection>
+      {repositories.map((repo) => (
+        <Repo key={repo.id} repo={repo} />
+      ))}
+    </RepositoriesSection>
+  )
+}
+
+export function RepositoriesSkeleton() {
+  return (
+    <RepositoriesSection>
+      {Array.from({ length: 4 }, (_, index) => (
+        <div key={index} className={`h-36 rounded-md ${BONE}`} />
+      ))}
+    </RepositoriesSection>
+  )
+}
+
+interface RepositoriesSectionProps {
+  children: ReactNode
+}
+
+/** The projects section's frame, shared by the list and its skeleton. */
+function RepositoriesSection({ children }: RepositoriesSectionProps) {
+  return (
     <div className="print:hidden">
       <SectionHeading>Open source projects</SectionHeading>
       <div className="mb-9 grid w-full grid-flow-row grid-cols-2 gap-6 max-md:grid-cols-1">
-        {repositories.map((repo) => (
-          <Repo key={repo.id} repo={repo} />
-        ))}
+        {children}
       </div>
     </div>
   )

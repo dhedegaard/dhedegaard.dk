@@ -2,6 +2,7 @@
 paths:
   - "src/app/*heatmap*"
   - "src/app/contribution-heatmap.tsx"
+  - "src/app/activity-section.tsx"
   - "src/app/years-param.ts"
   - "src/app/page.tsx"
   - "src/clients/github.ts"

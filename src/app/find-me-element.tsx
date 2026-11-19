@@ -4,10 +4,13 @@ import { LinkedInIcon } from '../icons/linkedin'
 import { MailIcon } from '../icons/lucide'
 import { formatHomepageUrl } from './format-homepage-url'
 import { LINKEDIN_URL } from './site-meta'
+import { BONE } from './skeleton'
 
 // Printed as plain blue text links that show their target.
-const baseLinkClass =
-  'flex items-center gap-2.5 rounded border px-3 py-1.5 text-sm no-underline shadow-sm transition-colors motion-reduce:transition-none print:gap-1.5 print:border-0 print:bg-transparent print:p-0 print:text-blue-600 print:shadow-none'
+const listClass = 'flex flex-wrap gap-2 md:flex-col print:flex-col print:gap-1'
+// Box model shared by the links and their skeleton.
+const linkBoxClass = 'flex items-center gap-2.5 rounded border px-3 py-1.5 text-sm'
+const baseLinkClass = `${linkBoxClass} no-underline shadow-sm transition-colors motion-reduce:transition-none print:gap-1.5 print:border-0 print:bg-transparent print:p-0 print:text-blue-600 print:shadow-none`
 const primaryLinkClass = `${baseLinkClass} border-blue-600 bg-blue-600/10 text-blue-600 hover:bg-blue-600/20 active:bg-blue-600/30`
 const secondaryLinkClass = `${baseLinkClass} border-gray-400 bg-slate-800/5 hover:bg-slate-800/10 active:bg-slate-800/15`
 
@@ -15,7 +18,7 @@ interface FindMeElementProps extends Pick<DataResult, 'githubUrl' | 'email'> {}
 
 export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
   return (
-    <div className="flex flex-wrap gap-2 md:flex-col print:flex-col print:gap-1">
+    <div className={listClass}>
       <a className={primaryLinkClass} href={githubUrl} target="_blank" rel="me noopener noreferrer">
         <GithubIcon className="fill-blue-600" width={16} height={16} />
         <Label screen="GitHub" print={formatHomepageUrl(githubUrl)} />
@@ -33,6 +36,23 @@ export function FindMeElement({ githubUrl, email }: FindMeElementProps) {
         <LinkedInIcon width={16} height={16} />
         <span>LinkedIn</span>
       </a>
+    </div>
+  )
+}
+
+export function FindMeSkeleton() {
+  return (
+    <div className={listClass}>
+      {['GitHub', 'Email', 'LinkedIn'].map((label) => (
+        <span
+          key={label}
+          aria-hidden="true"
+          className={`${linkBoxClass} border-transparent text-transparent ${BONE}`}
+        >
+          <span className="size-4" />
+          {label}
+        </span>
+      ))}
     </div>
   )
 }

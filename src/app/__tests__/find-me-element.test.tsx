@@ -1,7 +1,7 @@
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { FindMeElement } from '../find-me-element'
+import { FindMeElement, FindMeSkeleton } from '../find-me-element'
 
 describe('FindMeElement', () => {
   it('renders GitHub, LinkedIn, and Email links', () => {
@@ -46,5 +46,24 @@ describe('FindMeElement', () => {
     expect(markup.match(/<svg/g)).toHaveLength(3)
     expect(markup.match(/<a [^>]*print:text-blue-600/g)).toHaveLength(3)
     expect(markup).toMatch(/<a [^>]*print:hidden[^>]*href="https:\/\/www\.linkedin\.com\//)
+  })
+
+  it('has a skeleton placeholder for each link, with the same labels', () => {
+    const real = renderToStaticMarkup(
+      createElement(FindMeElement, {
+        githubUrl: 'https://github.com/dhedegaard',
+        email: 'dennis@example.com',
+      })
+    )
+    const labels = [
+      ...renderToStaticMarkup(createElement(FindMeSkeleton)).matchAll(
+        /<span class="size-4"><\/span>([^<]+)</g
+      ),
+    ].map((match) => match[1] ?? '')
+
+    expect(labels).toHaveLength(real.match(/<a /g)?.length ?? 0)
+    for (const label of labels) {
+      expect(real).toContain(`>${label}<`)
+    }
   })
 })

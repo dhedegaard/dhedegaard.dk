@@ -4,6 +4,11 @@
   color-scheme: light;
 }
 
+/* Reserve the scrollbar's space so short pages (the loading skeleton) don't shift. */
+html {
+  scrollbar-gutter: stable;
+}
+
 @page {
   size: A4;
   margin: 15mm 16mm;

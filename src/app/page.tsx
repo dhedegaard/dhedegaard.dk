@@ -3,16 +3,13 @@ import { getDeployment } from '../deployment'
 import { getDataAction, getHeatmapWindows } from '../fetchers/data-action'
 import { Avatar } from './avatar'
 import { ContributionHeatmap } from './contribution-heatmap'
-import { LOCATION } from './about-me-data'
 import { About, Education, Experience } from './about-me-sections'
 import { FindMeElement } from './find-me-element'
 import { LanguageStats } from './language-stats'
+import { PageHeader } from './page-header'
 import { PrintStamp } from './print-stamp'
 import { Repositories } from './repositories'
-import { SITE_NAME } from './site-meta'
 import { SiteFooter } from './site-footer'
-import { Tagline } from './tagline'
-import { TechStack } from './tech-stack'
 
 export default async function Index() {
   'use cache'
@@ -25,28 +22,11 @@ export default async function Index() {
 
   return (
     <>
-      <div className="mt-10 mb-12 flex gap-6 print:mt-0 print:mb-8">
-        <div className="flex flex-auto flex-col gap-4">
-          <h1 className="text-5xl">{SITE_NAME}</h1>
-          <div>
-            <Tagline />
-            <p className="text-sm text-slate-800/60">{LOCATION}</p>
-            <PrintStamp deployment={deployment} cachedAt={now} />
-          </div>
-          <TechStack />
-          <div className="md:hidden print:hidden">
-            <FindMeElement githubUrl={data.githubUrl} email={data.email} />
-          </div>
-        </div>
-        <div className="flex w-32 flex-none flex-col gap-3 self-start max-md:w-[60px] print:w-auto">
-          <div className="print:w-28 print:self-end">
-            <Avatar src={data.avatarUrl} />
-          </div>
-          <div className="max-md:hidden print:block">
-            <FindMeElement githubUrl={data.githubUrl} email={data.email} />
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        avatar={<Avatar src={data.avatarUrl} />}
+        findMe={<FindMeElement githubUrl={data.githubUrl} email={data.email} />}
+        printStamp={<PrintStamp deployment={deployment} cachedAt={now} />}
+      />
       <LanguageStats stats={data.languageStats} />
       <ContributionHeatmap windows={windows} />
       {/* Print only for now; see CLAUDE.md. The last printed section drops its margin. */}
