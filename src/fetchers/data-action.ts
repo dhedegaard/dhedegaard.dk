@@ -163,17 +163,21 @@ const compareRepositories = (
   right: DataRepository,
   pinnedRankMap: ReadonlyMap<string, number>
 ): number => {
-  // Unpinned repos rank after every pinned one.
-  const pinnedRank = (repo: DataRepository) => pinnedRankMap.get(repo.id) ?? pinnedRankMap.size
   return (
     Number(left.archived) - Number(right.archived) ||
-    pinnedRank(left) - pinnedRank(right) ||
+    // Unpinned repos rank after every pinned one.
+    compareNumbers(
+      pinnedRankMap.get(left.id) ?? Infinity,
+      pinnedRankMap.get(right.id) ?? Infinity
+    ) ||
     right.stargazerCount - left.stargazerCount ||
-    // Two never-pushed repos give -Infinity - -Infinity = NaN: a tie.
-    pushedAtTimestamp(right.pushedAt) - pushedAtTimestamp(left.pushedAt) ||
-    0
+    compareNumbers(pushedAtTimestamp(right.pushedAt), pushedAtTimestamp(left.pushedAt))
   )
 }
+
+// Ascending order that, unlike subtraction, ties equal infinities instead of giving NaN.
+const compareNumbers = (left: number, right: number): number =>
+  left < right ? -1 : left > right ? 1 : 0
 
 const TOP_LANGUAGE_COUNT = 10
 const MIN_LANGUAGE_SHARE = 0.01

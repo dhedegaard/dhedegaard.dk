@@ -157,6 +157,27 @@ describe('transformGithubUserToData', () => {
     ])
   })
 
+  it('keeps a repository pinned twice ahead of unpinned ones', () => {
+    const pinned = makeRepository({ id: 'pinned', stargazerCount: 0 })
+    const other = makeRepository({ id: 'other-pinned', stargazerCount: 0 })
+    const unpinned = makeRepository({ id: 'unpinned', stargazerCount: 200 })
+    const pin = (repository: typeof pinned) =>
+      ({ __typename: 'Repository', id: repository.id, name: repository.name }) as const
+
+    const { data } = transformGithubUserToData(
+      makeUser({
+        pinnedItems: [pin(pinned), pin(other), pin(pinned)],
+        repositories: [unpinned, other, pinned],
+      })
+    )
+
+    expect(data.repositories.map((repository) => repository.id)).toEqual([
+      'other-pinned',
+      'pinned',
+      'unpinned',
+    ])
+  })
+
   it('sorts unpinned repositories by stars and then newest pushed date', () => {
     const olderFiveStar = makeRepository({
       id: 'older-five-star',
