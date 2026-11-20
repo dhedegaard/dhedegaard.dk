@@ -2,7 +2,8 @@ import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import type { HeatmapWindow } from '../../fetchers/contribution-calendar'
-import { HeatmapGrid } from '../heatmap-grid'
+import { ContributionHeatmapSkeleton } from '../activity-section'
+import { CELL_SIZE, GRID_ROWS, HeatmapGrid } from '../heatmap-grid'
 
 const render = (period: HeatmapWindow, latest = true) =>
   renderToStaticMarkup(createElement(HeatmapGrid, { period, latest }))
@@ -82,6 +83,12 @@ describe('HeatmapGrid', () => {
     )
   })
 
+  it('lets keyboard users focus the scrolling weeks', () => {
+    expect(render(period)).toMatch(
+      /<div class="[^"]*overflow-x-auto[^"]*" role="img"[^>]* tabindex="0">/
+    )
+  })
+
   it('keeps the weekday labels in view while the weeks scroll', () => {
     expect(render(period)).toMatch(/<div class="sticky left-0 [^"]*">.*?>Mon</)
   })
@@ -101,5 +108,17 @@ describe('HeatmapGrid', () => {
 
   it('shows a legend from less to more', () => {
     expect(render(period)).toMatch(/Less.*bg-\[#ebedf0\].*bg-\[#216e39\].*More/)
+  })
+})
+
+describe('ContributionHeatmapSkeleton', () => {
+  it('takes its height from the same rows and cell size as the grid', () => {
+    const skeleton = renderToStaticMarkup(createElement(ContributionHeatmapSkeleton))
+    const grid = render(period)
+
+    for (const classes of [GRID_ROWS, CELL_SIZE]) {
+      expect(grid).toContain(classes)
+      expect(skeleton).toContain(classes)
+    }
   })
 })

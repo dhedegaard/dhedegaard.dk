@@ -11,6 +11,8 @@ import {
 
 // Sets --cell from the @container width and --weeks; the skeleton reuses it.
 export const CELL_SIZE = '[--cell:max(11px,calc((100cqi-2rem-var(--weeks)*3px)/var(--weeks)))]'
+// The month-label row, seven day rows and their gaps; the skeleton reuses them for its height.
+export const GRID_ROWS = 'grid-rows-[1.25rem_repeat(7,var(--cell))] gap-[3px]'
 
 // GitHub's light-theme greens, from no contributions to the top quartile.
 const LEVEL_CLASSES = [
@@ -50,9 +52,11 @@ export function HeatmapGrid({ period, latest }: HeatmapGridProps) {
         className="@container flex flex-row-reverse overflow-x-auto"
         role="img"
         aria-label={heatmapSummary(period, latest)}
+        // Focusable so keyboard users can scroll it with the arrow keys.
+        tabIndex={0}
       >
         <div
-          className={`grid flex-none grid-cols-[2rem_repeat(var(--weeks),var(--cell))] grid-rows-[1.25rem_repeat(7,var(--cell))] gap-[3px] ${CELL_SIZE}`}
+          className={`grid flex-none grid-cols-[2rem_repeat(var(--weeks),var(--cell))] ${GRID_ROWS} ${CELL_SIZE}`}
           style={{ '--weeks': weeks.length }}
         >
           {/* Shares the grid's rows, so the labels line up by construction; sticky keeps them in view. */}
