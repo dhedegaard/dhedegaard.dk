@@ -7,7 +7,7 @@
 - `npm run knip` — detect unused exports, deps, and files (zero-config; hard CI gate)
 - `npm run codegen` — regenerate GraphQL types from GitHub API (requires `GITHUB_PAT` env var)
 - `.claude/launch.json` — preview configs: `dev` (`npm run dev`, port 3000, or the next free one) and `prod` (`next start` on 3100, after `npm run build`)
-- Release: usually rebase the branch on `origin/main`, then `git push origin <branch>:main` (fast-forward). When a PR is asked for, merge it with a merge commit, never squash. Then watch the CI workflow (`gh run list --commit "$(git rev-parse HEAD)"`) and the Vercel commit status (the `Vercel` context in `gh api repos/dhedegaard/dhedegaard.dk/commits/<sha>/status`). Markdown-only pushes get no CI run (`paths-ignore: ['**/*.md']`), only Vercel.
+- Release: usually rebase the branch on `origin/main`, then `git push origin <branch>:main` (fast-forward). When a PR is asked for, merge it with a merge commit, never squash. Then watch the CI workflow (`gh run list --commit "$(git rev-parse HEAD)"`) and the Vercel commit status (the `Vercel` context in `gh api repos/dhedegaard/dhedegaard.dk/commits/<sha>/status`). Markdown-only pushes get no CI run (`paths-ignore: ['**/*.md']`), only Vercel. The apex domain 308s to `www`, so check the live footer's sha with `curl -sL`.
 
 `npm run build` is the primary correctness check; `npm test` covers unit logic. CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm test`, `npm run build` (with `GITHUB_PAT` injected), then `npm run knip` on push — all four are hard gates, so a green local build alone does not mean green CI. knip runs _after_ the build on purpose: it needs the generated `src/graphql-env.d.ts` that `graphql.ts` imports, so running it on a fresh clone before `npm run codegen` fails on an unresolvable import. knip itself needs no `GITHUB_PAT`.
 
@@ -29,6 +29,8 @@ Packages with install scripts must be allowlisted in `package.json` `allowScript
 
 Styling is plain Tailwind utility classes (no component library); icons are inlined SVG components in `src/icons/` (`lucide.tsx` copies the few Lucide icons used, since `lucide-react`'s `Icon` is a client component).
 
+`src/fetchers/`: `github-data.ts` (repos, profile, `getGithubData()`), `compute-language-stats.ts`, `heatmap-windows.ts` (fetch) + `contribution-calendar.ts` (shaping), `sanitize.ts` (URL/string/email clean-up).
+
 ### Key conventions
 
 - GraphQL types come from `gql.tada` (no codegen step that emits per-query types):
@@ -36,6 +38,7 @@ Styling is plain Tailwind utility classes (no component library); icons are inli
   - `src/graphql-env.d.ts` and `github-schema.graphql` are generated and **git-ignored** — never hand-edit or commit them. `postinstall` runs `npm run codegen` when `GITHUB_PAT` is set and the file is missing, and `npm run build` regenerates them first if absent (so CI, whose build step has the token, is self-sufficient).
   - Run `npm run codegen` manually (with `GITHUB_PAT` set) after a fresh clone to populate editor/lint types, or whenever the GitHub schema changes. Editing an existing query needs no regeneration — types re-infer from the local `github-schema.graphql`. Trade-off: typecheck/lint/build require `GITHUB_PAT` + network to (re)generate types rather than reading a committed file.
 - Adding a GitHub field means editing both the `graphql()` document (`user-query.ts` or `contributions-query.ts`) and its zod schema in `github.ts`. Typecheck catches a mismatch in either direction: the `satisfies` in `github.ts` checks one way, and an `expectTypeOf` in the query's test checks the other.
+- Type GitHub data with the interfaces `github.ts` exports (`GithubUser`, `GithubRepositoryNode`, `GithubLanguageEdge`); export a new one from its schema rather than deriving it from a function's return type.
 - Zod schemas import from `zod/mini` (the tree-shakeable subset of the `zod` v4 package, also listed in `optimizePackageImports`) — never import from `zod` directly; follow existing patterns. In client bundles Turbopack still ships its unused string formats (~19 KB gzip for one codec). Neither `optimizePackageImports` nor the namespace import helps, and `turbopackModuleFragments` breaks the build, so don't retry them.
 - `src/site.ts` exports `SITE_URL`, the canonical origin (no trailing slash, overridable via the `SITE_URL` env var for preview deploys). It is the single source for absolute URLs — `layout.tsx` metadata, `json-ld.ts`, `robots.ts`, and `sitemap.ts` all read it rather than hardcoding the domain.
 - Repository sort order: archived repos always last (shown with an "Archived" badge), then pinned first, then by star count, then by `pushedAt`. This logic lives in `github-data.ts`. There's no render cap: the query's `first: 100` (no pagination) is the only limit, so past 100 public repos the least recently pushed ones drop silently.
@@ -66,6 +69,8 @@ Styling is plain Tailwind utility classes (no component library); icons are inli
 `README.md` is the public engineering write-up for anyone exploring how the site is built. Keep it current in the same change whenever the architecture, a decision or trade-off, the CI gates, an env var or a command changes. It stays matter-of-fact: no counts that go stale (tests, repos) and no GitHub account logins.
 
 Keep code comments short — one brief line; point to CLAUDE.md or commit messages for rationale instead of explaining inline.
+
+Moving or renaming code that reports to Sentry regroups its issues (new fingerprints), so say so in the PR.
 
 `prettier-plugin-tailwindcss` is active — Tailwind class order is enforced automatically, don't reorder manually.
 
