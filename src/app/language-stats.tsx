@@ -82,8 +82,8 @@ export function LanguageStats({ stats }: LanguageStatsProps) {
   )
 }
 
-// Roughly the widths of ten legend items with repo counts: two lines on desktop.
-const LEGEND_BONE_WIDTHS = [168, 140, 136, 128, 124, 148, 120, 132, 120, 116]
+// The live legend's item widths (measured 2026-11-20), so the skeleton wraps like it at every width.
+const LEGEND_BONE_WIDTHS = [178.8, 138, 119.9, 112.4, 169.1, 139.5, 121.1, 103.8, 120.2, 77.4]
 
 export function LanguageStatsSkeleton() {
   return (
