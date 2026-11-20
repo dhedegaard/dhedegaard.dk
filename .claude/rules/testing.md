@@ -6,10 +6,10 @@ paths:
 
 # Testing conventions
 
-- `transformGithubUserToData` (in `data-action.ts`) is the pure, sync extraction of all data-shaping logic. Test data transformations through it directly rather than mocking `fetch`.
+- `transformGithubUserToData` (in `github-data.ts`) is the pure, sync extraction of all data-shaping logic. Test data transformations through it directly rather than mocking `fetch`.
 - Use `renderToStaticMarkup` + `createElement` (from `react-dom/server`) to test server component output without a DOM environment. Client components render their server snapshot there (`useSyncExternalStore`'s third argument). Verify interaction in the browser.
 - Use `vi.stubGlobal('fetch', vi.fn(...))` to mock network calls in `github.ts` tests; restore with `vi.unstubAllGlobals()` in `afterEach`.
-- Env-driven code: `vi.stubEnv(...)`, restored with `vi.unstubAllEnvs()` in `afterEach`. `vi.mock` of `../../clients/github` or `@sentry/nextjs` hoists file-wide, so keep module mocks in their own test file (see `get-heatmap-windows.test.ts`).
+- Env-driven code: `vi.stubEnv(...)`, restored with `vi.unstubAllEnvs()` in `afterEach`. `vi.mock` of `../../clients/github` or `@sentry/nextjs` hoists file-wide, so keep module mocks in their own test file (see `heatmap-windows.test.ts`).
 - Fake timers: `vi.useFakeTimers()` doesn't fake `AbortSignal.timeout`, so spy on it. For a promise that should reject, attach `expect(p).rejects…` before `vi.advanceTimersByTimeAsync`, or vitest reports an unhandled rejection.
 - Vitest 5 defaults to `clearMocks: true` — don't add `vi.clearAllMocks()` in `afterEach`; spies still need `mockRestore()`.
 - Test factory functions (`makeRepository`, `makeUser`) require explicit `id` fields — no auto-generated fallbacks.

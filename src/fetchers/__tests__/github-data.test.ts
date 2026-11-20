@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { GithubUser } from '../../clients/github'
-import { transformGithubUserToData } from '../data-action'
+import { transformGithubUserToData } from '../github-data'
 
 type RepositoryEdge = NonNullable<GithubUser['repositories']['edges']>[number]
 type RepositoryNode = NonNullable<NonNullable<RepositoryEdge>['node']>

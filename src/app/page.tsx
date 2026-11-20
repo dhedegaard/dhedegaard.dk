@@ -1,6 +1,7 @@
 import { cacheLife } from 'next/cache'
 import { getDeployment } from '../deployment'
-import { getDataAction, getHeatmapWindows } from '../fetchers/data-action'
+import { getGithubData } from '../fetchers/github-data'
+import { getHeatmapWindows } from '../fetchers/heatmap-windows'
 import { Avatar } from './avatar'
 import { ContributionHeatmap } from './contribution-heatmap'
 import { About, Education, Experience } from './about-me-sections'
@@ -17,7 +18,7 @@ export default async function Index() {
   cacheLife({ stale: 300, revalidate: 3600, expire: 2_592_000 })
   // Read once inside the cache scope: it's when this cached page was generated.
   const now = new Date()
-  const [data, windows] = await Promise.all([getDataAction(), getHeatmapWindows(now)])
+  const [data, windows] = await Promise.all([getGithubData(), getHeatmapWindows(now)])
   const deployment = getDeployment()
 
   return (

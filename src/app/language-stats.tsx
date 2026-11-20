@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { LanguageStats as LanguageStatsData } from '../fetchers/data-action'
+import type { LanguageStats as LanguageStatsData } from '../fetchers/language-stats'
 import { pluralize } from './heatmap-layout'
 import { SectionHeading } from './section-heading'
 import { BONE, TextBone } from './skeleton'
