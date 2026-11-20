@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { CELL_SIZE } from './heatmap-grid'
 import { BONE } from './skeleton'
 
 interface ActivitySectionProps {
@@ -23,7 +24,13 @@ export function ActivitySection({ controls, children }: ActivitySectionProps) {
 export function ContributionHeatmapSkeleton() {
   return (
     <ActivitySection controls={<div className={`h-6 w-72 max-w-full rounded ${BONE}`} />}>
-      <div className={`h-30 w-full rounded-md md:h-32 ${BONE}`} />
+      {/* The grid's height: label row plus 7 rows of --cell and their gaps, for a typical 53-week window. */}
+      <div className="@container">
+        <div
+          className={`h-[calc(1.25rem+7*var(--cell)+7*3px)] w-full rounded-md ${CELL_SIZE} ${BONE}`}
+          style={{ '--weeks': 53 }}
+        />
+      </div>
       <div className={`mt-2 h-4 w-96 max-w-full rounded ${BONE}`} />
     </ActivitySection>
   )

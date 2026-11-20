@@ -9,6 +9,9 @@ import {
   type HeatmapDay,
 } from './heatmap-layout'
 
+// Sets --cell from the @container width and --weeks; the skeleton reuses it.
+export const CELL_SIZE = '[--cell:max(11px,calc((100cqi-2rem-var(--weeks)*3px)/var(--weeks)))]'
+
 // GitHub's light-theme greens, from no contributions to the top quartile.
 const LEVEL_CLASSES = [
   'bg-[#ebedf0]',
@@ -42,14 +45,14 @@ export function HeatmapGrid({ period, latest }: HeatmapGridProps) {
 
   return (
     <>
-      {/* Square tracks: 11px cells scroll sideways on phones (newest first); from md up they're sized from the container width (never below 11px, so narrow tablets scroll), since Safari mis-sizes aspect-ratio cells in auto rows. */}
+      {/* Explicit square tracks, at least 11px, scrolling newest-first; see .claude/rules/activity-heatmap.md. */}
       <div
         className="@container flex flex-row-reverse overflow-x-auto"
         role="img"
         aria-label={heatmapSummary(period, latest)}
       >
         <div
-          className="grid flex-none grid-cols-[2rem_repeat(var(--weeks),var(--cell))] grid-rows-[1.25rem_repeat(7,var(--cell))] gap-[3px] [--cell:11px] md:[--cell:max(11px,calc((100cqi-2rem-var(--weeks)*3px)/var(--weeks)))]"
+          className={`grid flex-none grid-cols-[2rem_repeat(var(--weeks),var(--cell))] grid-rows-[1.25rem_repeat(7,var(--cell))] gap-[3px] ${CELL_SIZE}`}
           style={{ '--weeks': weeks.length }}
         >
           {/* Shares the grid's rows, so the labels line up by construction; sticky keeps them in view. */}
