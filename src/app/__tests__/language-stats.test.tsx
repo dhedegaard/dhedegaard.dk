@@ -1,7 +1,7 @@
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import type { LanguageStats as LanguageStatsData } from '../../fetchers/data-action'
+import type { LanguageStats as LanguageStatsData } from '../../fetchers/compute-language-stats'
 import { LanguageStats } from '../language-stats'
 
 const render = (stats: LanguageStatsData) =>

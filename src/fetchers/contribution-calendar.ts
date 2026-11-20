@@ -56,7 +56,7 @@ export const HeatmapWindow = z.object({
 })
 export interface HeatmapWindow extends z.infer<typeof HeatmapWindow> {}
 
-interface WindowBounds {
+export interface WindowBounds {
   start: string
   end: string
   from: string

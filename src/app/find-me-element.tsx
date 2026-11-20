@@ -1,4 +1,4 @@
-import type { DataResult } from '../fetchers/data-action'
+import type { DataResult } from '../fetchers/github-data'
 import { GithubIcon } from '../icons/github'
 import { LinkedInIcon } from '../icons/linkedin'
 import { MailIcon } from '../icons/lucide'

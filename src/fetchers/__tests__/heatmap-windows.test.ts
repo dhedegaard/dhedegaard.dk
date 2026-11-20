@@ -2,10 +2,10 @@ import { captureException } from '@sentry/nextjs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getGithubContributions, type GithubContributions } from '../../clients/github'
 import { windowBounds } from '../contribution-calendar'
-import { getHeatmapWindows } from '../data-action'
+import { getHeatmapWindows } from '../heatmap-windows'
 
 vi.mock('@sentry/nextjs', () => ({ captureException: vi.fn() }))
-vi.mock('../../clients/github', () => ({ getGithubUser: vi.fn(), getGithubContributions: vi.fn() }))
+vi.mock('../../clients/github', () => ({ getGithubContributions: vi.fn() }))
 
 const now = new Date('2026-10-16T12:00:00Z')
 const ANCHOR = '2026-10-16'

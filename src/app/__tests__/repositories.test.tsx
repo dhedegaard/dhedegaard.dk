@@ -1,7 +1,7 @@
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import type { DataRepository } from '../../fetchers/data-action'
+import type { DataRepository } from '../../fetchers/github-data'
 import { Repositories } from '../repositories'
 
 const makeRepository = (overrides: Partial<DataRepository> = {}): DataRepository => ({
