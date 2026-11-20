@@ -37,6 +37,7 @@ const GithubRepositoryNode = z.object({
     })
   ),
 })
+export interface GithubRepositoryNode extends z.infer<typeof GithubRepositoryNode> {}
 
 const GithubPinnedItem = z.union([
   z.object({ __typename: z.literal('Gist') }),

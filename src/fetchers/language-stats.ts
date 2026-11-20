@@ -1,5 +1,5 @@
 import * as z from 'zod/mini'
-import { type GithubRepoNode, uniqueLanguageEdges } from './github-repo'
+import type { GithubRepositoryNode } from '../clients/github'
 
 const Share = z.number().check(z.gte(0), z.lte(1))
 
@@ -17,6 +17,18 @@ export const LanguageStats = z.object({
   other: z.nullable(z.object({ share: Share, names: z.array(z.string().check(z.minLength(1))) })),
 })
 export interface LanguageStats extends z.infer<typeof LanguageStats> {}
+
+// First occurrence wins when GitHub lists a language id twice.
+export const uniqueLanguageEdges = (repo: GithubRepositoryNode) => {
+  const seen = new Set<string>()
+  return (repo.languages?.edges ?? []).flatMap((edge) => {
+    if (edge == null || seen.has(edge.node.id)) {
+      return []
+    }
+    seen.add(edge.node.id)
+    return [edge]
+  })
+}
 
 const TOP_LANGUAGE_COUNT = 10
 const MIN_LANGUAGE_SHARE = 0.01
@@ -36,7 +48,7 @@ const NON_PROGRAMMING_LANGUAGES: ReadonlySet<string> = new Set([
 ])
 
 // Each contributing repo counts once, split by byte share, so one huge repo can't dominate.
-export const computeLanguageStats = (repos: readonly GithubRepoNode[]): LanguageStats => {
+export const computeLanguageStats = (repos: readonly GithubRepositoryNode[]): LanguageStats => {
   const totals = new Map<string, LanguageStat>()
   let repoCount = 0
   for (const repo of repos) {

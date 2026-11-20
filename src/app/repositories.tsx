@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { DataRepository } from '../fetchers/github-data'
+import type { DataRepository } from '../fetchers/github-data'
 import { GithubIcon } from '../icons/github'
 import { LinkIcon, PinIcon, StarIcon } from '../icons/lucide'
 import { Badge } from './badge'

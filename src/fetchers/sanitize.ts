@@ -46,8 +46,6 @@ export const ensureNonEmptyNullableString = (value: unknown): string | null => {
   return trimmed === '' ? null : trimmed
 }
 
-// Shown when GitHub has no public email.
-export const FALLBACK_EMAIL = 'dennis@dhedegaard.dk'
 const Email = z.email()
 export const ensureEmail = (value: unknown): string | null => {
   if (typeof value !== 'string' || value.trim() === '') {

@@ -1,10 +1,8 @@
 import { captureException } from '@sentry/nextjs'
 import * as z from 'zod/mini'
-import { getGithubUser } from '../clients/github'
-import { type GithubRepoNode, type GithubUserData, uniqueLanguageEdges } from './github-repo'
-import { computeLanguageStats, LanguageStats } from './language-stats'
+import { getGithubUser, type GithubRepositoryNode, type GithubUser } from '../clients/github'
+import { computeLanguageStats, LanguageStats, uniqueLanguageEdges } from './language-stats'
 import {
-  FALLBACK_EMAIL,
   ensureEmail,
   ensureHomepageUrl,
   ensureNonEmptyNullableString,
@@ -65,15 +63,18 @@ interface TransformResult {
   dropped: DroppedRepository[]
 }
 
+// Shown when GitHub has no public email.
+const FALLBACK_EMAIL = 'dennis@dhedegaard.dk'
+
 // Pinned repository ids mapped to their position on the profile.
-const buildPinnedRankMap = (user: GithubUserData): ReadonlyMap<string, number> =>
+const buildPinnedRankMap = (user: GithubUser): ReadonlyMap<string, number> =>
   new Map(
     (user.pinnedItems.nodes ?? [])
       .flatMap((node) => (node?.__typename === 'Repository' ? [node.id] : []))
       .map((id, rank) => [id, rank])
   )
 
-const extractLanguages = (repo: GithubRepoNode): DataRepositoryLanguage[] => {
+const extractLanguages = (repo: GithubRepositoryNode): DataRepositoryLanguage[] => {
   const primary = repo.primaryLanguage
   const languages = uniqueLanguageEdges(repo).map((edge) => edge.node)
   return (
@@ -83,7 +84,7 @@ const extractLanguages = (repo: GithubRepoNode): DataRepositoryLanguage[] => {
   ).map((language) => ({ id: language.id, name: language.name, color: language.color ?? null }))
 }
 
-const extractTopics = (repo: GithubRepoNode): DataRepositoryTopic[] =>
+const extractTopics = (repo: GithubRepositoryNode): DataRepositoryTopic[] =>
   repo.repositoryTopics.edges
     ?.map((topic) => topic?.node ?? undefined)
     .filter((topic): topic is NonNullable<typeof topic> => topic != null)
@@ -99,7 +100,7 @@ export const pushedAtTimestamp = (pushedAt: string | null): number =>
   pushedAt != null ? Date.parse(pushedAt) : Number.NEGATIVE_INFINITY
 
 const toDataRepository = (
-  repo: GithubRepoNode,
+  repo: GithubRepositoryNode,
   userId: string,
   pinnedRankMap: ReadonlyMap<string, number>
 ): DataRepository | null => {
@@ -143,10 +144,10 @@ const compareRepositories = (
 const compareNumbers = (left: number, right: number): number =>
   left < right ? -1 : left > right ? 1 : 0
 
-export const transformGithubUserToData = (user: GithubUserData): TransformResult => {
+export const transformGithubUserToData = (user: GithubUser): TransformResult => {
   const pinnedRankMap = buildPinnedRankMap(user)
   const repos: DataRepository[] = []
-  const statsRepos: GithubRepoNode[] = []
+  const statsRepos: GithubRepositoryNode[] = []
   const dropped: DroppedRepository[] = []
 
   for (const edge of user.repositories.edges ?? []) {
