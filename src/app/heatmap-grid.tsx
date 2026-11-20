@@ -42,14 +42,14 @@ export function HeatmapGrid({ period, latest }: HeatmapGridProps) {
 
   return (
     <>
-      {/* Square tracks: 11px cells scroll sideways on phones (newest first); from md up they're sized from the container width, since Safari mis-sizes aspect-ratio cells in auto rows. */}
+      {/* Square tracks: 11px cells scroll sideways on phones (newest first); from md up they're sized from the container width (never below 11px, so narrow tablets scroll), since Safari mis-sizes aspect-ratio cells in auto rows. */}
       <div
         className="@container flex flex-row-reverse overflow-x-auto"
         role="img"
         aria-label={heatmapSummary(period, latest)}
       >
         <div
-          className="grid flex-none grid-cols-[2rem_repeat(var(--weeks),var(--cell))] grid-rows-[1.25rem_repeat(7,var(--cell))] gap-[3px] [--cell:11px] md:[--cell:calc((100cqi-2rem-var(--weeks)*3px)/var(--weeks))]"
+          className="grid flex-none grid-cols-[2rem_repeat(var(--weeks),var(--cell))] grid-rows-[1.25rem_repeat(7,var(--cell))] gap-[3px] [--cell:11px] md:[--cell:max(11px,calc((100cqi-2rem-var(--weeks)*3px)/var(--weeks)))]"
           style={{ '--weeks': weeks.length }}
         >
           {/* Shares the grid's rows, so the labels line up by construction; sticky keeps them in view. */}
