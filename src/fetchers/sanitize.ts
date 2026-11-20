@@ -1,13 +1,10 @@
 import * as z from 'zod/mini'
 
 const HTTP_SCHEME_RE = /^https?:\/\//i
-// A non-http(s) URI scheme (mailto:, tel:, ftp:, javascript:, ...). The negative
-// lookahead for a digit keeps a scheme-less "host:port" (e.g. example.com:8080)
-// from being mistaken for a scheme, since a port number follows the colon there.
+// A non-http(s) scheme (mailto:, javascript:, …); `(?!\d)` keeps "host:port" from matching.
 const NON_HTTP_SCHEME_RE = /^[a-z][a-z\d+.-]*:(?!\d)/i
 const HomepageUrl = z.url()
-// A repository homepage is a website: normalize to an http(s) URL, or return
-// null so the caller renders no link rather than a broken or invalid one.
+// Normalizes to an http(s) URL, or null so no broken link renders.
 export const ensureHomepageUrl = (url: unknown): string | null => {
   if (typeof url !== 'string') {
     return null

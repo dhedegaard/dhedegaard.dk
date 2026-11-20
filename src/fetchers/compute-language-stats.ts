@@ -1,5 +1,5 @@
 import * as z from 'zod/mini'
-import type { GithubRepositoryNode } from '../clients/github'
+import type { GithubLanguageEdge, GithubRepositoryNode } from '../clients/github'
 
 const Share = z.number().check(z.gte(0), z.lte(1))
 
@@ -19,7 +19,7 @@ export const LanguageStats = z.object({
 export interface LanguageStats extends z.infer<typeof LanguageStats> {}
 
 // First occurrence wins when GitHub lists a language id twice.
-export const uniqueLanguageEdges = (repo: GithubRepositoryNode) => {
+export const uniqueLanguageEdges = (repo: GithubRepositoryNode): GithubLanguageEdge[] => {
   const seen = new Set<string>()
   return (repo.languages?.edges ?? []).flatMap((edge) => {
     if (edge == null || seen.has(edge.node.id)) {
@@ -101,5 +101,5 @@ export const computeLanguageStats = (repos: readonly GithubRepositoryNode[]): La
             share: rest.reduce((sum, language) => sum + language.share, 0),
             names: rest.map((language) => language.name),
           },
-  }
+  } satisfies LanguageStats
 }

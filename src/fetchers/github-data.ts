@@ -1,7 +1,7 @@
 import { captureException } from '@sentry/nextjs'
 import * as z from 'zod/mini'
 import { getGithubUser, type GithubRepositoryNode, type GithubUser } from '../clients/github'
-import { computeLanguageStats, LanguageStats, uniqueLanguageEdges } from './language-stats'
+import { computeLanguageStats, LanguageStats, uniqueLanguageEdges } from './compute-language-stats'
 import {
   ensureEmail,
   ensureHomepageUrl,

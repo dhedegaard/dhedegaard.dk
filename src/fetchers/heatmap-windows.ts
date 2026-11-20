@@ -6,6 +6,7 @@ import {
   buildHeatmapWindow,
   oldestWindowIndex,
   contributionAccountsFromEnv,
+  type WindowBounds,
   windowBounds,
   windowOverlapsYears,
 } from './contribution-calendar'
@@ -21,6 +22,17 @@ const reportContributionError = (message: string, cause: unknown): null => {
 const MAX_CONCURRENT_REQUESTS = 6
 // Older windows must finish within Next's 50 s prerender limit, after the user query and window 0.
 const OLDER_WINDOWS_BUDGET_MS = 25_000
+
+interface OlderWindow {
+  bounds: WindowBounds
+  accounts: (GithubContributions | null)[]
+}
+
+interface WindowRequest {
+  index: number
+  account: number
+  run: (signal: AbortSignal) => Promise<GithubContributions>
+}
 
 const HeatmapWindows = z.array(HeatmapWindow).check(z.minLength(1))
 
@@ -60,7 +72,7 @@ export async function getHeatmapWindows(now: Date): Promise<HeatmapWindow[] | nu
     return {
       bounds,
       accounts: logins.map((): GithubContributions | null => null),
-    }
+    } satisfies OlderWindow
   })
   const requests = older.flatMap((period, index) =>
     logins.flatMap((login, account) =>
@@ -70,7 +82,7 @@ export async function getHeatmapWindows(now: Date): Promise<HeatmapWindow[] | nu
               index,
               account,
               run: (signal: AbortSignal) => getGithubContributions(login, period.bounds, signal),
-            },
+            } satisfies WindowRequest,
           ]
         : []
     )

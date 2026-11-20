@@ -10,6 +10,9 @@ const GithubLanguage = z.object({
   name: z.string(),
 })
 
+const GithubLanguageEdge = z.object({ size: z.number(), node: GithubLanguage })
+export interface GithubLanguageEdge extends z.infer<typeof GithubLanguageEdge> {}
+
 const GithubTopicNode = z.object({
   id: z.string(),
   topic: z.object({ id: z.string(), name: z.string() }),
@@ -33,7 +36,7 @@ const GithubRepositoryNode = z.object({
   primaryLanguage: z.nullable(GithubLanguage),
   languages: z.nullable(
     z.object({
-      edges: z.nullable(z.array(z.nullable(z.object({ size: z.number(), node: GithubLanguage })))),
+      edges: z.nullable(z.array(z.nullable(GithubLanguageEdge))),
     })
   ),
 })
